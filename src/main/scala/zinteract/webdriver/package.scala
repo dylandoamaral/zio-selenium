@@ -3,6 +3,8 @@ package zinteract
 import zio.{Has, UIO, URIO, ZIO, ZLayer}
 import org.openqa.selenium.{WebDriver => SeleniumWebDriver}
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.remote.DesiredCapabilities
 
 package object webdriver {
   case class Property(key: String, value: String) {
@@ -18,13 +20,26 @@ package object webdriver {
         ZLayer.succeed(List(Property("webdriver.chrome.driver", driverLocation))) >>> chrome
 
       val chrome: ZLayer[Properties, Throwable, WebDriver] =
+        webdriver(new ChromeDriver())
+
+      def firefoxMinConfig(driverLocation: String): ZLayer[Any, Throwable, WebDriver] =
+        ZLayer.succeed(List(Property("webdriver.gecko.driver", driverLocation))) >>> firefox
+
+      val firefox: ZLayer[Properties, Throwable, WebDriver] =
+        webdriver({
+          val capabilities = new DesiredCapabilities();
+          capabilities.setCapability("marionatte", false);
+          new FirefoxDriver(capabilities)
+        })
+
+      def webdriver(webDriver: => SeleniumWebDriver): ZLayer[Properties, Throwable, WebDriver] =
         ZLayer.fromAcquireRelease(for {
           properties <- properties()
           driver <-
             ZIO
               .effect({
                 properties.foreach(_.insert());
-                val driver: SeleniumWebDriver = new ChromeDriver()
+                val driver: SeleniumWebDriver = webDriver
                 driver
               })
         } yield driver)(driver => UIO(driver.quit()))
