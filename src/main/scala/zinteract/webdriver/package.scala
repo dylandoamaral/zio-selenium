@@ -5,6 +5,7 @@ import org.openqa.selenium.{WebDriver => SeleniumWebDriver}
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.remote.DesiredCapabilities
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
 package object webdriver {
   case class Property(key: String, value: String) {
@@ -31,6 +32,12 @@ package object webdriver {
           capabilities.setCapability("marionatte", false);
           new FirefoxDriver(capabilities)
         })
+
+      val htmlunitMinConfig: ZLayer[Any, Throwable, WebDriver] =
+        ZLayer.succeed(List[Property]()) >>> webdriver(new HtmlUnitDriver())
+
+      val htmlunit: ZLayer[Properties, Throwable, WebDriver] =
+        webdriver(new HtmlUnitDriver())
 
       def webdriver(webDriver: => SeleniumWebDriver): ZLayer[Properties, Throwable, WebDriver] =
         ZLayer.fromAcquireRelease(for {
