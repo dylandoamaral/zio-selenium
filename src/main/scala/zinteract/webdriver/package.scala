@@ -1,6 +1,7 @@
 package zinteract
 
 import zio.{Has, UIO, URIO, ZIO, ZLayer}
+
 import org.openqa.selenium.{WebDriver => SeleniumWebDriver}
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.firefox.FirefoxDriver
@@ -34,7 +35,7 @@ package object webdriver {
         })
 
       val htmlunitMinConfig: ZLayer[Any, Throwable, WebDriver] =
-        ZLayer.succeed(List[Property]()) >>> webdriver(new HtmlUnitDriver())
+        ZLayer.succeed(List[Property]()) >>> htmlunit
 
       val htmlunit: ZLayer[Properties, Throwable, WebDriver] =
         webdriver(new HtmlUnitDriver())

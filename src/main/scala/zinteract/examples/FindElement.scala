@@ -1,13 +1,19 @@
 package zinteract
 
 import zio.{App, ExitCode, ZIO}
+import zio.console
 
 import zinteract.webdriver.{Property, WebDriver}
 import zinteract.surfer.Surfer
 
-object Link extends App {
+object FindElement extends App {
   val app = for {
-    _ <- surfer.link("https://www.selenium.dev/documentation/en/")
+    _       <- surfer.link("https://www.selenium.dev/documentation/en/")
+    element <- surfer.findElementById("the-selenium-browser-automation-project")
+    _ <- element match {
+      case Some(value) => console.putStrLn(s"Title: ${value.getText()}")
+      case None        => console.putStrLn("Title not found !")
+    }
   } yield ()
 
   val pathToDriver = "/path/to/webdriver/chromedriver"
