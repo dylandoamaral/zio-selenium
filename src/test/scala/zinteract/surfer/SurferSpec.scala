@@ -40,6 +40,14 @@ object SurferSpec extends DefaultRunnableSpec {
         assertM(effect.provideCustomLayer(testLayer).run)(
           fails(isSubtype[org.openqa.selenium.WebDriverException](anything))
         )
+      },
+      testM("Surfer should link correctly to a correct domain") {
+        val effect = for {
+          _   <- surfer.link(testWebsite)
+          url <- surfer.domain
+        } yield assert(url)(equalTo("automationpractice.com"))
+
+        effect.provideCustomLayer(testLayer)
       }
     )
 

@@ -5,6 +5,7 @@ import zio.{Task, IO, Has, UIO, RIO, ZIO, ZLayer}
 import zinteract.webdriver.WebDriver
 
 import org.openqa.selenium.{By, NoSuchElementException, WebElement}
+import java.net.URI
 
 import scala.jdk.CollectionConverters._
 
@@ -15,6 +16,7 @@ package object surfer {
     trait Service extends Serializable {
       def link(url: String): Task[Unit]
       def url(): UIO[String]
+      def domain(): UIO[String]
 
       def findElement(by: By): IO[NoSuchElementException, WebElement]
       def findElementById(id: String): IO[NoSuchElementException, WebElement]
@@ -56,6 +58,14 @@ package object surfer {
 
             def url(): UIO[String] =
               ZIO.effect(webdriver.getCurrentUrl).orElse(ZIO.succeed("about:blank"))
+
+            def domain(): UIO[String] =
+              url.map(url => {
+                val uri: URI       = new URI(url)
+                val domain: String = uri.getHost();
+
+                if (domain.startsWith("www.")) domain.substring(4) else domain
+              })
 
             def findElement(by: By): IO[NoSuchElementException, WebElement] =
               ZIO.effect(webdriver.findElement(by)).refineToOrDie[NoSuchElementException]
@@ -139,6 +149,9 @@ package object surfer {
 
   val url: RIO[Surfer, String] =
     ZIO.accessM(_.get.url)
+
+  val domain: RIO[Surfer, String] =
+    ZIO.accessM(_.get.domain)
 
   def findElement(by: By): ZIO[Surfer, NoSuchElementException, WebElement] =
     ZIO.accessM(_.get.findElement(by))
