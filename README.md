@@ -11,17 +11,22 @@ A ZIO friendly librairy to interact with a browser using Selenium.
 
 ## How it works
 
-Here is a sample to link to a particular website:
+Here is a sample to link to a particular website and retrive the title:
 
 ```scala
-import zio.{App, ExitCode, ZIO}
+package zinteract
 
-import zinteract.webdriver.{Property, WebDriver}
+import zio.{App, ExitCode, ZIO}
+import zio.console
+
+import zinteract.webdriver.WebDriver
 import zinteract.surfer.Surfer
 
-object Zinteract extends App {
+object FindElement extends App {
   val app = for {
-    _ <- surfer.link("https://www.selenium.dev/documentation/en/")
+    _       <- surfer.link("https://www.selenium.dev/documentation/en/")
+    element <- surfer.findElementById("the-selenium-browser-automation-project")
+    _       <- console.putStrLn(s"Title: ${element.getText()}")
   } yield ()
 
   val pathToDriver = "/path/to/webdriver/chromedriver"
