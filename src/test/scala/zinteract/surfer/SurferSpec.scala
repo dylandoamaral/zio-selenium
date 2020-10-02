@@ -34,10 +34,12 @@ object SurferSpec extends DefaultRunnableSpec {
       },
       testM("Surfer shouldn't link to an incorrect url") {
         val effect = for {
-          result <- surfer.link(fakeValue).run
-        } yield assert(result)(fails(equalTo(FailLinkError(fakeValue))))
+          result <- surfer.link(fakeValue)
+        } yield ()
 
-        effect.provideCustomLayer(testLayer)
+        assertM(effect.provideCustomLayer(testLayer).run)(
+          fails(isSubtype[org.openqa.selenium.WebDriverException](anything))
+        )
       }
     )
 
@@ -47,8 +49,8 @@ object SurferSpec extends DefaultRunnableSpec {
         val effect = for {
           result  <- surfer.link(testWebsite)
           element <- surfer.findElement(new By.ById("editorial_image_legend"))
-          text    <- ZIO.succeed(element.map(_.getText()))
-        } yield assert(text)(isSome(equalTo("Subsidiary of seleniumframework.com")))
+          text    <- ZIO.succeed(element.getText())
+        } yield assert(text)(equalTo("Subsidiary of seleniumframework.com"))
 
         effect.provideCustomLayer(testLayer)
       },
@@ -56,8 +58,8 @@ object SurferSpec extends DefaultRunnableSpec {
         val effect = for {
           result  <- surfer.link(testWebsite)
           element <- surfer.findElementById("editorial_image_legend")
-          text    <- ZIO.succeed(element.map(_.getText()))
-        } yield assert(text)(isSome(equalTo("Subsidiary of seleniumframework.com")))
+          text    <- ZIO.succeed(element.getText())
+        } yield assert(text)(equalTo("Subsidiary of seleniumframework.com"))
 
         effect.provideCustomLayer(testLayer)
       },
@@ -65,8 +67,8 @@ object SurferSpec extends DefaultRunnableSpec {
         val effect = for {
           result  <- surfer.link(testWebsite)
           element <- surfer.findElementByClass("homefeatured")
-          text    <- ZIO.succeed(element.map(_.getText()))
-        } yield assert(text)(isSome(equalTo("Popular")))
+          text    <- ZIO.succeed(element.getText())
+        } yield assert(text)(equalTo("Popular"))
 
         effect.provideCustomLayer(testLayer)
       },
@@ -74,8 +76,8 @@ object SurferSpec extends DefaultRunnableSpec {
         val effect = for {
           result  <- surfer.link(testWebsite)
           element <- surfer.findElementByName("description")
-          content <- ZIO.succeed(element.map(_.getAttribute("content")))
-        } yield assert(content)(isSome(equalTo("Shop powered by PrestaShop")))
+          content <- ZIO.succeed(element.getAttribute("content"))
+        } yield assert(content)(equalTo("Shop powered by PrestaShop"))
 
         effect.provideCustomLayer(testLayer)
       },
@@ -83,8 +85,8 @@ object SurferSpec extends DefaultRunnableSpec {
         val effect = for {
           result  <- surfer.link(testWebsite)
           element <- surfer.findElementByTagName("div")
-          id      <- ZIO.succeed(element.map(_.getAttribute("id")))
-        } yield assert(id)(isSome(equalTo("page")))
+          id      <- ZIO.succeed(element.getAttribute("id"))
+        } yield assert(id)(equalTo("page"))
 
         effect.provideCustomLayer(testLayer)
       },
@@ -92,8 +94,8 @@ object SurferSpec extends DefaultRunnableSpec {
         val effect = for {
           result  <- surfer.link(testWebsite)
           element <- surfer.findElementByXPath("/html/body/div/div[1]/header/div[3]/div/div/div[6]/ul/li[1]/a")
-          text    <- ZIO.succeed(element.map(_.getText()))
-        } yield assert(text)(isSome(equalTo("Women")))
+          text    <- ZIO.succeed(element.getText())
+        } yield assert(text)(equalTo("Women"))
 
         effect.provideCustomLayer(testLayer)
       },
@@ -101,8 +103,8 @@ object SurferSpec extends DefaultRunnableSpec {
         val effect = for {
           result  <- surfer.link(testWebsite)
           element <- surfer.findElementByCssSelector("#block_top_menu > ul > li:nth-child(1) > a")
-          text    <- ZIO.succeed(element.map(_.getText()))
-        } yield assert(text)(isSome(equalTo("Women")))
+          text    <- ZIO.succeed(element.getText())
+        } yield assert(text)(equalTo("Women"))
 
         effect.provideCustomLayer(testLayer)
       },
@@ -110,8 +112,8 @@ object SurferSpec extends DefaultRunnableSpec {
         val effect = for {
           result  <- surfer.link(testWebsite)
           element <- surfer.findElementByLinkText("Contact us")
-          href    <- ZIO.succeed(element.map(_.getAttribute("href")))
-        } yield assert(href)(isSome(equalTo(s"$testWebsite?controller=contact")))
+          href    <- ZIO.succeed(element.getAttribute("href"))
+        } yield assert(href)(equalTo(s"$testWebsite?controller=contact"))
 
         effect.provideCustomLayer(testLayer)
       },
@@ -119,19 +121,20 @@ object SurferSpec extends DefaultRunnableSpec {
         val effect = for {
           result  <- surfer.link(testWebsite)
           element <- surfer.findElementByPartialLinkText("Contact")
-          href    <- ZIO.succeed(element.map(_.getAttribute("href")))
-        } yield assert(href)(isSome(equalTo(s"$testWebsite?controller=contact")))
+          href    <- ZIO.succeed(element.getAttribute("href"))
+        } yield assert(href)(equalTo(s"$testWebsite?controller=contact"))
 
         effect.provideCustomLayer(testLayer)
       },
-      testM("Surfer shouldn't find an unknown element") {
+      testM("Surfer shouldn't find an unknown element using findElement") {
         val effect = for {
-          result  <- surfer.link(testWebsite)
-          element <- surfer.findElementById(fakeValue)
-          text    <- ZIO.succeed(element.map(_.getText()))
-        } yield assert(text)(isNone)
+          result <- surfer.link(testWebsite)
+          _      <- surfer.findElementById(fakeValue)
+        } yield ()
 
-        effect.provideCustomLayer(testLayer)
+        assertM(effect.provideCustomLayer(testLayer).run)(
+          fails(isSubtype[org.openqa.selenium.NoSuchElementException](anything))
+        )
       }
     )
 
@@ -218,7 +221,7 @@ object SurferSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer)
       },
-      testM("Surfer shouldn't find an unknown element") {
+      testM("Surfer shouldn't find an unknown element using findElements") {
         val effect = for {
           result  <- surfer.link(testWebsite)
           element <- surfer.findElementsById(fakeValue)
@@ -303,7 +306,7 @@ object SurferSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer)
       },
-      testM("Surfer shouldn't find an unknown element") {
+      testM("Surfer shouldn't find an unknown element using hasElement") {
         val effect = for {
           result <- surfer.link(testWebsite)
           bool   <- surfer.hasElement(new By.ById(fakeValue))

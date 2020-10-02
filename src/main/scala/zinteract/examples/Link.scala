@@ -2,7 +2,7 @@ package zinteract
 
 import zio.{App, ExitCode, ZIO}
 
-import zinteract.webdriver.{Property, WebDriver}
+import zinteract.webdriver.WebDriver
 import zinteract.surfer.Surfer
 
 object Link extends App {
