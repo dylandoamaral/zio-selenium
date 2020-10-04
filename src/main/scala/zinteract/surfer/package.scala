@@ -3,8 +3,9 @@ package zinteract
 import zio.{Task, IO, Has, UIO, RIO, ZIO, ZLayer}
 
 import zinteract.webdriver.WebDriver
+import zinteract.context._
 
-import org.openqa.selenium.{By, NoSuchElementException, WebElement}
+import org.openqa.selenium.{By, NoSuchElementException, WebElement, WebDriver => SeleniumWebDriver}
 import java.net.URI
 
 import scala.jdk.CollectionConverters._
@@ -47,6 +48,8 @@ package object surfer {
       def hasElementWithCssSelector(selector: String): UIO[Boolean]
       def hasElementWithLinkText(link: String): UIO[Boolean]
       def hasElementWithPartialLinkText(text: String): UIO[Boolean]
+
+      val getWebdriver: UIO[SeleniumWebDriver]
     }
 
     object Service {
@@ -68,76 +71,80 @@ package object surfer {
               })
 
             def findElement(by: By): IO[NoSuchElementException, WebElement] =
-              ZIO.effect(webdriver.findElement(by)).refineToOrDie[NoSuchElementException]
+              findElementFrom(webdriver)(by)
 
-            def findElementById(id: String): IO[NoSuchElementException, WebElement] = findElement(new By.ById(id))
+            def findElementById(id: String): IO[NoSuchElementException, WebElement] = findElementByIdFrom(webdriver)(id)
 
             def findElementByTagName(tag: String): IO[NoSuchElementException, WebElement] =
-              findElementByCssSelector(tag)
+              findElementByTagNameFrom(webdriver)(tag)
 
             def findElementByClass(classname: String): IO[NoSuchElementException, WebElement] =
-              findElement(new By.ByClassName(classname))
+              findElementByClassFrom(webdriver)(classname)
 
             def findElementByName(name: String): IO[NoSuchElementException, WebElement] =
-              findElement(new By.ByName(name))
+              findElementByNameFrom(webdriver)(name)
 
             def findElementByXPath(xpath: String): IO[NoSuchElementException, WebElement] =
-              findElement(new By.ByXPath(xpath))
+              findElementByXPathFrom(webdriver)(xpath)
 
             def findElementByCssSelector(selector: String): IO[NoSuchElementException, WebElement] =
-              findElement(new By.ByCssSelector(selector))
+              findElementByCssSelectorFrom(webdriver)(selector)
 
             def findElementByLinkText(text: String): IO[NoSuchElementException, WebElement] =
-              findElement(new By.ByLinkText(text))
+              findElementByLinkTextFrom(webdriver)(text)
 
             def findElementByPartialLinkText(text: String): IO[NoSuchElementException, WebElement] =
-              findElement(new By.ByPartialLinkText(text))
+              findElementByPartialLinkTextFrom(webdriver)(text)
 
             def findElements(by: By): UIO[List[WebElement]] =
-              ZIO.effect(webdriver.findElements(by).asScala.toList).orElseSucceed(List[WebElement]())
+              findElementsFrom(webdriver)(by)
 
-            def findElementsById(id: String): UIO[List[WebElement]] = findElements(new By.ById(id))
+            def findElementsById(id: String): UIO[List[WebElement]] = findElementsByIdFrom(webdriver)(id)
 
-            def findElementsByTagName(tag: String): UIO[List[WebElement]] = findElementsByCssSelector(tag)
+            def findElementsByTagName(tag: String): UIO[List[WebElement]] = findElementsByTagNameFrom(webdriver)(tag)
 
             def findElementsByClass(classname: String): UIO[List[WebElement]] =
-              findElements(new By.ByClassName(classname))
+              findElementsByClassFrom(webdriver)(classname)
 
-            def findElementsByName(name: String): UIO[List[WebElement]] = findElements(new By.ByName(name))
+            def findElementsByName(name: String): UIO[List[WebElement]] =
+              findElementsByNameFrom(webdriver)(name)
 
-            def findElementsByXPath(xpath: String): UIO[List[WebElement]] = findElements(new By.ByXPath(xpath))
+            def findElementsByXPath(xpath: String): UIO[List[WebElement]] =
+              findElementsByXPathFrom(webdriver)(xpath)
 
             def findElementsByCssSelector(selector: String): UIO[List[WebElement]] =
-              findElements(new By.ByCssSelector(selector))
+              findElementsByCssSelectorFrom(webdriver)(selector)
 
             def findElementsByLinkText(text: String): UIO[List[WebElement]] =
-              findElements(new By.ByLinkText(text))
+              findElementsByLinkTextFrom(webdriver)(text)
 
             def findElementsByPartialLinkText(text: String): UIO[List[WebElement]] =
-              findElements(new By.ByPartialLinkText(text))
+              findElementsByPartialLinkTextFrom(webdriver)(text)
 
             def hasElement(by: By): UIO[Boolean] =
-              findElements(by).map(!_.isEmpty)
+              hasElementFrom(webdriver)(by)
 
-            def hasElementWithId(id: String): UIO[Boolean] = findElementsById(id).map(!_.isEmpty)
+            def hasElementWithId(id: String): UIO[Boolean] = hasElementWithIdFrom(webdriver)(id)
 
-            def hasElementWithTagName(tag: String): UIO[Boolean] = findElementsByTagName(tag).map(!_.isEmpty)
+            def hasElementWithTagName(tag: String): UIO[Boolean] = hasElementWithTagNameFrom(webdriver)(tag)
 
             def hasElementWithClass(classname: String): UIO[Boolean] =
-              findElementsByClass(classname).map(!_.isEmpty)
+              hasElementWithClassFrom(webdriver)(classname)
 
-            def hasElementWithName(name: String): UIO[Boolean] = findElementsByName(name).map(!_.isEmpty)
+            def hasElementWithName(name: String): UIO[Boolean] = hasElementWithNameFrom(webdriver)(name)
 
-            def hasElementWithXPath(xpath: String): UIO[Boolean] = findElementsByXPath(xpath).map(!_.isEmpty)
+            def hasElementWithXPath(xpath: String): UIO[Boolean] = hasElementWithXPathFrom(webdriver)(xpath)
 
             def hasElementWithCssSelector(selector: String): UIO[Boolean] =
-              findElementsByCssSelector(selector).map(!_.isEmpty)
+              hasElementWithCssSelectorFrom(webdriver)(selector)
 
             def hasElementWithLinkText(text: String): UIO[Boolean] =
-              findElementsByLinkText(text).map(!_.isEmpty)
+              hasElementWithLinkTextFrom(webdriver)(text)
 
             def hasElementWithPartialLinkText(text: String): UIO[Boolean] =
-              findElementsByPartialLinkText(text).map(!_.isEmpty)
+              hasElementWithPartialLinkTextFrom(webdriver)(text)
+
+            val getWebdriver: UIO[SeleniumWebDriver] = ZIO.succeed(webdriver)
           }
         )
     }
@@ -234,4 +241,6 @@ package object surfer {
   def hasElementWithPartialLinkText(text: String): RIO[Surfer, Boolean] =
     ZIO.accessM(_.get.hasElementWithPartialLinkText(text))
 
+  val getWebdriver: RIO[Surfer, SeleniumWebDriver] =
+    ZIO.accessM(_.get.getWebdriver)
 }
