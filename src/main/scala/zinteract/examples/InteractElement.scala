@@ -1,4 +1,4 @@
-package zinteract
+package zinteract.examples
 
 import zio.{App, ExitCode, ZIO}
 import zio.console
@@ -6,7 +6,7 @@ import zio.clock
 import zio.duration.durationInt
 
 import zinteract.webdriver.WebDriver
-import zinteract.surfer.Surfer
+import zinteract.surfer
 import zinteract.element._
 
 object InteractElement extends App {
@@ -25,7 +25,7 @@ object InteractElement extends App {
   override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
     app
       .provideCustomLayer(
-        WebDriver.Service.chromeMinConfig(pathToDriver) >>> Surfer.Service.live
+        WebDriver.Service.chromeMinConfig(pathToDriver) >>> surfer.Surfer.Service.live
       )
       .exitCode
 }
