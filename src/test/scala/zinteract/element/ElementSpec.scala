@@ -39,7 +39,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer)
       },
-      testM("Element form should be submitable") {
+      testM("Element such as form should be submitable") {
         val effect = for {
           _             <- surfer.link(testWebsite)
           newsletter    <- surfer.findElementById("newsletter_block_left")
@@ -75,7 +75,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer)
       },
-      testM("Element can have css values") {
+      testM("Element has css values") {
         val effect = for {
           _      <- surfer.link(testWebsite)
           button <- surfer.findElementByLinkText("Women")

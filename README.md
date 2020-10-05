@@ -1,6 +1,7 @@
 # Zinteract
 
-## Description
+[![Actions Status](https://github.com/dylandoamaral/zinteract/workflows/Scala%20CI/badge.svg)](https://github.com/dylandoamaral/zinteract/actions)
+[![codecov](https://codecov.io/gh/dylandoamaral/zinteract/branch/master/graph/badge.svg)](https://codecov.io/gh/dylandoamaral/zinteract)
 
 A ZIO friendly librairy to interact with a browser using Selenium.
 
@@ -14,13 +15,11 @@ A ZIO friendly librairy to interact with a browser using Selenium.
 Here is a sample to link to a particular website and retrive the title:
 
 ```scala
-package zinteract
-
 import zio.{App, ExitCode, ZIO}
 import zio.console
 
 import zinteract.webdriver.WebDriver
-import zinteract.surfer.Surfer
+import zinteract.surfer
 
 object FindElement extends App {
   val app = for {
@@ -34,7 +33,7 @@ object FindElement extends App {
   override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
     app
       .provideCustomLayer(
-        WebDriver.Service.chromeMinConfig(pathToDriver) >>> Surfer.Service.live
+        WebDriver.Service.chromeMinConfig(pathToDriver) >>> surfer.Surfer.Service.live
       )
       .exitCode
 }
