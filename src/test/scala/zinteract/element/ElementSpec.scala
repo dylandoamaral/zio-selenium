@@ -24,7 +24,7 @@ object ElementSpec extends DefaultRunnableSpec {
           _      <- search.sendKeysM("test")
         } yield assert(search.getAttribute("value"))(equalTo("test"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Element such as input should be cleanable") {
         val effect = for {
@@ -34,7 +34,7 @@ object ElementSpec extends DefaultRunnableSpec {
           _      <- search.clearM
         } yield assert(search.getAttribute("value"))(isEmptyString)
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Element such as button should be clickable") {
         val effect = for {
@@ -44,7 +44,7 @@ object ElementSpec extends DefaultRunnableSpec {
           url    <- surfer.url
         } yield assert(url)(equalTo("https://www.google.com/"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Element such as form should be submitable") {
         val effect = for {
@@ -54,7 +54,7 @@ object ElementSpec extends DefaultRunnableSpec {
           url  <- surfer.url
         } yield assert(url)(equalTo("https://www.google.com/"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       }
     )
 
@@ -67,7 +67,7 @@ object ElementSpec extends DefaultRunnableSpec {
           title <- h1.getAttributeM("title")
         } yield assert(title)(equalTo("Test 1"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Element can have a text") {
         val effect = for {
@@ -76,16 +76,16 @@ object ElementSpec extends DefaultRunnableSpec {
           text <- h1.getTextM
         } yield assert(text)(equalTo("Test 1"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Element has css values") {
         val effect = for {
           _     <- surfer.link(testWebsite)
           h1    <- surfer.findElement(By.id("test"))
           value <- h1.getCssValueM("color")
-        } yield assert(value)(equalTo("rgba(0, 0, 0, 1)")) // CSS is disabled
+        } yield assert(value)(equalTo("rgba(0, 0, 255, 0.5)"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer(true, false))
       },
       testM("Element has a tag name") {
         val effect = for {
@@ -94,7 +94,7 @@ object ElementSpec extends DefaultRunnableSpec {
           tag <- h1.getTagNameM
         } yield assert(tag)(equalTo("h1"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Element has a location, as size and a rect") {
         val effect =
@@ -111,7 +111,7 @@ object ElementSpec extends DefaultRunnableSpec {
             assert(size.getHeight)(equalTo(rect.getHeight))
           }
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       }
     )
 
@@ -125,7 +125,7 @@ object ElementSpec extends DefaultRunnableSpec {
           text   <- p.getTextM
         } yield assert(text)(equalTo("Test 3"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Element can find several elements") {
         val effect = for {
@@ -135,7 +135,7 @@ object ElementSpec extends DefaultRunnableSpec {
           texts  <- ZIO.succeed(ps.map(_.getText()))
         } yield assert(texts)(equalTo(List("Test 3")))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Element can check if an element exist") {
         val effect = for {
@@ -144,7 +144,7 @@ object ElementSpec extends DefaultRunnableSpec {
           bool   <- div.hasElementM(By.tagName("p"))
         } yield assert(bool)(isTrue)
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       }
     )
 

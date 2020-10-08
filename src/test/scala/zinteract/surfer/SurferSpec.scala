@@ -22,7 +22,7 @@ object SurferSpec extends DefaultRunnableSpec {
           webdriver <- surfer.getWebdriver
         } yield assert(webdriver.getCurrentUrl())(equalTo("about:blank"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       }
     )
   def suiteUrl =
@@ -32,32 +32,40 @@ object SurferSpec extends DefaultRunnableSpec {
           url <- surfer.url
         } yield assert(url)(equalTo("about:blank"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Surfer should link correctly to a correct url") {
         val effect = for {
-          _   <- surfer.link("http://nojs.io/")
+          _   <- surfer.link("https://www.google.com/")
           url <- surfer.url
-        } yield assert(url)(equalTo("http://nojs.io/"))
+        } yield assert(url)(equalTo("https://www.google.com/"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Surfer shouldn't link to an incorrect url") {
         val effect = for {
           result <- surfer.link(fakeValue)
         } yield ()
 
-        assertM(effect.provideCustomLayer(testLayer).run)(
+        assertM(effect.provideCustomLayer(testLayer()).run)(
           fails(isSubtype[org.openqa.selenium.WebDriverException](anything))
         )
       },
+      testM("Surfer should link correctly to a correct domain") {
+        val effect = for {
+          _   <- surfer.link("https://github.com/")
+          url <- surfer.domain
+        } yield assert(url)(equalTo("github.com"))
+
+        effect.provideCustomLayer(testLayer())
+      },
       testM("Surfer should link correctly to a correct domain with www") {
         val effect = for {
-          _   <- surfer.link("http://nojs.io/")
+          _   <- surfer.link("https://www.google.com/")
           url <- surfer.domain
-        } yield assert(url)(equalTo("nojs.io"))
+        } yield assert(url)(equalTo("google.com"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       }
     )
 
@@ -70,7 +78,7 @@ object SurferSpec extends DefaultRunnableSpec {
           text    <- ZIO.succeed(element.getText())
         } yield assert(text)(equalTo("Test 1"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Surfer can find several elements") {
         val effect = for {
@@ -79,7 +87,7 @@ object SurferSpec extends DefaultRunnableSpec {
           texts   <- ZIO.succeed(element.map(_.getText()))
         } yield assert(texts)(equalTo(List("Test 1", "Test 2")))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Surfer return empty list if no elements") {
         val effect = for {
@@ -87,7 +95,7 @@ object SurferSpec extends DefaultRunnableSpec {
           element <- surfer.findElements(By.id("notest"))
         } yield assert(element)(isEmpty)
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       },
       testM("Surfer can check if an element exist") {
         val effect = for {
@@ -95,7 +103,7 @@ object SurferSpec extends DefaultRunnableSpec {
           bool   <- surfer.hasElement(By.id("test"))
         } yield assert(bool)(isTrue)
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer())
       }
     )
 

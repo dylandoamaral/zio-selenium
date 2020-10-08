@@ -26,7 +26,7 @@ object WaitSpec extends DefaultRunnableSpec {
           element <- surfer.findElement(By.tagName("p"))(None)
         } yield ()
 
-        assertM(effect.provideCustomLayer(testLayer).run)(
+        assertM(effect.provideCustomLayer(testLayer(false, true)).run)(
           fails(isSubtype[NoSuchElementException](anything))
         )
       },
@@ -39,7 +39,7 @@ object WaitSpec extends DefaultRunnableSpec {
             text    <- element.getTextM
           } yield assert(text)(equalTo("Test"))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer(false, true))
       },
       testM("Find element can use scheduled wait") {
         val waiter = Scheduled(Schedule.recurs(5) && Schedule.spaced(200.milliseconds))
@@ -50,7 +50,7 @@ object WaitSpec extends DefaultRunnableSpec {
             text    <- element.getTextM
           } yield assert(text)(equalTo("Test"))
 
-        Live.live(effect.provideCustomLayer(testLayer))
+        Live.live(effect.provideCustomLayer(testLayer(false, true)))
       },
       testM("Find elements can not wait") {
         val effect =
@@ -59,7 +59,7 @@ object WaitSpec extends DefaultRunnableSpec {
             elements <- surfer.findElements(By.tagName("p"))
           } yield assert(elements)(isEmpty)
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer(false, true))
       },
       testM("Find elements can use fluent wait") {
         val effect =
@@ -70,7 +70,7 @@ object WaitSpec extends DefaultRunnableSpec {
             texts    <- ZIO.succeed(elements.map(_.getText()))
           } yield assert(texts)(equalTo(List("Test")))
 
-        effect.provideCustomLayer(testLayer)
+        effect.provideCustomLayer(testLayer(false, true))
       },
       testM("Find elements can use scheduled wait") {
         val waiter = Scheduled(Schedule.recurs(5) && Schedule.spaced(200.milliseconds))
@@ -81,7 +81,7 @@ object WaitSpec extends DefaultRunnableSpec {
             texts    <- ZIO.succeed(elements.map(_.getText()))
           } yield assert(texts)(equalTo(List("Test")))
 
-        Live.live(effect.provideCustomLayer(testLayer))
+        Live.live(effect.provideCustomLayer(testLayer(false, true)))
       }
     )
 }
