@@ -6,10 +6,12 @@ import zio.console
 import zinteract.webdriver.WebDriver
 import zinteract.surfer
 
+import org.openqa.selenium.By
+
 object FindElement extends App {
   val app = for {
     _       <- surfer.link("https://www.selenium.dev/documentation/en/")
-    element <- surfer.findElementById("the-selenium-browser-automation-project")
+    element <- surfer.findElement(By.id("the-selenium-browser-automation-project"))
     _       <- console.putStrLn(s"Title: ${element.getText()}")
   } yield ()
 
