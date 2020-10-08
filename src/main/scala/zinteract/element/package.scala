@@ -1,6 +1,7 @@
 package zinteract
 
-import zio.{IO, UIO, Task, ZIO}
+import zio.{IO, RIO, Task, ZIO}
+import zio.clock.Clock
 
 import zinteract.context._
 
@@ -54,79 +55,14 @@ package object element {
     val isSelectedM: Task[Boolean] =
       isSelected(element)
 
-    def findElementM(by: By): IO[NoSuchElementException, WebElement] =
-      findElementFrom(element)(by)
+    def findElementM(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, NoSuchElementException, WebElement] =
+      findElementFrom(element)(by)(wait)
 
-    def findElementByIdM(id: String): IO[NoSuchElementException, WebElement] = findElementByIdFrom(element)(id)
+    def findElementsM(by: By)(implicit wait: WaitConfig = None): RIO[Clock, List[WebElement]] =
+      findElementsFrom(element)(by)(wait)
 
-    def findElementByTagNameM(tag: String): IO[NoSuchElementException, WebElement] =
-      findElementByTagNameFrom(element)(tag)
-
-    def findElementByClassM(classname: String): IO[NoSuchElementException, WebElement] =
-      findElementByClassFrom(element)(classname)
-
-    def findElementByNameM(name: String): IO[NoSuchElementException, WebElement] =
-      findElementByNameFrom(element)(name)
-
-    def findElementByXPathM(xpath: String): IO[NoSuchElementException, WebElement] =
-      findElementByXPathFrom(element)(xpath)
-
-    def findElementByCssSelectorM(selector: String): IO[NoSuchElementException, WebElement] =
-      findElementByCssSelectorFrom(element)(selector)
-
-    def findElementByLinkTextM(text: String): IO[NoSuchElementException, WebElement] =
-      findElementByLinkTextFrom(element)(text)
-
-    def findElementByPartialLinkTextM(text: String): IO[NoSuchElementException, WebElement] =
-      findElementByPartialLinkTextFrom(element)(text)
-
-    def findElementsM(by: By): UIO[List[WebElement]] =
-      findElementsFrom(element)(by)
-
-    def findElementsByIdM(id: String): UIO[List[WebElement]] = findElementsByIdFrom(element)(id)
-
-    def findElementsByTagNameM(tag: String): UIO[List[WebElement]] = findElementsByTagNameFrom(element)(tag)
-
-    def findElementsByClassM(classname: String): UIO[List[WebElement]] =
-      findElementsByClassFrom(element)(classname)
-
-    def findElementsByNameM(name: String): UIO[List[WebElement]] =
-      findElementsByNameFrom(element)(name)
-
-    def findElementsByXPathM(xpath: String): UIO[List[WebElement]] =
-      findElementsByXPathFrom(element)(xpath)
-
-    def findElementsByCssSelectorM(selector: String): UIO[List[WebElement]] =
-      findElementsByCssSelectorFrom(element)(selector)
-
-    def findElementsByLinkTextM(text: String): UIO[List[WebElement]] =
-      findElementsByLinkTextFrom(element)(text)
-
-    def findElementsByPartialLinkTextM(text: String): UIO[List[WebElement]] =
-      findElementsByPartialLinkTextFrom(element)(text)
-
-    def hasElementM(by: By): UIO[Boolean] =
-      hasElementFrom(element)(by)
-
-    def hasElementWithIdM(id: String): UIO[Boolean] = hasElementWithIdFrom(element)(id)
-
-    def hasElementWithTagNameM(tag: String): UIO[Boolean] = hasElementWithTagNameFrom(element)(tag)
-
-    def hasElementWithClassM(classname: String): UIO[Boolean] =
-      hasElementWithClassFrom(element)(classname)
-
-    def hasElementWithNameM(name: String): UIO[Boolean] = hasElementWithNameFrom(element)(name)
-
-    def hasElementWithXPathM(xpath: String): UIO[Boolean] = hasElementWithXPathFrom(element)(xpath)
-
-    def hasElementWithCssSelectorM(selector: String): UIO[Boolean] =
-      hasElementWithCssSelectorFrom(element)(selector)
-
-    def hasElementWithLinkTextM(text: String): UIO[Boolean] =
-      hasElementWithLinkTextFrom(element)(text)
-
-    def hasElementWithPartialLinkTextM(text: String): UIO[Boolean] =
-      hasElementWithPartialLinkTextFrom(element)(text)
+    def hasElementM(by: By)(implicit wait: WaitConfig = None): RIO[Clock, Boolean] =
+      hasElementFrom(element)(by)(wait)
   }
 
   def clickOn(element: WebElement): Task[Unit] =

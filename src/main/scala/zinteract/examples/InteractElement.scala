@@ -9,13 +9,15 @@ import zinteract.webdriver.WebDriver
 import zinteract.surfer
 import zinteract.element._
 
+import org.openqa.selenium.By
+
 object InteractElement extends App {
   val app = for {
     _          <- surfer.link("https://www.selenium.dev/documentation/en/")
-    search     <- surfer.findElementByCssSelector("[type=search]")
+    search     <- surfer.findElement(By.cssSelector("[type=search]"))
     _          <- search.sendKeysM("Introduction")
     _          <- clock.sleep(2.seconds)
-    suggestion <- surfer.findElementByClass("autocomplete-suggestion")
+    suggestion <- surfer.findElement(By.className("autocomplete-suggestion"))
     _          <- suggestion.clickM
     _          <- clock.sleep(2.seconds)
   } yield ()
