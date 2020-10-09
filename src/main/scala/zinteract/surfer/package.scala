@@ -1,8 +1,8 @@
 package zinteract
 
-import zio.{Task, IO, Has, UIO, RIO, ZIO, ZLayer}
+import zio.{Has, IO, RIO, Task, UIO, ZIO, ZLayer}
 import zio.clock.Clock
-import zio.duration.{Duration, durationInt}
+import zio.duration.{durationInt, Duration}
 
 import zinteract.webdriver.WebDriver
 import zinteract.context._

@@ -5,7 +5,7 @@ import zio.clock.Clock
 
 import zinteract.context._
 
-import org.openqa.selenium.{By, Dimension, Keys, Point, NoSuchElementException, Rectangle, WebElement}
+import org.openqa.selenium.{By, Dimension, Keys, NoSuchElementException, Point, Rectangle, WebElement}
 
 package object element {
 
