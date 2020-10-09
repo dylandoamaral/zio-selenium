@@ -3,7 +3,7 @@ package zinteract
 import zio.ZLayer
 
 import zinteract.webdriver.Property
-import zinteract.surfer.Surfer
+import zinteract.session.Session
 
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -23,5 +23,5 @@ object TestDriver {
       .webdriver(new TestDriver(cssEnabled, jsEnabled))
 
   def testLayer(cssEnabled: Boolean = false, jsEnabled: Boolean = false) =
-    TestDriver.testDriver(cssEnabled, jsEnabled) >>> Surfer.Service.live
+    TestDriver.testDriver(cssEnabled, jsEnabled) >>> Session.Service.live
 }

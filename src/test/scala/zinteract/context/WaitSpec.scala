@@ -7,7 +7,7 @@ import zio.test.environment._
 import zio.duration.durationInt
 
 import zinteract.TestDriver.testLayer
-import zinteract.SurferSpec.fakeValue
+import zinteract.SessionSpec.fakeValue
 import zinteract.element._
 
 import org.openqa.selenium.{By, NoSuchElementException, TimeoutException}
@@ -22,8 +22,8 @@ object WaitSpec extends DefaultRunnableSpec {
     suite("Wait Spec")(
       testM("Find element can not wait") {
         val effect = for {
-          _       <- surfer.link(testWebsite)
-          element <- surfer.findElement(By.tagName("p"))(None)
+          _       <- session.link(testWebsite)
+          element <- session.findElement(By.tagName("p"))(None)
         } yield ()
 
         assertM(effect.provideCustomLayer(testLayer(false, true)).run)(
@@ -33,9 +33,9 @@ object WaitSpec extends DefaultRunnableSpec {
       testM("Find element can use fluent wait") {
         val effect =
           for {
-            _       <- surfer.link(testWebsite)
-            waiter  <- surfer.getFluentWaiter(200.milliseconds, 1.second)
-            element <- surfer.findElement(By.tagName("p"))(waiter)
+            _       <- session.link(testWebsite)
+            waiter  <- session.getFluentWaiter(200.milliseconds, 1.second)
+            element <- session.findElement(By.tagName("p"))(waiter)
             text    <- element.getTextM
           } yield assert(text)(equalTo("Test"))
 
@@ -45,8 +45,8 @@ object WaitSpec extends DefaultRunnableSpec {
         val waiter = Scheduled(Schedule.recurs(5) && Schedule.spaced(200.milliseconds))
         val effect =
           for {
-            _       <- surfer.link(testWebsite)
-            element <- surfer.findElement(By.tagName("p"))(waiter)
+            _       <- session.link(testWebsite)
+            element <- session.findElement(By.tagName("p"))(waiter)
             text    <- element.getTextM
           } yield assert(text)(equalTo("Test"))
 
@@ -55,8 +55,8 @@ object WaitSpec extends DefaultRunnableSpec {
       testM("Find elements can not wait") {
         val effect =
           for {
-            _        <- surfer.link(testWebsite)
-            elements <- surfer.findElements(By.tagName("p"))
+            _        <- session.link(testWebsite)
+            elements <- session.findElements(By.tagName("p"))
           } yield assert(elements)(isEmpty)
 
         effect.provideCustomLayer(testLayer(false, true))
@@ -64,9 +64,9 @@ object WaitSpec extends DefaultRunnableSpec {
       testM("Find elements can use fluent wait") {
         val effect =
           for {
-            _        <- surfer.link(testWebsite)
-            waiter   <- surfer.getFluentWaiter(200.milliseconds, 1.second)
-            elements <- surfer.findElements(By.tagName("p"))(waiter)
+            _        <- session.link(testWebsite)
+            waiter   <- session.getFluentWaiter(200.milliseconds, 1.second)
+            elements <- session.findElements(By.tagName("p"))(waiter)
             texts    <- ZIO.succeed(elements.map(_.getText()))
           } yield assert(texts)(equalTo(List("Test")))
 
@@ -76,8 +76,8 @@ object WaitSpec extends DefaultRunnableSpec {
         val waiter = Scheduled(Schedule.recurs(5) && Schedule.spaced(200.milliseconds))
         val effect =
           for {
-            _        <- surfer.link(testWebsite)
-            elements <- surfer.findElements(By.tagName("p"))(waiter)
+            _        <- session.link(testWebsite)
+            elements <- session.findElements(By.tagName("p"))(waiter)
             texts    <- ZIO.succeed(elements.map(_.getText()))
           } yield assert(texts)(equalTo(List("Test")))
 

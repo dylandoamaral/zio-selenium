@@ -6,7 +6,7 @@ import zio.test.Assertion._
 import zio.test.environment._
 
 import zinteract.TestDriver.testLayer
-import zinteract.SurferSpec.fakeValue
+import zinteract.SessionSpec.fakeValue
 import zinteract.element._
 
 import org.openqa.selenium.By
@@ -19,8 +19,8 @@ object ElementSpec extends DefaultRunnableSpec {
     suite("Interact Element Spec")(
       testM("Element such as input should be writable") {
         val effect = for {
-          _      <- surfer.link(testWebsite)
-          search <- surfer.findElement(By.id("input"))
+          _      <- session.link(testWebsite)
+          search <- session.findElement(By.id("input"))
           _      <- search.sendKeysM("test")
         } yield assert(search.getAttribute("value"))(equalTo("test"))
 
@@ -28,8 +28,8 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element such as input should be cleanable") {
         val effect = for {
-          _      <- surfer.link(testWebsite)
-          search <- surfer.findElement(By.id("input"))
+          _      <- session.link(testWebsite)
+          search <- session.findElement(By.id("input"))
           _      <- search.sendKeysM("test")
           _      <- search.clearM
         } yield assert(search.getAttribute("value"))(isEmptyString)
@@ -38,20 +38,20 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element such as button should be clickable") {
         val effect = for {
-          _      <- surfer.link(testWebsite)
-          button <- surfer.findElement(By.tagName("a"))
+          _      <- session.link(testWebsite)
+          button <- session.findElement(By.tagName("a"))
           _      <- button.clickM
-          url    <- surfer.url
+          url    <- session.url
         } yield assert(url)(equalTo("https://www.google.com/"))
 
         effect.provideCustomLayer(testLayer())
       },
       testM("Element such as form should be submitable") {
         val effect = for {
-          _    <- surfer.link(testWebsite)
-          form <- surfer.findElement(By.tagName("form"))
+          _    <- session.link(testWebsite)
+          form <- session.findElement(By.tagName("form"))
           _    <- form.submitM
-          url  <- surfer.url
+          url  <- session.url
         } yield assert(url)(equalTo("https://www.google.com/"))
 
         effect.provideCustomLayer(testLayer())
@@ -62,8 +62,8 @@ object ElementSpec extends DefaultRunnableSpec {
     suite("Getter Element Spec")(
       testM("Element has attributes") {
         val effect = for {
-          _     <- surfer.link(testWebsite)
-          h1    <- surfer.findElement(By.id("test"))
+          _     <- session.link(testWebsite)
+          h1    <- session.findElement(By.id("test"))
           title <- h1.getAttributeM("title")
         } yield assert(title)(equalTo("Test 1"))
 
@@ -71,8 +71,8 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element can have a text") {
         val effect = for {
-          _    <- surfer.link(testWebsite)
-          h1   <- surfer.findElement(By.id("test"))
+          _    <- session.link(testWebsite)
+          h1   <- session.findElement(By.id("test"))
           text <- h1.getTextM
         } yield assert(text)(equalTo("Test 1"))
 
@@ -80,8 +80,8 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element has css values") {
         val effect = for {
-          _     <- surfer.link(testWebsite)
-          h1    <- surfer.findElement(By.id("test"))
+          _     <- session.link(testWebsite)
+          h1    <- session.findElement(By.id("test"))
           value <- h1.getCssValueM("color")
         } yield assert(value)(equalTo("rgba(0, 0, 255, 0.5)"))
 
@@ -89,8 +89,8 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element has a tag name") {
         val effect = for {
-          _   <- surfer.link(testWebsite)
-          h1  <- surfer.findElement(By.tagName("h1"))
+          _   <- session.link(testWebsite)
+          h1  <- session.findElement(By.tagName("h1"))
           tag <- h1.getTagNameM
         } yield assert(tag)(equalTo("h1"))
 
@@ -99,8 +99,8 @@ object ElementSpec extends DefaultRunnableSpec {
       testM("Element has a location, as size and a rect") {
         val effect =
           for {
-            _        <- surfer.link(testWebsite)
-            h1       <- surfer.findElement(By.tagName("h1"))
+            _        <- session.link(testWebsite)
+            h1       <- session.findElement(By.tagName("h1"))
             location <- h1.getLocationM
             size     <- h1.getSizeM
             rect     <- h1.getRectM
@@ -119,8 +119,8 @@ object ElementSpec extends DefaultRunnableSpec {
     suite("Find Elements Spec")(
       testM("Element can find an element") {
         val effect = for {
-          result <- surfer.link(testWebsite)
-          div    <- surfer.findElement(By.id("div"))
+          result <- session.link(testWebsite)
+          div    <- session.findElement(By.id("div"))
           p      <- div.findElementM(By.tagName("p"))
           text   <- p.getTextM
         } yield assert(text)(equalTo("Test 3"))
@@ -129,8 +129,8 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element can find several elements") {
         val effect = for {
-          result <- surfer.link(testWebsite)
-          div    <- surfer.findElement(By.id("div"))
+          result <- session.link(testWebsite)
+          div    <- session.findElement(By.id("div"))
           ps     <- div.findElementsM(By.tagName("p"))
           texts  <- ZIO.succeed(ps.map(_.getText()))
         } yield assert(texts)(equalTo(List("Test 3")))
@@ -139,8 +139,8 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element can check if an element exist") {
         val effect = for {
-          result <- surfer.link(testWebsite)
-          div    <- surfer.findElement(By.id("div"))
+          result <- session.link(testWebsite)
+          div    <- session.findElement(By.id("div"))
           bool   <- div.hasElementM(By.tagName("p"))
         } yield assert(bool)(isTrue)
 
