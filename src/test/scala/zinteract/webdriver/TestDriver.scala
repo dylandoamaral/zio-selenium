@@ -1,4 +1,4 @@
-package zinteract
+package zinteract.test
 
 import zio.ZLayer
 

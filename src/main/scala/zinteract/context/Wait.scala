@@ -1,4 +1,4 @@
-package zinteract
+package zinteract.context
 
 import zio.Schedule
 import zio.clock.Clock

@@ -1,12 +1,12 @@
-package zinteract
+package zinteract.test
 
 import zio.ZIO
 import zio.test._
 import zio.test.Assertion._
 import zio.test.environment._
 
-import zinteract.TestDriver.testLayer
-import zinteract.session.Session
+import zinteract.test.TestDriver.testLayer
+import zinteract.session
 
 import org.openqa.selenium.By
 
