@@ -1,4 +1,4 @@
-package zinteract.examples
+package zinteract.example
 
 import zio.{App, ExitCode, ZIO}
 
