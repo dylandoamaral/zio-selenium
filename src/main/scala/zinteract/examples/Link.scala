@@ -3,11 +3,11 @@ package zinteract.examples
 import zio.{App, ExitCode, ZIO}
 
 import zinteract.webdriver.WebDriver
-import zinteract.surfer
+import zinteract.session
 
 object Link extends App {
   val app = for {
-    _ <- surfer.link("https://www.selenium.dev/documentation/en/")
+    _ <- session.link("https://www.selenium.dev/documentation/en/")
   } yield ()
 
   val pathToDriver = "/path/to/webdriver/chromedriver"
@@ -15,7 +15,7 @@ object Link extends App {
   override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
     app
       .provideCustomLayer(
-        WebDriver.Service.chromeMinConfig(pathToDriver) >>> surfer.Surfer.Service.live
+        WebDriver.Service.chromeMinConfig(pathToDriver) >>> session.Session.Service.live
       )
       .exitCode
 }

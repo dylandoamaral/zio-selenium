@@ -13,10 +13,10 @@ import java.net.URI
 
 import scala.jdk.CollectionConverters._
 
-package object surfer {
-  type Surfer = Has[Surfer.Service]
+package object session {
+  type Session = Has[Session.Service]
 
-  object Surfer extends Serializable {
+  object Session extends Serializable {
     trait Service extends Serializable {
       def link(url: String): Task[Unit]
       def url(): UIO[String]
@@ -31,9 +31,9 @@ package object surfer {
     }
 
     object Service {
-      val live: ZLayer[WebDriver, Nothing, Surfer] =
+      val live: ZLayer[WebDriver, Nothing, Session] =
         ZLayer.fromService(webdriver =>
-          new Surfer.Service {
+          new Session.Service {
             def link(url: String): Task[Unit] =
               ZIO.effect(webdriver.get(url))
 
@@ -74,29 +74,29 @@ package object surfer {
   }
 
   //accessor methods
-  def link(url: String): ZIO[Surfer, Throwable, Unit] =
+  def link(url: String): ZIO[Session, Throwable, Unit] =
     ZIO.accessM(_.get.link(url))
 
-  val url: RIO[Surfer, String] =
+  val url: RIO[Session, String] =
     ZIO.accessM(_.get.url)
 
-  val domain: RIO[Surfer, String] =
+  val domain: RIO[Session, String] =
     ZIO.accessM(_.get.domain)
 
   def findElement(
       by: By
-  )(implicit wait: WaitConfig = None): ZIO[Surfer with Clock, NoSuchElementException, WebElement] =
+  )(implicit wait: WaitConfig = None): ZIO[Session with Clock, NoSuchElementException, WebElement] =
     ZIO.accessM(_.get.findElement(by)(wait))
 
-  def findElements(by: By)(implicit wait: WaitConfig = None): RIO[Surfer with Clock, List[WebElement]] =
+  def findElements(by: By)(implicit wait: WaitConfig = None): RIO[Session with Clock, List[WebElement]] =
     ZIO.accessM(_.get.findElements(by)(wait))
 
-  def hasElement(by: By)(implicit wait: WaitConfig = None): RIO[Surfer with Clock, Boolean] =
+  def hasElement(by: By)(implicit wait: WaitConfig = None): RIO[Session with Clock, Boolean] =
     ZIO.accessM(_.get.hasElement(by)(wait))
 
-  val getWebdriver: RIO[Surfer, SeleniumWebDriver] =
+  val getWebdriver: RIO[Session, SeleniumWebDriver] =
     ZIO.accessM(_.get.getWebdriver)
 
-  def getFluentWaiter(polling: Duration, timeout: Duration): RIO[Surfer, Fluent] =
+  def getFluentWaiter(polling: Duration, timeout: Duration): RIO[Session, Fluent] =
     ZIO.accessM(_.get.getFluentWaiter(timeout, polling))
 }

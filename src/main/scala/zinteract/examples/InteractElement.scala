@@ -6,18 +6,18 @@ import zio.clock
 import zio.duration.durationInt
 
 import zinteract.webdriver.WebDriver
-import zinteract.surfer
+import zinteract.session
 import zinteract.element._
 
 import org.openqa.selenium.By
 
 object InteractElement extends App {
   val app = for {
-    _          <- surfer.link("https://www.selenium.dev/documentation/en/")
-    search     <- surfer.findElement(By.cssSelector("[type=search]"))
+    _          <- session.link("https://www.selenium.dev/documentation/en/")
+    search     <- session.findElement(By.cssSelector("[type=search]"))
     _          <- search.sendKeysM("Introduction")
     _          <- clock.sleep(2.seconds)
-    suggestion <- surfer.findElement(By.className("autocomplete-suggestion"))
+    suggestion <- session.findElement(By.className("autocomplete-suggestion"))
     _          <- suggestion.clickM
     _          <- clock.sleep(2.seconds)
   } yield ()
@@ -27,7 +27,7 @@ object InteractElement extends App {
   override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
     app
       .provideCustomLayer(
-        WebDriver.Service.chromeMinConfig(pathToDriver) >>> surfer.Surfer.Service.live
+        WebDriver.Service.chromeMinConfig(pathToDriver) >>> session.Session.Service.live
       )
       .exitCode
 }
