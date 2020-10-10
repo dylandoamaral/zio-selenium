@@ -18,35 +18,53 @@ package object session {
 
   object Session extends Serializable {
     trait Service extends Serializable {
+      def back: UIO[Unit]
+      def forward: UIO[Unit]
+      def refresh: UIO[Unit]
+
       def link(url: String): Task[Unit]
-      def url(): UIO[String]
-      def domain(): UIO[String]
+      def url: UIO[String]
+      def domain: UIO[String]
+      def title: UIO[String]
 
       def findElement(by: By)(implicit wait: WaitConfig): ZIO[Clock, NoSuchElementException, WebElement]
       def findElements(by: By)(implicit wait: WaitConfig = None): RIO[Clock, List[WebElement]]
       def hasElement(by: By)(implicit wait: WaitConfig = None): RIO[Clock, Boolean]
 
-      val getWebdriver: UIO[SeleniumWebDriver]
+      def getWebdriver: UIO[SeleniumWebDriver]
       def getFluentWaiter(polling: Duration, timeout: Duration): UIO[Fluent]
+      def getPageSource: UIO[String]
     }
 
     object Service {
       val live: ZLayer[WebDriver, Nothing, Session] =
         ZLayer.fromService(webdriver =>
           new Session.Service {
+            def back: UIO[Unit] =
+              ZIO.succeed(webdriver.navigate().back)
+
+            def forward: UIO[Unit] =
+              ZIO.succeed(webdriver.navigate().forward)
+
+            def refresh: UIO[Unit] =
+              ZIO.succeed(webdriver.navigate().refresh)
+
             def link(url: String): Task[Unit] =
               ZIO.effect(webdriver.get(url))
 
-            def url(): UIO[String] =
+            def url: UIO[String] =
               ZIO.effect(webdriver.getCurrentUrl).orElse(ZIO.succeed("about:blank"))
 
-            def domain(): UIO[String] =
+            def domain: UIO[String] =
               url.map(url => {
                 val uri: URI       = new URI(url)
                 val domain: String = uri.getHost();
 
                 if (domain.startsWith("www.")) domain.substring(4) else domain
               })
+
+            def title: UIO[String] =
+              ZIO.effect(webdriver.getTitle).orElse(ZIO.succeed("title"))
 
             def findElement(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, NoSuchElementException, WebElement] =
               findElementFrom(webdriver)(by)(wait)
@@ -57,7 +75,7 @@ package object session {
             def hasElement(by: By)(implicit wait: WaitConfig = None): RIO[Clock, Boolean] =
               hasElementFrom(webdriver)(by)(wait)
 
-            val getWebdriver: UIO[SeleniumWebDriver] = ZIO.succeed(webdriver)
+            def getWebdriver: UIO[SeleniumWebDriver] = ZIO.succeed(webdriver)
 
             def getFluentWaiter(polling: Duration, timeout: Duration): UIO[Fluent] =
               ZIO.succeed(
@@ -68,6 +86,8 @@ package object session {
                     .ignoring(classOf[NoSuchElementException])
                 )
               )
+
+            def getPageSource: UIO[String] = ZIO.succeed(webdriver.getPageSource)
           }
         )
     }
@@ -77,11 +97,23 @@ package object session {
   def link(url: String): ZIO[Session, Throwable, Unit] =
     ZIO.accessM(_.get.link(url))
 
-  val url: RIO[Session, String] =
+  def back: RIO[Session, Unit] =
+    ZIO.accessM(_.get.back)
+
+  def forward: RIO[Session, Unit] =
+    ZIO.accessM(_.get.forward)
+
+  def refresh: RIO[Session, Unit] =
+    ZIO.accessM(_.get.refresh)
+
+  def url: RIO[Session, String] =
     ZIO.accessM(_.get.url)
 
-  val domain: RIO[Session, String] =
+  def domain: RIO[Session, String] =
     ZIO.accessM(_.get.domain)
+
+  def title: RIO[Session, String] =
+    ZIO.accessM(_.get.title)
 
   def findElement(
       by: By
@@ -94,9 +126,12 @@ package object session {
   def hasElement(by: By)(implicit wait: WaitConfig = None): RIO[Session with Clock, Boolean] =
     ZIO.accessM(_.get.hasElement(by)(wait))
 
-  val getWebdriver: RIO[Session, SeleniumWebDriver] =
+  def getWebdriver: RIO[Session, SeleniumWebDriver] =
     ZIO.accessM(_.get.getWebdriver)
 
   def getFluentWaiter(polling: Duration, timeout: Duration): RIO[Session, Fluent] =
     ZIO.accessM(_.get.getFluentWaiter(timeout, polling))
+
+  def getPageSource: RIO[Session, String] =
+    ZIO.accessM(_.get.getPageSource)
 }

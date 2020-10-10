@@ -7,8 +7,11 @@ import zio.test.environment._
 
 import zinteract.test.TestDriver.testLayer
 import zinteract.session
+import zinteract.element._
 
 import org.openqa.selenium.By
+
+import scala.io.Source
 
 object SessionSpec extends DefaultRunnableSpec {
   val testPath    = getClass.getResource("/SessionSpec.html").getPath
@@ -23,49 +26,86 @@ object SessionSpec extends DefaultRunnableSpec {
         } yield assert(webdriver.getCurrentUrl())(equalTo("about:blank"))
 
         effect.provideCustomLayer(testLayer())
+      },
+      testM("Session can go back") {
+        val effect = session.link("https://www.google.com/") *>
+          session.link("https://duckduckgo.com/") *>
+          session.back *>
+          session.url
+
+        assertM(effect.provideCustomLayer(testLayer()))(equalTo("https://www.google.com/"))
+      },
+      testM("Session can go forward") {
+        val effect = session.link("https://www.google.com/") *>
+          session.link("https://duckduckgo.com/") *>
+          session.back *>
+          session.forward *>
+          session.url
+
+        assertM(effect.provideCustomLayer(testLayer()))(equalTo("https://duckduckgo.com/"))
+      },
+      testM("Session can refresh") {
+        val effect = for {
+          _      <- session.link(testWebsite)
+          input  <- session.findElement(By.id("input"))
+          _      <- input.sendKeysM("test")
+          _      <- session.refresh
+          input2 <- session.findElement(By.id("input"))
+          text   <- input2.getTextM
+        } yield assert(text)(isEmptyString)
+
+        effect.provideCustomLayer(testLayer())
+      },
+      testM("Session can get page source") {
+        def clean(page: String): String =
+          page.split("\n").drop(1).map(_.replace(" ", "")).mkString
+
+        val file   = Source.fromFile(testPath)
+        val source = file.getLines.mkString("\n")
+
+        val effect = for {
+          _    <- session.link(testWebsite)
+          raw  <- session.getPageSource
+          html <- ZIO.succeed(raw.replace("\r\n", "\n"))
+        } yield assert(clean(html))(equalTo(clean(source)))
+
+        effect.provideCustomLayer(testLayer())
       }
     )
+
   def suiteUrl =
     suite("Url Spec")(
       testM("Session should link to about:blank by default") {
-        val effect = for {
-          url <- session.url
-        } yield assert(url)(equalTo("about:blank"))
+        val effect = session.url
 
-        effect.provideCustomLayer(testLayer())
+        assertM(effect.provideCustomLayer(testLayer()))(equalTo("about:blank"))
       },
       testM("Session should link correctly to a correct url") {
-        val effect = for {
-          _   <- session.link("https://www.google.com/")
-          url <- session.url
-        } yield assert(url)(equalTo("https://www.google.com/"))
+        val effect = session.link("https://www.google.com/") *> session.url
 
-        effect.provideCustomLayer(testLayer())
+        assertM(effect.provideCustomLayer(testLayer()))(equalTo("https://www.google.com/"))
       },
       testM("Session shouldn't link to an incorrect url") {
-        val effect = for {
-          result <- session.link(fakeValue)
-        } yield ()
+        val effect = session.link(fakeValue)
 
         assertM(effect.provideCustomLayer(testLayer()).run)(
           fails(isSubtype[org.openqa.selenium.WebDriverException](anything))
         )
       },
       testM("Session should link correctly to a correct domain") {
-        val effect = for {
-          _   <- session.link("https://github.com/")
-          url <- session.domain
-        } yield assert(url)(equalTo("github.com"))
+        val effect = session.link("https://github.com/") *> session.domain
 
-        effect.provideCustomLayer(testLayer())
+        assertM(effect.provideCustomLayer(testLayer()))(equalTo("github.com"))
       },
       testM("Session should link correctly to a correct domain with www") {
-        val effect = for {
-          _   <- session.link("https://www.google.com/")
-          url <- session.domain
-        } yield assert(url)(equalTo("google.com"))
+        val effect = session.link("https://www.google.com/") *> session.domain
 
-        effect.provideCustomLayer(testLayer())
+        assertM(effect.provideCustomLayer(testLayer()))(equalTo("google.com"))
+      },
+      testM("Session should link to a page with a title") {
+        val effect = session.link("https://www.google.com/") *> session.title
+
+        assertM(effect.provideCustomLayer(testLayer()))(equalTo("Google"))
       }
     )
 
@@ -107,5 +147,5 @@ object SessionSpec extends DefaultRunnableSpec {
       }
     )
 
-  def spec = suite("Session Spec")(suiteUrl, suiteElements)
+  def spec = suite("Session Spec")(suiteWebDriver, suiteUrl, suiteElements)
 }
