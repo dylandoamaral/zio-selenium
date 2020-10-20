@@ -3,7 +3,7 @@
 [![Actions Status](https://github.com/dylandoamaral/zinteract/workflows/Scala%20CI/badge.svg)](https://github.com/dylandoamaral/zinteract/actions)
 [![codecov](https://codecov.io/gh/dylandoamaral/zinteract/branch/master/graph/badge.svg)](https://codecov.io/gh/dylandoamaral/zinteract)
 
-A ZIO friendly librairy to interact with a browser using Selenium.
+A ZIO friendly library to interact with a browser using Selenium.
 
 ## Why use it
 
@@ -24,7 +24,7 @@ libraryDependencies ++= Seq(
 
 ## How it works
 
-Here is a sample to link to a particular website and retrive the title:
+Here is a sample to link to a particular website and retrieve the title:
 
 ```scala
 import zio.{App, ExitCode, ZIO}
@@ -52,7 +52,3 @@ object FindElement extends App {
       .exitCode
 }
 ```
-
-## Is it usable ?
-
-Not for the moment, feel free to contribute or raise issues !
