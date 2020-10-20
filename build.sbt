@@ -4,9 +4,9 @@ val htmlUnitDriverVersion = "2.43.1"
 
 ThisBuild / scalaVersion := "2.13.3"
 
-ThisBuild / organization := "me.dylandoamaral"
-ThisBuild / organizationName := "dylandoamaral"
-ThisBuild / organizationHomepage := Some(url("https://www.dylandoamaral.me/"))
+ThisBuild / organization := "dev.doamaral"
+ThisBuild / organizationName := "doamaral"
+ThisBuild / organizationHomepage := Some(url("https://www.dylan.doamaral.dev/"))
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
@@ -19,7 +19,7 @@ ThisBuild / developers := List(
     id = "ddoamaral",
     name = "Dylan DO AMARAL",
     email = "do.amaral.dylan@gmail.com",
-    url = url("https://www.dylandoamaral.me/")
+    url = url("https://www.dylan.doamaral.dev/")
   )
 )
 
