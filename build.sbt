@@ -60,6 +60,5 @@ lazy val root = (project in file("."))
       "org.seleniumhq.selenium" % "selenium-java"   % seleniumVersion,
       "org.seleniumhq.selenium" % "htmlunit-driver" % htmlUnitDriverVersion
     ),
-    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
-    credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   )
