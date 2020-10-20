@@ -3,10 +3,39 @@ val seleniumVersion       = "3.141.59"
 val htmlUnitDriverVersion = "2.43.1"
 
 ThisBuild / scalaVersion := "2.13.3"
-ThisBuild / version := "0.1.0-SNAPSHOT"
+
 ThisBuild / organization := "me.dylandoamaral"
 ThisBuild / organizationName := "dylandoamaral"
+ThisBuild / organizationHomepage := Some(url("https://www.dylandoamaral.me/"))
+
+ThisBuild / scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/dylandoamaral/zinteract"),
+    "scm:git@github.com:dylandoamaral/zinteract.git"
+  )
+)
+ThisBuild / developers := List(
+  Developer(
+    id = "ddoamaral",
+    name = "Dylan DO AMARAL",
+    email = "do.amaral.dylan@gmail.com",
+    url = url("https://www.dylandoamaral.me/")
+  )
+)
+
+ThisBuild / description := "A ZIO wrapper to interact with a browser using Selenium."
+ThisBuild / licenses := List("Apache 2" -> new URL("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+ThisBuild / homepage := Some(url("https://github.com/dylandoamaral/zinteract"))
+
+ThisBuild / pomIncludeRepository := { _ => false }
+
 ThisBuild / coverageExcludedPackages := ".*zinteract.example.*"
+
+ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
+ThisBuild / githubWorkflowPublishTargetBranches ++=
+  Seq(RefPredicate.StartsWith(Ref.Tag("v")))
+
+ThisBuild / githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("ci-release")))
 
 lazy val root = (project in file("."))
   .settings(
@@ -18,5 +47,6 @@ lazy val root = (project in file("."))
       "org.seleniumhq.selenium" % "selenium-java"   % seleniumVersion,
       "org.seleniumhq.selenium" % "htmlunit-driver" % htmlUnitDriverVersion
     ),
-    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
+    credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
   )
