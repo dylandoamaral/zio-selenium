@@ -7,7 +7,14 @@ import zio.duration.{durationInt, Duration}
 import zinteract.webdriver.WebDriver
 import zinteract.context._
 
-import org.openqa.selenium.{By, NoSuchElementException, WebElement, WebDriver => SeleniumWebDriver}
+import org.openqa.selenium.{
+  By,
+  Cookie,
+  NoSuchElementException,
+  NoSuchCookieException,
+  WebElement,
+  WebDriver => SeleniumWebDriver
+}
 import org.openqa.selenium.support.ui.{FluentWait, Wait}
 import java.net.URI
 
@@ -18,36 +25,44 @@ package object session {
 
   object Session extends Serializable {
     trait Service extends Serializable {
-      def back: UIO[Unit]
-      def forward: UIO[Unit]
-      def refresh: UIO[Unit]
+      def back: Task[Unit]
+      def forward: Task[Unit]
+      def refresh: Task[Unit]
 
       def link(url: String): Task[Unit]
       def url: UIO[String]
       def domain: UIO[String]
       def title: UIO[String]
 
-      def findElement(by: By)(implicit wait: WaitConfig): ZIO[Clock, NoSuchElementException, WebElement]
+      def findElement(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, NoSuchElementException, WebElement]
       def findElements(by: By)(implicit wait: WaitConfig = None): RIO[Clock, List[WebElement]]
       def hasElement(by: By)(implicit wait: WaitConfig = None): RIO[Clock, Boolean]
 
       def getWebdriver: UIO[SeleniumWebDriver]
       def getFluentWaiter(polling: Duration, timeout: Duration): UIO[Fluent]
       def getPageSource: UIO[String]
+
+      def addCookie(cookie: Cookie): Task[Unit]
+      def addCookie(key: String, value: String): Task[Unit]
+      def getCookieNamed(key: String): IO[NoSuchCookieException, Cookie]
+      def getAllCookies(): Task[List[Cookie]]
+      def deleteCookie(cookie: Cookie): Task[Unit]
+      def deleteCookieNamed(key: String): Task[Unit]
+      def deleteAllCookies(): Task[Unit]
     }
 
     object Service {
       val live: ZLayer[WebDriver, Nothing, Session] =
         ZLayer.fromService(webdriver =>
           new Session.Service {
-            def back: UIO[Unit] =
-              ZIO.succeed(webdriver.navigate().back)
+            def back: Task[Unit] =
+              ZIO.effect(webdriver.navigate().back)
 
-            def forward: UIO[Unit] =
-              ZIO.succeed(webdriver.navigate().forward)
+            def forward: Task[Unit] =
+              ZIO.effect(webdriver.navigate().forward)
 
-            def refresh: UIO[Unit] =
-              ZIO.succeed(webdriver.navigate().refresh)
+            def refresh: Task[Unit] =
+              ZIO.effect(webdriver.navigate().refresh)
 
             def link(url: String): Task[Unit] =
               ZIO.effect(webdriver.get(url))
@@ -87,7 +102,32 @@ package object session {
                 )
               )
 
-            def getPageSource: UIO[String] = ZIO.succeed(webdriver.getPageSource)
+            def getPageSource: UIO[String] =
+              ZIO.succeed(webdriver.getPageSource)
+
+            def addCookie(cookie: Cookie): Task[Unit] =
+              ZIO.effect(webdriver.manage().addCookie(cookie))
+
+            def addCookie(key: String, value: String): Task[Unit] =
+              this.addCookie(new Cookie(key, value))
+
+            def getCookieNamed(key: String): IO[NoSuchCookieException, Cookie] =
+              webdriver.manage().getCookieNamed(key) match {
+                case null   => ZIO.fail(new NoSuchCookieException(s"Cookie named '$key' doesn't exist"))
+                case cookie => ZIO.succeed(cookie)
+              }
+
+            def getAllCookies(): Task[List[Cookie]] =
+              ZIO.effect(webdriver.manage().getCookies.asScala.toList)
+
+            def deleteCookie(cookie: Cookie): Task[Unit] =
+              ZIO.effect(webdriver.manage().deleteCookie(cookie))
+
+            def deleteCookieNamed(key: String): Task[Unit] =
+              ZIO.effect(webdriver.manage().deleteCookieNamed(key))
+
+            def deleteAllCookies(): Task[Unit] =
+              ZIO.effect(webdriver.manage().deleteAllCookies)
           }
         )
     }
@@ -134,4 +174,25 @@ package object session {
 
   def getPageSource: RIO[Session, String] =
     ZIO.accessM(_.get.getPageSource)
+
+  def addCookie(cookie: Cookie): RIO[Session, Unit] =
+    ZIO.accessM(_.get.addCookie(cookie))
+
+  def addCookie(key: String, value: String): RIO[Session, Unit] =
+    ZIO.accessM(_.get.addCookie(key, value))
+
+  def getCookieNamed(key: String): ZIO[Session, NoSuchCookieException, Cookie] =
+    ZIO.accessM(_.get.getCookieNamed(key))
+
+  def getAllCookies: RIO[Session, List[Cookie]] =
+    ZIO.accessM(_.get.getAllCookies)
+
+  def deleteCookie(cookie: Cookie): RIO[Session, Unit] =
+    ZIO.accessM(_.get.deleteCookie(cookie))
+
+  def deleteCookieNamed(key: String): RIO[Session, Unit] =
+    ZIO.accessM(_.get.deleteCookieNamed(key))
+
+  def deleteAllCookies: RIO[Session, Unit] =
+    ZIO.accessM(_.get.deleteAllCookies)
 }

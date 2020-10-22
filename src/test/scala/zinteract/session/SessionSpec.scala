@@ -1,6 +1,7 @@
 package zinteract.test
 
 import zio.ZIO
+import zio.random
 import zio.test._
 import zio.test.Assertion._
 import zio.test.environment._
@@ -9,7 +10,7 @@ import zinteract.test.TestDriver.testLayer
 import zinteract.session
 import zinteract.element._
 
-import org.openqa.selenium.By
+import org.openqa.selenium.{By, Cookie, NoSuchCookieException, WebDriverException}
 
 import scala.io.Source
 
@@ -89,7 +90,7 @@ object SessionSpec extends DefaultRunnableSpec {
         val effect = session.link(fakeValue)
 
         assertM(effect.provideCustomLayer(testLayer()).run)(
-          fails(isSubtype[org.openqa.selenium.WebDriverException](anything))
+          fails(isSubtype[WebDriverException](anything))
         )
       },
       testM("Session should link correctly to a correct domain") {
@@ -147,5 +148,80 @@ object SessionSpec extends DefaultRunnableSpec {
       }
     )
 
-  def spec = suite("Session Spec")(suiteWebDriver, suiteUrl, suiteElements)
+  def suiteCookies =
+    suite("Cookies Spec")(
+      testM("Session can add a cookie") {
+        val effect = for {
+          _ <- session.link("https://www.google.com/")
+          _ <- session.addCookie(new Cookie("key", "value"))
+        } yield assertCompletes
+
+        effect.provideCustomLayer(testLayer())
+      },
+      testM("Session can add a cookie using key and value") {
+        val effect = for {
+          _ <- session.link("https://www.google.com/")
+          _ <- session.addCookie("key", "value")
+        } yield assertCompletes
+
+        effect.provideCustomLayer(testLayer())
+      },
+      testM("Session can get a cookie") {
+        val effect = for {
+          _      <- session.link("https://www.google.com/")
+          _      <- session.addCookie("key", "value")
+          cookie <- session.getCookieNamed("key")
+        } yield assert(cookie.getName)(equalTo("key")) && assert(cookie.getValue)(equalTo("value"))
+
+        effect.provideCustomLayer(testLayer())
+      },
+      testM("Session can get several cookies") {
+        val effect = for {
+          _        <- session.link("https://www.google.com/")
+          _        <- session.deleteAllCookies
+          nCookies <- zio.random.nextIntBetween(1, 10)
+          _        <- ZIO.foreach(1 to nCookies)(index => session.addCookie(s"key $index", s"value $index"))
+          cookies  <- session.getAllCookies
+        } yield assert(cookies.length)(equalTo(nCookies)) &&
+          assert(cookies(0).getName.toSeq)(startsWith("key"))
+
+        Live.live(effect.provideCustomLayer(testLayer()))
+      },
+      testM("Session can delete a cookie") {
+        val effect = for {
+          _      <- session.link("https://www.google.com/")
+          before <- session.getAllCookies
+          _      <- session.addCookie(new Cookie("key", "value", "google.com", null, null))
+          cookie <- session.getCookieNamed("key")
+          _      <- session.deleteCookie(cookie)
+          after  <- session.getAllCookies
+        } yield assert(before.length)(equalTo(after.length))
+
+        effect.provideCustomLayer(testLayer())
+      },
+      testM("Session can delete a cookie by name") {
+        val effect = session.link("https://www.google.com/") *>
+          session.addCookie("key", "value") *>
+          session.deleteCookieNamed("key") *>
+          session.getCookieNamed("key")
+
+        assertM(effect.provideCustomLayer(testLayer()).run)(
+          fails(isSubtype[NoSuchCookieException](anything))
+        )
+      },
+      testM("Session can delete many cookies") {
+        val effect = for {
+          _         <- session.link("https://www.google.com/")
+          _         <- session.addCookie("key 0", "value 0")
+          _         <- session.addCookie("key 1", "value 1")
+          cookies   <- session.getAllCookies
+          _         <- session.deleteAllCookies
+          nocookies <- session.getAllCookies
+        } yield assert(cookies.length)(isGreaterThan(0)) && assert(nocookies)(isEmpty)
+
+        effect.provideCustomLayer(testLayer())
+      }
+    )
+
+  def spec = suite("Session Spec")(suiteWebDriver, suiteUrl, suiteElements, suiteCookies)
 }
