@@ -3,6 +3,7 @@ val seleniumVersion       = "3.141.59"
 val htmlUnitDriverVersion = "2.43.1"
 
 ThisBuild / scalaVersion := "2.13.3"
+ThisBuild / scalacOptions += "-Wunused:imports"
 
 ThisBuild / organization := "dev.doamaral"
 ThisBuild / organizationName := "doamaral"
@@ -49,6 +50,9 @@ ThisBuild / githubWorkflowPublish := Seq(
     )
   )
 )
+
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 lazy val root = (project in file("."))
   .settings(

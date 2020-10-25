@@ -7,14 +7,12 @@ import zio.test.environment._
 import zio.duration.durationInt
 
 import zinteract.test.TestDriver.testLayer
-import zinteract.test.SessionSpec.fakeValue
 import zinteract.element._
 import zinteract.context._
 import zinteract.session
 
-import org.openqa.selenium.{By, NoSuchElementException, TimeoutException}
+import org.openqa.selenium.{By, NoSuchElementException}
 
-import scala.io.Source
 
 object WaitSpec extends DefaultRunnableSpec {
   val testPath    = getClass.getResource("/WaitSpec.html").getPath

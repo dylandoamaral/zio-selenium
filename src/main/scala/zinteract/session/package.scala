@@ -2,7 +2,7 @@ package zinteract
 
 import zio.{Has, IO, RIO, Task, UIO, ZIO, ZLayer}
 import zio.clock.Clock
-import zio.duration.{durationInt, Duration}
+import zio.duration.Duration
 
 import zinteract.webdriver.WebDriver
 import zinteract.context._
@@ -16,7 +16,7 @@ import org.openqa.selenium.{
   WebElement,
   WebDriver => SeleniumWebDriver
 }
-import org.openqa.selenium.support.ui.{ExpectedCondition, ExpectedConditions, FluentWait, Wait}
+import org.openqa.selenium.support.ui.{ExpectedConditions, FluentWait, Wait}
 import java.net.URI
 
 import scala.jdk.CollectionConverters._

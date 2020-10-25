@@ -16,8 +16,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Run formatting
+      - name: Check formatting
         run: sbt scalafmtCheck
+      - name: Check linting
+        run: sbt "scalafix --check"
       - name: Run tests
         run: sbt coverage test
       - name: Generate coverage

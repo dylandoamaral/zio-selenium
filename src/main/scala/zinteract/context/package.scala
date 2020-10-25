@@ -3,12 +3,10 @@ package zinteract
 import zio.{RIO, ZIO}
 import zio.clock.Clock
 
-import org.openqa.selenium.{By, Keys, NoSuchElementException, SearchContext, WebDriver, WebElement}
-import org.openqa.selenium.support.ui.FluentWait
+import org.openqa.selenium.{By, NoSuchElementException, SearchContext, WebElement}
 
 import scala.jdk.CollectionConverters._
 import java.util.ArrayList
-import java.time.Duration
 
 package object context {
   def findElementFrom(
