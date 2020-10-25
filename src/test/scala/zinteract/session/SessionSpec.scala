@@ -2,6 +2,7 @@ package zinteract.test
 
 import zio.ZIO
 import zio.random
+import zio.duration.durationInt
 import zio.test._
 import zio.test.Assertion._
 import zio.test.environment._
@@ -10,7 +11,7 @@ import zinteract.test.TestDriver.testLayer
 import zinteract.session
 import zinteract.element._
 
-import org.openqa.selenium.{By, Cookie, NoSuchCookieException, WebDriverException}
+import org.openqa.selenium.{By, Cookie, NoSuchCookieException, TimeoutException, WebDriverException}
 
 import scala.io.Source
 
@@ -223,5 +224,26 @@ object SessionSpec extends DefaultRunnableSpec {
       }
     )
 
-  def spec = suite("Session Spec")(suiteWebDriver, suiteUrl, suiteElements, suiteCookies)
+  def suiteAlerts =
+    suite("Alerts Spec")(
+      testM("Session can handle an alert") {
+        val effect = for {
+          _      <- session.link(testWebsite)
+          button <- session.findElement(By.tagName("button"))
+          _      <- button.clickM
+          alert  <- session.getAlert(100.milliseconds, 500.milliseconds)
+        } yield assert(alert.getText())(equalTo("Test alert"))
+
+        effect.provideCustomLayer(testLayer(false, true))
+      },
+      testM("Session return a timeout exception if no alert") {
+        val effect = session.link(testWebsite) *> session.getAlert(100.milliseconds, 500.milliseconds)
+
+        assertM(effect.provideCustomLayer(testLayer(false, true)).run)(
+          fails(isSubtype[TimeoutException](anything))
+        )
+      }
+    )
+
+  def spec = suite("Session Spec")(suiteWebDriver, suiteUrl, suiteElements, suiteCookies, suiteAlerts)
 }
