@@ -8,6 +8,7 @@ import zinteract.webdriver.WebDriver
 import zinteract.context._
 
 import org.openqa.selenium.{
+  Alert,
   By,
   Cookie,
   NoSuchElementException,
@@ -15,7 +16,7 @@ import org.openqa.selenium.{
   WebElement,
   WebDriver => SeleniumWebDriver
 }
-import org.openqa.selenium.support.ui.{FluentWait, Wait}
+import org.openqa.selenium.support.ui.{ExpectedCondition, ExpectedConditions, FluentWait, Wait}
 import java.net.URI
 
 import scala.jdk.CollectionConverters._
@@ -49,6 +50,9 @@ package object session {
       def deleteCookie(cookie: Cookie): Task[Unit]
       def deleteCookieNamed(key: String): Task[Unit]
       def deleteAllCookies(): Task[Unit]
+
+      def getAlert(wait: Wait[SeleniumWebDriver]): Task[Alert]
+      def getAlert(polling: Duration, timeout: Duration): Task[Alert]
     }
 
     object Service {
@@ -128,6 +132,18 @@ package object session {
 
             def deleteAllCookies(): Task[Unit] =
               ZIO.effect(webdriver.manage().deleteAllCookies)
+
+            def getAlert(wait: Wait[SeleniumWebDriver]): Task[Alert] =
+              for {
+                webdriver <- getWebdriver
+                alert     <- ZIO.effect(wait.until(ExpectedConditions.alertIsPresent()))
+              } yield alert
+
+            def getAlert(polling: Duration, timeout: Duration): Task[Alert] =
+              for {
+                wait  <- getFluentWaiter(polling, timeout)
+                alert <- getAlert(wait.waiter)
+              } yield alert
           }
         )
     }
@@ -195,4 +211,10 @@ package object session {
 
   def deleteAllCookies: RIO[Session, Unit] =
     ZIO.accessM(_.get.deleteAllCookies)
+
+  def getAlert(wait: Wait[SeleniumWebDriver]): RIO[Session, Alert] =
+    ZIO.accessM(_.get.getAlert(wait))
+
+  def getAlert(polling: Duration, timeout: Duration): RIO[Session, Alert] =
+    ZIO.accessM(_.get.getAlert(polling, timeout))
 }
