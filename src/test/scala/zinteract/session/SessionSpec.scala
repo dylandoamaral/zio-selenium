@@ -243,7 +243,7 @@ object SessionSpec extends DefaultRunnableSpec {
           button <- session.findElement(By.tagName("button"))
           _      <- button.clickM
           wait   <- session.getWebdriver.map(new WebDriverWait(_, 3))
-          alert  <- session.getAlert(100.milliseconds, 500.milliseconds)
+          alert  <- session.getAlert(wait)
         } yield assert(alert.getText())(equalTo("Test alert"))
 
         effect.provideCustomLayer(testLayer(false, true))
