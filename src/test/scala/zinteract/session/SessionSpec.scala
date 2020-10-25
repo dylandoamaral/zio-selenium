@@ -12,6 +12,7 @@ import zinteract.session
 import zinteract.element._
 
 import org.openqa.selenium.{By, Cookie, NoSuchCookieException, TimeoutException, WebDriverException}
+import org.openqa.selenium.support.ui.WebDriverWait
 
 import scala.io.Source
 
@@ -226,11 +227,22 @@ object SessionSpec extends DefaultRunnableSpec {
 
   def suiteAlerts =
     suite("Alerts Spec")(
-      testM("Session can handle an alert") {
+      testM("Session can handle an alert giving a polling and timeout duration") {
         val effect = for {
           _      <- session.link(testWebsite)
           button <- session.findElement(By.tagName("button"))
           _      <- button.clickM
+          alert  <- session.getAlert(100.milliseconds, 500.milliseconds)
+        } yield assert(alert.getText())(equalTo("Test alert"))
+
+        effect.provideCustomLayer(testLayer(false, true))
+      },
+      testM("Session can handle an alert giving a wait") {
+        val effect = for {
+          _      <- session.link(testWebsite)
+          button <- session.findElement(By.tagName("button"))
+          _      <- button.clickM
+          wait   <- session.getWebdriver.map(new WebDriverWait(_, 3))
           alert  <- session.getAlert(100.milliseconds, 500.milliseconds)
         } yield assert(alert.getText())(equalTo("Test alert"))
 
