@@ -1,6 +1,6 @@
 package zinteract.example
 
-import zio.{App, ExitCode, ZIO}
+import zio.{App, ExitCode}
 
 import zinteract.webdriver.WebDriver
 import zinteract.session

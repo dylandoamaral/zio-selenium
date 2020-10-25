@@ -5,7 +5,6 @@ import zio.ZLayer
 import zinteract.webdriver.Property
 import zinteract.session.Session
 
-import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import com.gargoylesoftware.htmlunit.WebClient
 

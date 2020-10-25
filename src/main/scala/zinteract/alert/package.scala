@@ -1,9 +1,7 @@
 package zinteract
 
-import zio.{IO, RIO, Task, ZIO}
-import zio.clock.Clock
+import zio.{Task, ZIO}
 
-import zinteract.context._
 
 import org.openqa.selenium.{Alert}
 

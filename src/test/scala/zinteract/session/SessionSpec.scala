@@ -1,7 +1,6 @@
 package zinteract.test
 
 import zio.ZIO
-import zio.random
 import zio.duration.durationInt
 import zio.test._
 import zio.test.Assertion._

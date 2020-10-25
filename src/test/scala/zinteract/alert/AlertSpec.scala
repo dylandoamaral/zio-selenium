@@ -1,13 +1,10 @@
 package zinteract.test
 
-import zio.ZIO
 import zio.duration.durationInt
 import zio.test._
 import zio.test.Assertion._
-import zio.test.environment._
 
 import zinteract.test.TestDriver.testLayer
-import zinteract.test.SessionSpec.fakeValue
 import zinteract.element._
 import zinteract.alert._
 import zinteract.session

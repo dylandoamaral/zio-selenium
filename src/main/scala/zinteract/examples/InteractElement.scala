@@ -1,7 +1,6 @@
 package zinteract.example
 
-import zio.{App, ExitCode, ZIO}
-import zio.console
+import zio.{App, ExitCode}
 import zio.clock
 import zio.duration.durationInt
 
