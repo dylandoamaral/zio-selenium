@@ -2,7 +2,6 @@ package zinteract
 
 import zio.{Task, ZIO}
 
-
 import org.openqa.selenium.{Alert}
 
 package object alert {
