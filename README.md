@@ -27,11 +27,11 @@ libraryDependencies ++= Seq(
 Here is a sample to link to a particular website and retrieve the title:
 
 ```scala
-import zio.{App, ExitCode, ZIO}
+import zio.{App, ExitCode}
 import zio.console
 
-import zinteract.webdriver.WebDriver
 import zinteract.session
+import zinteract.webdriver.ChromeBuilder
 
 import org.openqa.selenium.By
 
@@ -47,8 +47,9 @@ object FindElement extends App {
   override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
     app
       .provideCustomLayer(
-        WebDriver.Service.chromeMinConfig(pathToDriver) >>> session.Session.Service.live
+        ChromeBuilder(pathToDriver).buildLayer >>> session.Session.Service.live
       )
       .exitCode
 }
+
 ```
