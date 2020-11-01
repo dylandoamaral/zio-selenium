@@ -1,8 +1,6 @@
 package zinteract.test
 
-import zio.ZLayer
-
-import zinteract.webdriver.Property
+import zinteract.webdriver.WebDriver.Service.webdriver
 import zinteract.session.Session
 
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -18,8 +16,7 @@ class TestDriver(cssEnabled: Boolean, jsEnabled: Boolean) extends HtmlUnitDriver
 
 object TestDriver {
   def testDriver(cssEnabled: Boolean, jsEnabled: Boolean) =
-    ZLayer.succeed(List[Property]()) >>> zinteract.webdriver.WebDriver.Service
-      .webdriver(new TestDriver(cssEnabled, jsEnabled))
+    webdriver(new TestDriver(cssEnabled, jsEnabled))
 
   def testLayer(cssEnabled: Boolean = false, jsEnabled: Boolean = false) =
     TestDriver.testDriver(cssEnabled, jsEnabled) >>> Session.Service.live

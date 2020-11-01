@@ -21,7 +21,7 @@ object InteractElement extends App {
     _          <- clock.sleep(2.seconds)
   } yield ()
 
-  val pathToDriver = "/home/ddoamaral/WebDriver/chromedriver"
+  val pathToDriver = "/path/to/webdriver/chromedriver"
 
   override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
     app
