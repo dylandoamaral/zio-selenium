@@ -6,9 +6,10 @@ import zio.test.Assertion._
 
 import zinteract.webdriver.{ChromeBlueprintOps, ChromeBuilder}
 import zinteract.webdriver.ChromeBlueprintOps.ChromeBlueprint
+import zinteract.webdriver.CommonBlueprintOps
 
 import scala.jdk.CollectionConverters._
-import org.openqa.selenium.PageLoadStrategy
+import org.openqa.selenium.{PageLoadStrategy}
 
 object ChromeBlueprintSpec extends DefaultRunnableSpec {
   def assertCapability(blueprint: ChromeBlueprint)(key: String, value: String) =
@@ -44,11 +45,25 @@ object ChromeBlueprintSpec extends DefaultRunnableSpec {
           ChromeBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER)
         assertCapability(blueprint)("pageLoadStrategy", "eager")
       },
+      testM("Chrome Blueprint can compose two action") {
+        val blueprint = ChromeBlueprintOps.noGpu and ChromeBlueprintOps.noExtensions
+        assertArgument(blueprint)("--disable-gpu")
+        assertArgument(blueprint)("--disable-extensions")
+      },
+      testM("Chrome Blueprint can set capability") {
+        val blueprint = CommonBlueprintOps.setCapability("key", "value") <> ChromeBlueprintOps.default
+        assertCapability(blueprint)("key", "value")
+      },
       testM("Chrome Blueprint can set another pageLoadStrategy") {
         assertCapability(ChromeBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER))("pageLoadStrategy", "eager")
       },
       testM("Chrome Blueprint can add an argument") {
         assertArgument(ChromeBlueprintOps.addArgument("--argument"))("--argument")
+      },
+      testM("Chrome Blueprint can add arguments") {
+        val blueprint = ChromeBlueprintOps.addArguments(List("--argument", "--argument2"))
+        assertArgument(blueprint)("--argument")
+        assertArgument(blueprint)("--argument2")
       },
       testM("Chrome Blueprint can disable gpu") {
         assertArgument(ChromeBlueprintOps.noGpu)("--disable-gpu")
