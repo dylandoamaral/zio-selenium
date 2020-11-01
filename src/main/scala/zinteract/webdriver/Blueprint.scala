@@ -54,27 +54,4 @@ object ChromeBlueprintOps {
     Blueprint(options => Task.effect(options.setHeadless(bool)))
 
   def headless: ChromeBlueprint = setHeadless(true)
-
-  def headfull: ChromeBlueprint = setHeadless(false)
-
-  def setBinary(path: String): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.setBinary(path)))
-
-  def setBinary(path: File): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.setBinary(path)))
-
-  def addExtension(extension: File): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addExtensions(extension)))
-
-  def addExtensions(extensions: List[File]): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addExtensions(extensions.asJava)))
-
-  def addEncodedExtension(encoded: String): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addEncodedExtensions(encoded)))
-
-  def addEncodedExtensions(encoded: List[String]): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addEncodedExtensions(encoded.asJava)))
-
-  def setProxy(proxy: Proxy): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.setProxy(proxy)))
 }
