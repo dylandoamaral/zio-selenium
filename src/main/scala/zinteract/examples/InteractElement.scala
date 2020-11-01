@@ -4,9 +4,9 @@ import zio.{App, ExitCode}
 import zio.clock
 import zio.duration.durationInt
 
-import zinteract.webdriver.WebDriver
 import zinteract.session
 import zinteract.element._
+import zinteract.webdriver.ChromeBuilder
 
 import org.openqa.selenium.By
 
@@ -26,7 +26,7 @@ object InteractElement extends App {
   override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
     app
       .provideCustomLayer(
-        WebDriver.Service.chromeMinConfig(pathToDriver) >>> session.Session.Service.live
+        ChromeBuilder(pathToDriver).buildLayer >>> session.Session.Service.live
       )
       .exitCode
 }
