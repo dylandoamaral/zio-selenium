@@ -38,7 +38,7 @@ case class ChromeBuilder(path: String, blueprint: ChromeBlueprint = ChromeBluepr
     extends Builder[ChromeOptions, ChromeDriver] {
 
   /**
-    * Build a ChromeOptions by applying the blueprint.
+    * Builds a ChromeOptions by applying the blueprint.
     */
   def buildOptions: Task[ChromeOptions] =
     for {
@@ -47,7 +47,7 @@ case class ChromeBuilder(path: String, blueprint: ChromeBlueprint = ChromeBluepr
     } yield options
 
   /**
-    * Build a ChromeDriver by applying the blueprint.
+    * Builds a ChromeDriver by applying the blueprint.
     */
   def buildDriver: Task[ChromeDriver] =
     for {

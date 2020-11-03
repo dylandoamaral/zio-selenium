@@ -7,11 +7,11 @@ import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.FluentWait
 
 /**
-  * A interface to define different ways to wait for an element.
+  * An interface to define different ways to wait for an element.
   * You has two ways to do that, by using selenium fluent wait or
   * by using ZIO schedule.
   *
-  * e.g: The page has a loading screen
+  * e.g: The page has a loading screen.
   */
 sealed trait WaitConfig
 case object None                                                extends WaitConfig

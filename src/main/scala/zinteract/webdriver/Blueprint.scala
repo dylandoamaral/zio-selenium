@@ -125,7 +125,7 @@ object ChromeBlueprintOps {
   def headless: ChromeBlueprint = setHeadless(true)
 
   /**
-    * Doesn't run in headless mode
+    * Doesn't run in headless mode.
     */
   def headfull: ChromeBlueprint = setHeadless(false)
 
@@ -174,7 +174,7 @@ object ChromeBlueprintOps {
     Blueprint(options => Task.effect(options.addEncodedExtensions(encoded.asJava)))
 
   /**
-    * Set a proxy to the ChromeDriver
+    * Set a proxy to the ChromeDriver.
     */
   def setProxy(proxy: Proxy): ChromeBlueprint =
     Blueprint(options => Task.effect(options.setProxy(proxy)))

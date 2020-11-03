@@ -17,7 +17,7 @@ package object webdriver {
     object Service {
 
       /**
-        * Returns a [[org.openqa.selenium.WebDriver]] has a ZLayer.
+        * Returns a WebDriver has a ZLayer.
         */
       def webdriver(webDriver: => SeleniumWebDriver): ZLayer[Any, Throwable, WebDriver] =
         ZLayer.fromAcquireRelease(for {

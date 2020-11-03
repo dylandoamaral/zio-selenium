@@ -141,13 +141,13 @@ package object element {
       getTagNameOf(element)
 
     /**
-      * Where on the page is the top left-hand corner of the rendered element?
+      * Where on the page is the top left-hand corner of the rendered element.
       */
     val getLocationM: Task[Point] =
       getLocationOf(element)
 
     /**
-      * Returns the location and size of the rendered element
+      * Returns the location and size of the rendered element.
       */
     val getRectM: Task[Rectangle] =
       getRectOf(element)
@@ -231,13 +231,13 @@ package object element {
     ZIO.effect(element.clear)
 
   /**
-    * Use this method to simulate typing into an element, which may set its value.
+    * Simulates typing into an element, which may set its value.
     */
   def sendKeysOn(element: WebElement)(text: CharSequence): Task[Unit] =
     ZIO.effect(element.sendKeys(text))
 
   /**
-    * Use this method to simulate the key enter into an element.
+    * Simulates the key enter into an element.
     */
   def pressEnterOn(element: WebElement): Task[Unit] =
     sendKeysOn(element)(Keys.ENTER)
@@ -286,7 +286,7 @@ package object element {
     ZIO.effect(element.getAttribute(name))
 
   /**
-    * Get the visible (i.e. not hidden by CSS) text of this element, including sub-elements.
+    * Gets the visible (i.e. not hidden by CSS) text of this element, including sub-elements.
     */
   def getTextOf(element: WebElement): Task[String] =
     ZIO.effect(element.getText)
@@ -315,13 +315,13 @@ package object element {
     ZIO.effect(element.getTagName)
 
   /**
-    * Where on the page is the top left-hand corner of the rendered element?
+    * Where on the page is the top left-hand corner of the rendered element.
     */
   def getLocationOf(element: WebElement): Task[Point] =
     ZIO.effect(element.getLocation)
 
   /**
-    * Returns the location and size of the rendered element
+    * Returns the location and size of the rendered element.
     */
   def getRectOf(element: WebElement): Task[Rectangle] =
     ZIO.effect(element.getRect)
