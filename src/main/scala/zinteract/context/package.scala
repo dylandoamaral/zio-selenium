@@ -8,7 +8,15 @@ import org.openqa.selenium.{By, NoSuchElementException, SearchContext, WebElemen
 import scala.jdk.CollectionConverters._
 import java.util.ArrayList
 
+/**
+  * Context provides methods to find an element which are use by
+  * webdriver and element packages.
+  */
 package object context {
+
+  /**
+    * Finds all WebElements using the given method.
+    */
   def findElementFrom(
       context: SearchContext
   )(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, NoSuchElementException, WebElement] = {
@@ -20,6 +28,9 @@ package object context {
     effect.refineToOrDie[NoSuchElementException]
   }
 
+  /**
+    * Finds all WebElements using the given method.
+    */
   def findElementsFrom(
       context: SearchContext
   )(by: By)(implicit wait: WaitConfig = None): RIO[Clock, List[WebElement]] = {
@@ -33,6 +44,9 @@ package object context {
     effect.map(_.asScala.toList).orElseSucceed(List[WebElement]())
   }
 
+  /**
+    * Checks if the given method find an element.
+    */
   def hasElementFrom(context: SearchContext)(by: By)(implicit wait: WaitConfig = None): RIO[Clock, Boolean] =
     findElementsFrom(context)(by)(wait).map(!_.isEmpty)
 }
