@@ -14,8 +14,6 @@ object Link extends App {
 
   override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
     app
-      .provideCustomLayer(
-        ChromeBuilder(pathToDriver).buildLayer >>> session.Session.Service.live
-      )
+      .provideCustomLayer(ChromeBuilder(pathToDriver).buildLayer)
       .exitCode
 }
