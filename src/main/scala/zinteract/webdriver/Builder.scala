@@ -1,6 +1,6 @@
 package zinteract.webdriver
 
-import zio.{Has, Task, UIO, ZIO, ZLayer}
+import zio.{Task, UIO, ZIO, ZLayer}
 
 import ChromeBlueprintOps.ChromeBlueprint
 import zinteract.session.Session
