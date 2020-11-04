@@ -2,7 +2,7 @@ package zinteract
 
 import zio.{Has, IO, RIO, Task, UIO, ZIO, ZLayer}
 import zio.clock.Clock
-import zio.duration.Duration
+import zio.duration.{Duration, DurationOps}
 
 import zinteract.webdriver.WebDriver
 import zinteract.context._
