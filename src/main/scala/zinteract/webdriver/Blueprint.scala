@@ -18,15 +18,16 @@ case class Blueprint[A](link: A => Task[Unit]) {
     * An operator to combine two blueprints into one.
     *
     * {{{
-    * val blueprint: ChromeBlueprint = CommonBlueprintOps.unit <> ChromeBlueprintOps.noGpu
+    * val blueprint: ChromeBlueprint = CommonBlueprintOps.unit and ChromeBlueprintOps.noGpu
     * }}}
     */
-  def <>[B <: A](that: Blueprint[B]): Blueprint[B] = Blueprint((options: B) => this.link(options) *> that.link(options))
+  def and[B <: A](that: Blueprint[B]): Blueprint[B] =
+    Blueprint((options: B) => this.link(options) *> that.link(options))
 
   /**
-    * Operator alias for `<>`.
+    * Operator alias for `and`.
     */
-  def and[B <: A](that: Blueprint[B]): Blueprint[B] = this <> that
+  def &&[B <: A](that: Blueprint[B]): Blueprint[B] = this and that
 }
 
 /**

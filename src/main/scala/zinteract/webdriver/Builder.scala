@@ -41,6 +41,26 @@ case class ChromeBuilder(path: String, blueprint: ChromeBlueprint = ChromeBluepr
     extends Builder[ChromeOptions, ChromeDriver] {
 
   /**
+    * Returns a builder using the new path.
+    */
+  def at(path: String): ChromeBuilder = this.copy(path = path)
+
+  /**
+    * Operator alias for `at`.
+    */
+  def >(path: String): ChromeBuilder = at(path)
+
+  /**
+    * Returns a builder using the new blueprint.
+    */
+  def using(blueprint: ChromeBlueprint): ChromeBuilder = this.copy(blueprint = blueprint)
+
+  /**
+    * Operator alias for `>>`.
+    */
+  def >>(blueprint: ChromeBlueprint): ChromeBuilder = using(blueprint)
+
+  /**
     * Builds a ChromeOptions by applying the blueprint.
     */
   def buildOptions: Task[ChromeOptions] =
@@ -58,4 +78,12 @@ case class ChromeBuilder(path: String, blueprint: ChromeBlueprint = ChromeBluepr
       options <- this.buildOptions
       driver  <- ZIO.effect(new ChromeDriver(options))
     } yield driver
+}
+
+object BuilderOps {
+
+  /**
+    * Create a unit chrome builder.
+    */
+  def chrome: ChromeBuilder = ChromeBuilder("")
 }

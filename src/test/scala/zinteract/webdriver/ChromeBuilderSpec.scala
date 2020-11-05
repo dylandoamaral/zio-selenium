@@ -4,22 +4,23 @@ import zio.ZIO
 import zio.test._
 import zio.test.Assertion._
 
-import zinteract.webdriver.{ChromeBlueprintOps, ChromeBuilder}
+import zinteract.webdriver.BuilderOps.chrome
+import zinteract.webdriver.ChromeBlueprintOps
 import zinteract.webdriver.ChromeBlueprintOps.ChromeBlueprint
 import zinteract.webdriver.CommonBlueprintOps
 
 import scala.jdk.CollectionConverters._
 import org.openqa.selenium.{PageLoadStrategy}
 
-object ChromeBlueprintSpec extends DefaultRunnableSpec {
+object ChromeBuilderSpec extends DefaultRunnableSpec {
   def assertCapability(blueprint: ChromeBlueprint)(key: String, value: String) =
     for {
-      capabilities <- ChromeBuilder("", blueprint).buildOptions.map(_.asMap.asScala)
+      capabilities <- (chrome using blueprint).buildOptions.map(_.asMap.asScala)
     } yield assert(capabilities.get(key).map(_.toString))(isSome(equalTo(value)))
 
   def assertArgument(blueprint: ChromeBlueprint)(argument: String) =
     for {
-      options <- ChromeBuilder("", blueprint).buildOptions
+      options <- (chrome using blueprint).buildOptions
       arguments <- ZIO.succeed({
         val field = options.getClass.getDeclaredField("args")
         field.setAccessible(true)
@@ -31,6 +32,22 @@ object ChromeBlueprintSpec extends DefaultRunnableSpec {
       })
     } yield assert(arguments)(contains(argument))
 
+  def suiteChromeBuilder =
+    suite("Chrome Builder Spec")(
+      test("We can build an unit chrome builder") {
+        val builder = chrome
+        assert(builder.path)(equalTo(""))
+      },
+      test("We can update the path of a build") {
+        val builder = chrome at "path"
+        assert(builder.path)(equalTo("path"))
+      },
+      testM("We can update the blueprint of a build") {
+        val builder = chrome using ChromeBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER)
+        assertCapability(builder.blueprint)("pageLoadStrategy", "eager")
+      }
+    )
+
   def suiteChromeDefaultBlueprint =
     suite("Chrome Default Blueprint Spec")(
       testM("Default Chrome Blueprint has a normal pageLoadStrategy") {
@@ -41,7 +58,7 @@ object ChromeBlueprintSpec extends DefaultRunnableSpec {
   def suiteChromeBlueprint =
     suite("Chrome Default Blueprint Spec")(
       testM("Chrome Blueprint can overload default blueprint") {
-        val blueprint = ChromeBlueprintOps.default <>
+        val blueprint = ChromeBlueprintOps.default &&
           ChromeBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER)
         assertCapability(blueprint)("pageLoadStrategy", "eager")
       },
@@ -51,7 +68,7 @@ object ChromeBlueprintSpec extends DefaultRunnableSpec {
         assertArgument(blueprint)("--disable-extensions")
       },
       testM("Chrome Blueprint can set capability") {
-        val blueprint = CommonBlueprintOps.setCapability("key", "value") <> ChromeBlueprintOps.default
+        val blueprint = CommonBlueprintOps.setCapability("key", "value") && ChromeBlueprintOps.default
         assertCapability(blueprint)("key", "value")
       },
       testM("Chrome Blueprint can set another pageLoadStrategy") {
@@ -83,5 +100,5 @@ object ChromeBlueprintSpec extends DefaultRunnableSpec {
       }
     )
 
-  def spec = suite("Chrome Blueprint Spec")(suiteChromeDefaultBlueprint, suiteChromeBlueprint)
+  def spec = suite("Chrome Builder Spec")(suiteChromeBuilder, suiteChromeDefaultBlueprint, suiteChromeBlueprint)
 }
