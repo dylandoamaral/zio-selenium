@@ -6,7 +6,8 @@ import zio.duration.durationInt
 
 import zinteract.session
 import zinteract.element._
-import zinteract.webdriver.ChromeBuilder
+import zinteract.webdriver.ChromeBlueprintOps.default
+import zinteract.webdriver.BuilderOps.chrome
 
 import org.openqa.selenium.By
 
@@ -21,10 +22,10 @@ object InteractElement extends App {
     _          <- clock.sleep(2.seconds)
   } yield ()
 
-  val pathToDriver = "/path/to/webdriver/chromedriver"
+  val builder = chrome at "/path/to/webdriver/chromedriver" using default
 
   override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
     app
-      .provideCustomLayer(ChromeBuilder(pathToDriver).buildLayer)
+      .provideCustomLayer(builder.buildLayer)
       .exitCode
 }

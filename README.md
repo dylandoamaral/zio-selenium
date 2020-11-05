@@ -31,7 +31,8 @@ import zio.{App, ExitCode}
 import zio.console
 
 import zinteract.session
-import zinteract.webdriver.ChromeBuilder
+import zinteract.webdriver.ChromeBlueprintOps.default
+import zinteract.webdriver.BuilderOps.chrome
 
 import org.openqa.selenium.By
 
@@ -42,11 +43,12 @@ object FindElement extends App {
     _       <- console.putStrLn(s"Title: ${element.getText()}")
   } yield ()
 
-  val pathToDriver = "/path/to/webdriver/chromedriver"
+  val builder = chrome at "/path/to/webdriver/chromedriver" using default
 
   override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
     app
-      .provideCustomLayer(ChromeBuilder(pathToDriver).buildLayer)
+      .provideCustomLayer(builder.buildLayer)
       .exitCode
 }
+
 ```
