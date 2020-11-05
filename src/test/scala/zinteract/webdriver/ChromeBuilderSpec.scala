@@ -38,12 +38,20 @@ object ChromeBuilderSpec extends DefaultRunnableSpec {
         val builder = chrome
         assert(builder.path)(equalTo(""))
       },
-      test("We can update the path of a build") {
+      test("We can update the path of a build with 'at'") {
         val builder = chrome at "path"
         assert(builder.path)(equalTo("path"))
       },
-      testM("We can update the blueprint of a build") {
+      test("We can update the path of a build with '>'") {
+        val builder = chrome > "path"
+        assert(builder.path)(equalTo("path"))
+      },
+      testM("We can update the blueprint of a build with 'using'") {
         val builder = chrome using ChromeBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER)
+        assertCapability(builder.blueprint)("pageLoadStrategy", "eager")
+      },
+      testM("We can update the blueprint of a build with '>>'") {
+        val builder = chrome >> ChromeBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER)
         assertCapability(builder.blueprint)("pageLoadStrategy", "eager")
       }
     )
