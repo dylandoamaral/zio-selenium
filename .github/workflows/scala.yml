@@ -25,7 +25,7 @@ jobs:
 
       - name: Install ChromeDriver
         run: |
-          wget https://chromedriver.storage.googleapis.com/87.0.4280.20/chromedriver_linux64.zip
+          wget https://chromedriver.storage.googleapis.com/86.0.4240.22/chromedriver_linux64.zip
           mkdir ~/WebDriver
           unzip chromedriver*.zip -d ~/Webdriver
 
