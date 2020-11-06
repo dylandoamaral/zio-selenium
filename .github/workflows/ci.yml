@@ -27,17 +27,6 @@ jobs:
         java: [adopt@1.8]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Install Chromium
-        run: |
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo dpkg -i google-chrome*.deb
-
-      - name: Install ChromeDriver
-        run: |
-          wget https://chromedriver.storage.googleapis.com/87.0.4280.20/chromedriver_linux64.zip
-          mkdir ~/WebDriver
-          unzip chromedriver*.zip -d ~/Webdriver
-
       - name: Checkout current branch (full)
         uses: actions/checkout@v2
         with:
