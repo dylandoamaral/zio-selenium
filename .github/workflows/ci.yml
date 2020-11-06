@@ -9,9 +9,9 @@ name: Continuous Integration
 
 on:
   pull_request:
-    branches: ['*']
+    branches: ["*"]
   push:
-    branches: ['*']
+    branches: ["*"]
     tags: [v*]
 
 env:
@@ -87,11 +87,19 @@ jobs:
           mkdir ~/WebDrive
           unzip chromedriver*.zip -d ~/Webdriver
 
+      - name: Check formatting
+        run: sbt ++${{ matrix.scala }} scalafmtCheck
+
+      - name: Check linting
+        run: sbt ++${{ matrix.scala }} '"scalafix --check"'
+
       - name: Check that workflows are up to date
         run: sbt ++${{ matrix.scala }} githubWorkflowCheck
 
-      - name: Build project
-        run: sbt ++${{ matrix.scala }} test
+      - run: sbt ++${{ matrix.scala }} coverage test
+
+      - name: Generate coverage
+        run: "sbt coverageReport && bash <(curl -s https://codecov.io/bash)"
 
       - name: Compress target directories
         run: tar cf targets.tar target project/target
