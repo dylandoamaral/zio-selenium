@@ -76,6 +76,17 @@ jobs:
           path: ~/.sbt
           key: ${{ runner.os }}-sbt-cache-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
+      - name: Install chrome
+        run: |
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo dpkg -i google-chrome*.deb
+
+      - name: Install chromedriver
+        run: |
+          wget https://chromedriver.storage.googleapis.com/86.0.4240.22/chromedriver_linux64.zip
+          mkdir ~/WebDrive
+          unzip chromedriver*.zip -d ~/Webdriver
+
       - name: Check that workflows are up to date
         run: sbt ++${{ matrix.scala }} githubWorkflowCheck
 
