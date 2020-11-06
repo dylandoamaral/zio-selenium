@@ -51,6 +51,24 @@ ThisBuild / githubWorkflowPublish := Seq(
   )
 )
 
+ThisBuild / githubWorkflowBuildPreamble := Seq(
+  WorkflowStep.Run(
+    name = Some("Install chrome"),
+    commands = List(
+      "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb",
+      "sudo dpkg -i google-chrome*.deb"
+    )
+  ),
+  WorkflowStep.Run(
+    name = Some("Install chromedriver"),
+    commands = List(
+      "wget https://chromedriver.storage.googleapis.com/86.0.4240.22/chromedriver_linux64.zip",
+      "mkdir ~/WebDrive",
+      "unzip chromedriver*.zip -d ~/Webdriver"
+    )
+  )
+)
+
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
