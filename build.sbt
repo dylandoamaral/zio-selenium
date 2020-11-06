@@ -73,7 +73,7 @@ ThisBuild / githubWorkflowBuildPreamble := Seq(
   ),
   WorkflowStep.Sbt(
     name = Some("Check linting"),
-    commands = List("\"scalafix --check\"")
+    commands = List("scalafix --check")
   )
 )
 ThisBuild / githubWorkflowBuild := Seq(WorkflowStep.Sbt(List("coverage", "test")))
