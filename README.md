@@ -1,6 +1,6 @@
 # Zinteract
 
-[![Actions Status](https://github.com/dylandoamaral/zinteract/workflows/Scala%20CI/badge.svg)](https://github.com/dylandoamaral/zinteract/actions)
+[![Actions Status](https://github.com/dylandoamaral/zinteract/workflows/Continuous%20Integration/badge.svg)](https://github.com/dylandoamaral/zinteract/actions)
 [![codecov](https://codecov.io/gh/dylandoamaral/zinteract/branch/master/graph/badge.svg)](https://codecov.io/gh/dylandoamaral/zinteract)
 
 A ZIO friendly library to interact with a browser using Selenium.

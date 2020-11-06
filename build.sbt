@@ -66,6 +66,21 @@ ThisBuild / githubWorkflowBuildPreamble := Seq(
       "mkdir ~/WebDrive",
       "unzip chromedriver*.zip -d ~/Webdriver"
     )
+  ),
+  WorkflowStep.Sbt(
+    name = Some("Check formatting"),
+    commands = List("scalafmtCheck")
+  ),
+  WorkflowStep.Sbt(
+    name = Some("Check linting"),
+    commands = List("scalafix --check")
+  )
+)
+ThisBuild / githubWorkflowBuild := Seq(WorkflowStep.Sbt(List("coverage", "test")))
+ThisBuild / githubWorkflowBuildPostamble := Seq(
+  WorkflowStep.Run(
+    name = Some("Generate coverage"),
+    commands = List("sbt coverageReport && bash <(curl -s https://codecov.io/bash)")
   )
 )
 
