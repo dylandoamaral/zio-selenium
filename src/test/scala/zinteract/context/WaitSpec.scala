@@ -13,7 +13,6 @@ import zinteract.session
 
 import org.openqa.selenium.{By, NoSuchElementException}
 
-
 object WaitSpec extends DefaultRunnableSpec {
   val testPath    = getClass.getResource("/WaitSpec.html").getPath
   val testWebsite = s"file://$testPath"
@@ -72,6 +71,16 @@ object WaitSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer(false, true))
       },
+      testM("Find elements can use fluent wait and returns empty list if no element") {
+        val effect =
+          for {
+            _        <- session.link(testWebsite)
+            waiter   <- session.getFluentWaiter(200.milliseconds, 1.second)
+            elements <- session.findElements(By.id("notexist"))(waiter)
+          } yield assert(elements)(isEmpty)
+
+        effect.provideCustomLayer(testLayer(false, true))
+      },
       testM("Find elements can use scheduled wait") {
         val waiter = Scheduled(Schedule.recurs(5) && Schedule.spaced(200.milliseconds))
         val effect =
@@ -80,6 +89,16 @@ object WaitSpec extends DefaultRunnableSpec {
             elements <- session.findElements(By.tagName("p"))(waiter)
             texts    <- ZIO.succeed(elements.map(_.getText()))
           } yield assert(texts)(equalTo(List("Test")))
+
+        Live.live(effect.provideCustomLayer(testLayer(false, true)))
+      },
+      testM("Find elements can use scheduled wait and returns empty list if no element") {
+        val waiter = Scheduled(Schedule.recurs(5) && Schedule.spaced(200.milliseconds))
+        val effect =
+          for {
+            _        <- session.link(testWebsite)
+            elements <- session.findElements(By.id("notexist"))(waiter)
+          } yield assert(elements)(isEmpty)
 
         Live.live(effect.provideCustomLayer(testLayer(false, true)))
       }

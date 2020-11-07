@@ -19,13 +19,13 @@ package object context {
     */
   def findElementFrom(
       context: SearchContext
-  )(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, NoSuchElementException, WebElement] = {
+  )(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, Throwable, WebElement] = {
     val effect = wait match {
       case None                => ZIO.effect(context.findElement(by))
       case Fluent(waiter)      => ZIO.effect(waiter.until(_ => context.findElement(by)))
       case Scheduled(schedule) => ZIO.effect(context.findElement(by)).retry(schedule)
     }
-    effect.refineToOrDie[NoSuchElementException]
+    effect
   }
 
   /**
@@ -41,7 +41,7 @@ package object context {
       case Scheduled(schedule) =>
         findElementFrom(context)(by)(wait).fold(_ => new ArrayList(), _ => context.findElements(by))
     }
-    effect.map(_.asScala.toList).orElseSucceed(List[WebElement]())
+    effect.map(_.asScala.toList)
   }
 
   /**

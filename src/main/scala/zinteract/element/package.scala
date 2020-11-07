@@ -186,7 +186,7 @@ package object element {
     /**
       * Finds the first WebElement using the given method.
       */
-    def findElementM(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, NoSuchElementException, WebElement] =
+    def findElementM(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, Throwable, WebElement] =
       findElementFrom(element)(by)(wait)
 
     /**
