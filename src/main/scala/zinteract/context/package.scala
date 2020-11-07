@@ -3,7 +3,7 @@ package zinteract
 import zio.{RIO, ZIO}
 import zio.clock.Clock
 
-import org.openqa.selenium.{By, NoSuchElementException, SearchContext, WebElement}
+import org.openqa.selenium.{By, SearchContext, WebElement}
 
 import scala.jdk.CollectionConverters._
 import java.util.ArrayList
