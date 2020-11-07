@@ -89,7 +89,7 @@ package object session {
               ZIO.effect(webdriver.get(url))
 
             def url: UIO[String] =
-              ZIO.effect(webdriver.getCurrentUrl).orElse(ZIO.succeed("about:blank"))
+              ZIO.succeed(webdriver.getCurrentUrl)
 
             def domain: UIO[String] =
               url.map(url => {
@@ -100,7 +100,7 @@ package object session {
               })
 
             def title: UIO[String] =
-              ZIO.effect(webdriver.getTitle).orElse(ZIO.succeed("title"))
+              ZIO.succeed(webdriver.getTitle)
 
             def findElement(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, Throwable, WebElement] =
               findElementFrom(webdriver)(by)(wait)
