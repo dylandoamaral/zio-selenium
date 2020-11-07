@@ -111,6 +111,66 @@ object ElementSpec extends DefaultRunnableSpec {
           }
 
         effect.provideCustomLayer(testLayer())
+      },
+      testM("Element is show by default") {
+        val effect =
+          for {
+            _         <- session.link(testWebsite)
+            element   <- session.findElement(By.id("show"))
+            displayed <- element.isDisplayedM
+          } yield assert(displayed)(isTrue)
+
+        effect.provideCustomLayer(testLayer(true, true))
+      },
+      testM("Element can be hidden") {
+        val effect =
+          for {
+            _         <- session.link(testWebsite)
+            element   <- session.findElement(By.id("hide"))
+            displayed <- element.isDisplayedM
+          } yield assert(displayed)(isFalse)
+
+        effect.provideCustomLayer(testLayer(true, true))
+      },
+      testM("Element is enable by default") {
+        val effect =
+          for {
+            _       <- session.link(testWebsite)
+            element <- session.findElement(By.id("enable"))
+            enabled <- element.isEnabledM
+          } yield assert(enabled)(isTrue)
+
+        effect.provideCustomLayer(testLayer())
+      },
+      testM("Element can be disable") {
+        val effect =
+          for {
+            _       <- session.link(testWebsite)
+            element <- session.findElement(By.id("disable"))
+            enabled <- element.isEnabledM
+          } yield assert(enabled)(isFalse)
+
+        effect.provideCustomLayer(testLayer())
+      },
+      testM("Element is unselected by default") {
+        val effect =
+          for {
+            _        <- session.link(testWebsite)
+            element  <- session.findElement(By.id("unselected"))
+            selected <- element.isSelectedM
+          } yield assert(selected)(isFalse)
+
+        effect.provideCustomLayer(testLayer())
+      },
+      testM("Element can be selected") {
+        val effect =
+          for {
+            _        <- session.link(testWebsite)
+            element  <- session.findElement(By.id("selected"))
+            selected <- element.isSelectedM
+          } yield assert(selected)(isTrue)
+
+        effect.provideCustomLayer(testLayer())
       }
     )
 

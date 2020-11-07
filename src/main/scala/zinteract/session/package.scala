@@ -51,7 +51,7 @@ package object session {
       def domain: UIO[String]
       def title: UIO[String]
 
-      def findElement(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, NoSuchElementException, WebElement]
+      def findElement(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, Throwable, WebElement]
       def findElements(by: By)(implicit wait: WaitConfig = None): RIO[Clock, List[WebElement]]
       def hasElement(by: By)(implicit wait: WaitConfig = None): RIO[Clock, Boolean]
 
@@ -89,7 +89,7 @@ package object session {
               ZIO.effect(webdriver.get(url))
 
             def url: UIO[String] =
-              ZIO.effect(webdriver.getCurrentUrl).orElse(ZIO.succeed("about:blank"))
+              ZIO.succeed(webdriver.getCurrentUrl)
 
             def domain: UIO[String] =
               url.map(url => {
@@ -100,9 +100,9 @@ package object session {
               })
 
             def title: UIO[String] =
-              ZIO.effect(webdriver.getTitle).orElse(ZIO.succeed("title"))
+              ZIO.succeed(webdriver.getTitle)
 
-            def findElement(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, NoSuchElementException, WebElement] =
+            def findElement(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, Throwable, WebElement] =
               findElementFrom(webdriver)(by)(wait)
 
             def findElements(by: By)(implicit wait: WaitConfig = None): RIO[Clock, List[WebElement]] =
@@ -221,7 +221,7 @@ package object session {
     */
   def findElement(
       by: By
-  )(implicit wait: WaitConfig = None): ZIO[Session with Clock, NoSuchElementException, WebElement] =
+  )(implicit wait: WaitConfig = None): ZIO[Session with Clock, Throwable, WebElement] =
     ZIO.accessM(_.get.findElement(by)(wait))
 
   /**

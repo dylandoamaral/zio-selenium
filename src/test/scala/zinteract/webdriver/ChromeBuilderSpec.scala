@@ -60,6 +60,9 @@ object ChromeBuilderSpec extends DefaultRunnableSpec {
     suite("Chrome Default Blueprint Spec")(
       testM("Default Chrome Blueprint has a normal pageLoadStrategy") {
         assertCapability(ChromeBlueprintOps.default)("pageLoadStrategy", "normal")
+      },
+      testM("Using unit change nothing to Default Chrome Blueprint") {
+        assertCapability(CommonBlueprintOps.unit && ChromeBlueprintOps.default)("pageLoadStrategy", "normal")
       }
     )
 
