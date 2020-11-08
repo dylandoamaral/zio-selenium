@@ -56,16 +56,6 @@ object ChromeBuilderSpec extends DefaultRunnableSpec {
       }
     )
 
-  def suiteChromeDefaultBlueprint =
-    suite("Chrome Default Blueprint Spec")(
-      testM("Default Chrome Blueprint has a normal pageLoadStrategy") {
-        assertCapability(ChromeBlueprintOps.default)("pageLoadStrategy", "normal")
-      },
-      testM("Using unit change nothing to Default Chrome Blueprint") {
-        assertCapability(CommonBlueprintOps.unit && ChromeBlueprintOps.default)("pageLoadStrategy", "normal")
-      }
-    )
-
   def suiteChromeBlueprint =
     suite("Chrome Default Blueprint Spec")(
       testM("Chrome Blueprint can overload default blueprint") {
@@ -111,5 +101,5 @@ object ChromeBuilderSpec extends DefaultRunnableSpec {
       }
     )
 
-  def spec = suite("Chrome Builder Spec")(suiteChromeBuilder, suiteChromeDefaultBlueprint, suiteChromeBlueprint)
+  def spec = suite("Chrome Builder Spec")(suiteChromeBuilder, suiteChromeBlueprint)
 }

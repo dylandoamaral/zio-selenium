@@ -4,6 +4,7 @@ import zio.Task
 
 import org.openqa.selenium.{MutableCapabilities, PageLoadStrategy, Proxy}
 import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.firefox.FirefoxOptions
 
 import scala.jdk.CollectionConverters._
 import java.io.File
@@ -57,8 +58,7 @@ object ChromeBlueprintOps {
   /**
     * Default configuration for the chrome blueprint.
     */
-  val default: ChromeBlueprint =
-    setLoadPageStrategy(PageLoadStrategy.NORMAL)
+  val default: ChromeBlueprint = CommonBlueprintOps.unit.asInstanceOf[ChromeBlueprint]
 
   /**
     * Adds command-line arguments to use when starting Chrome.
@@ -179,4 +179,40 @@ object ChromeBlueprintOps {
     */
   def setProxy(proxy: Proxy): ChromeBlueprint =
     Blueprint(options => Task.effect(options.setProxy(proxy)))
+}
+
+/**
+  * FirefoxBlueprint instances usable by FirefoxBuilder.
+  */
+object FirefoxBlueprintOps {
+  type FirefoxBlueprint = Blueprint[FirefoxOptions]
+
+  /**
+    * Default configuration for the firefox blueprint.
+    */
+  val default: FirefoxBlueprint = CommonBlueprintOps.unit.asInstanceOf[FirefoxBlueprint]
+
+  /**
+    * Defines the current session’s page loading strategy.
+    *
+    * See [[https://www.selenium.dev/documentation/en/webdriver/page_loading_strategy/ here]] for more information.
+    */
+  def setLoadPageStrategy(strategy: PageLoadStrategy): FirefoxBlueprint =
+    Blueprint(options => Task.effect(options.setPageLoadStrategy(strategy)))
+
+  /**
+    * Chooses if you want to run in headless mode or not
+    */
+  def setHeadless(bool: Boolean): FirefoxBlueprint =
+    Blueprint(options => Task.effect(options.setHeadless(bool)))
+
+  /**
+    * Runs in headless mode, i.e., without a UI or display server dependencies.
+    */
+  def headless: FirefoxBlueprint = setHeadless(true)
+
+  /**
+    * Doesn't run in headless mode.
+    */
+  def headfull: FirefoxBlueprint = setHeadless(false)
 }

@@ -53,6 +53,12 @@ ThisBuild / githubWorkflowPublish := Seq(
 
 ThisBuild / githubWorkflowBuildPreamble := Seq(
   WorkflowStep.Run(
+    name = Some("Create Webdriver foler"),
+    commands = List(
+      "mkdir ~/WebDrive"
+    )
+  ),
+  WorkflowStep.Run(
     name = Some("Install chrome"),
     commands = List(
       "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb",
@@ -63,8 +69,21 @@ ThisBuild / githubWorkflowBuildPreamble := Seq(
     name = Some("Install chromedriver"),
     commands = List(
       "wget https://chromedriver.storage.googleapis.com/86.0.4240.22/chromedriver_linux64.zip",
-      "mkdir ~/WebDrive",
       "unzip chromedriver*.zip -d ~/Webdriver"
+    )
+  ),
+  WorkflowStep.Run(
+    name = Some("Install firefox"),
+    commands = List(
+      "wget http://ftp.fr.debian.org/debian/pool/main/f/firefox/firefox_82.0.2-1_amd64.deb",
+      "sudo dpkg -i firefox*.deb"
+    )
+  ),
+  WorkflowStep.Run(
+    name = Some("Install geckodriver"),
+    commands = List(
+      "wget https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux32.tar.gz",
+      " tar zxvf geckodriver*.zip -C ~/Webdriver"
     )
   ),
   WorkflowStep.Sbt(
