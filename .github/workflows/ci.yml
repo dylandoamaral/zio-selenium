@@ -90,9 +90,7 @@ jobs:
           unzip chromedriver*.zip -d ~/Webdriver
 
       - name: Install firefox
-        run: |
-          wget http://ftp.fr.debian.org/debian/pool/main/f/firefox/firefox_82.0.2-1_amd64.deb
-          sudo dpkg -i firefox*.deb
+        run: sudo apt install firefox
 
       - name: Install geckodriver
         run: |

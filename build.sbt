@@ -75,8 +75,7 @@ ThisBuild / githubWorkflowBuildPreamble := Seq(
   WorkflowStep.Run(
     name = Some("Install firefox"),
     commands = List(
-      "wget http://ftp.fr.debian.org/debian/pool/main/f/firefox/firefox_82.0.2-1_amd64.deb",
-      "sudo dpkg -i firefox*.deb"
+      "sudo apt install firefox"
     )
   ),
   WorkflowStep.Run(
