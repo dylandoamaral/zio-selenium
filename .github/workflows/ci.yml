@@ -76,6 +76,9 @@ jobs:
           path: ~/.sbt
           key: ${{ runner.os }}-sbt-cache-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
+      - name: Create Webdriver foler
+        run: mkdir ~/WebDrive
+
       - name: Install chrome
         run: |
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -84,8 +87,17 @@ jobs:
       - name: Install chromedriver
         run: |
           wget https://chromedriver.storage.googleapis.com/86.0.4240.22/chromedriver_linux64.zip
-          mkdir ~/WebDrive
           unzip chromedriver*.zip -d ~/Webdriver
+
+      - name: Install firefox
+        run: |
+          wget http://ftp.fr.debian.org/debian/pool/main/f/firefox/firefox_82.0.2-1_amd64.deb
+          sudo dpkg -i firefox*.deb
+
+      - name: Install geckodriver
+        run: |
+          wget https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux32.tar.gz
+           tar zxvf geckodriver*.zip -C ~/Webdriver
 
       - name: Check formatting
         run: sbt ++${{ matrix.scala }} scalafmtCheck
