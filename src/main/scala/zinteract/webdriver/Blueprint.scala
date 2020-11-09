@@ -124,61 +124,6 @@ object ChromeBlueprintOps {
     * Runs in headless mode, i.e., without a UI or display server dependencies.
     */
   def headless: ChromeBlueprint = setHeadless(true)
-
-  /**
-    * Doesn't run in headless mode.
-    */
-  def headfull: ChromeBlueprint = setHeadless(false)
-
-  /**
-    * Sets the path to the Chrome executable. This path should exist on the
-    * machine which will launch Chrome. The path should either be absolute or
-    * relative to the location of running ChromeDriver server.
-    */
-  def setBinary(path: String): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.setBinary(path)))
-
-  /**
-    * Sets the path to the Chrome executable. This path should exist on the
-    * machine which will launch Chrome. The path should either be absolute or
-    * relative to the location of running ChromeDriver server.
-    */
-  def setBinary(path: File): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.setBinary(path)))
-
-  /**
-    * Adds a new Chrome extension to install on browser startup. Each path should
-    * specify a packed Chrome extension (CRX file).
-    */
-  def addExtension(extension: File): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addExtensions(extension)))
-
-  /**
-    * Adds new Chrome extensions to install on browser startup. Each path should
-    * specify a packed Chrome extension (CRX file).
-    */
-  def addExtensions(extensions: List[File]): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addExtensions(extensions.asJava)))
-
-  /**
-    * Adds a new Chrome extension to install on browser startup. Each string data should
-    * specify a Base64 encoded string of packed Chrome extension (CRX file).
-    */
-  def addEncodedExtension(encoded: String): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addEncodedExtensions(encoded)))
-
-  /**
-    * Adds a new Chrome extension to install on browser startup. Each string data should
-    * specify a Base64 encoded string of packed Chrome extension (CRX file).
-    */
-  def addEncodedExtensions(encoded: List[String]): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addEncodedExtensions(encoded.asJava)))
-
-  /**
-    * Set a proxy to the ChromeDriver.
-    */
-  def setProxy(proxy: Proxy): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.setProxy(proxy)))
 }
 
 /**
