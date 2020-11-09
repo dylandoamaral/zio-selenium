@@ -172,9 +172,4 @@ object FirefoxBlueprintOps {
     * Runs in headless mode, i.e., without a UI or display server dependencies.
     */
   def headless: FirefoxBlueprint = setHeadless(true)
-
-  /**
-    * Doesn't run in headless mode.
-    */
-  def headfull: FirefoxBlueprint = setHeadless(false)
 }
