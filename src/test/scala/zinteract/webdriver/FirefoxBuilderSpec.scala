@@ -1,6 +1,5 @@
 package zinteract.test
 
-import zio.ZIO
 import zio.test._
 import zio.test.Assertion._
 
@@ -9,8 +8,9 @@ import zinteract.webdriver.FirefoxBlueprintOps
 import zinteract.webdriver.FirefoxBlueprintOps.FirefoxBlueprint
 import zinteract.webdriver.CommonBlueprintOps
 
-import scala.jdk.CollectionConverters._
 import org.openqa.selenium.{PageLoadStrategy}
+
+import scala.jdk.CollectionConverters._
 
 object FirefoxBuilderSpec extends DefaultRunnableSpec {
   def assertCapability(blueprint: FirefoxBlueprint)(key: String, value: String) =
@@ -19,32 +19,21 @@ object FirefoxBuilderSpec extends DefaultRunnableSpec {
     } yield assert(capabilities.get(key).map(_.toString))(isSome(equalTo(value)))
 
   def assertArgument(blueprint: FirefoxBlueprint)(argument: String) =
-    for {
-      options <- (firefox using blueprint).buildOptions
-      arguments <- ZIO.succeed({
-        val field = options.getClass.getDeclaredField("args")
-        field.setAccessible(true)
-        field
-          .get(options)
-          .asInstanceOf[java.util.List[String]]
-          .asScala
-          .toList
-      })
-    } yield assert(arguments)(contains(argument))
+    BuilderUtils.assertArgument(firefox, blueprint)(argument)
 
   def suiteFirefoxBuilder =
     suite("Firefox Builder Spec")(
       test("We can build an unit firefox builder") {
         val builder = firefox
-        assert(builder.path)(equalTo(""))
+        assert(builder.path)(isNone)
       },
       test("We can update the path of a build with 'at'") {
         val builder = firefox at "path"
-        assert(builder.path)(equalTo("path"))
+        assert(builder.path)(isSome(equalTo("path")))
       },
       test("We can update the path of a build with '>'") {
         val builder = firefox > "path"
-        assert(builder.path)(equalTo("path"))
+        assert(builder.path)(isSome(equalTo("path")))
       },
       testM("We can update the blueprint of a build with 'using'") {
         val builder = firefox using FirefoxBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER)

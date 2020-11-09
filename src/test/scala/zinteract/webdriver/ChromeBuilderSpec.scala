@@ -1,6 +1,5 @@
 package zinteract.test
 
-import zio.ZIO
 import zio.test._
 import zio.test.Assertion._
 
@@ -9,8 +8,9 @@ import zinteract.webdriver.ChromeBlueprintOps
 import zinteract.webdriver.ChromeBlueprintOps.ChromeBlueprint
 import zinteract.webdriver.CommonBlueprintOps
 
-import scala.jdk.CollectionConverters._
 import org.openqa.selenium.{PageLoadStrategy}
+
+import scala.jdk.CollectionConverters._
 
 object ChromeBuilderSpec extends DefaultRunnableSpec {
   def assertCapability(blueprint: ChromeBlueprint)(key: String, value: String) =
@@ -19,32 +19,21 @@ object ChromeBuilderSpec extends DefaultRunnableSpec {
     } yield assert(capabilities.get(key).map(_.toString))(isSome(equalTo(value)))
 
   def assertArgument(blueprint: ChromeBlueprint)(argument: String) =
-    for {
-      options <- (chrome using blueprint).buildOptions
-      arguments <- ZIO.succeed({
-        val field = options.getClass.getDeclaredField("args")
-        field.setAccessible(true)
-        field
-          .get(options)
-          .asInstanceOf[java.util.List[String]]
-          .asScala
-          .toList
-      })
-    } yield assert(arguments)(contains(argument))
+    BuilderUtils.assertArgument(chrome, blueprint)(argument)
 
   def suiteChromeBuilder =
     suite("Chrome Builder Spec")(
       test("We can build an unit chrome builder") {
         val builder = chrome
-        assert(builder.path)(equalTo(""))
+        assert(builder.path)(isNone)
       },
       test("We can update the path of a build with 'at'") {
         val builder = chrome at "path"
-        assert(builder.path)(equalTo("path"))
+        assert(builder.path)(isSome(equalTo("path")))
       },
       test("We can update the path of a build with '>'") {
         val builder = chrome > "path"
-        assert(builder.path)(equalTo("path"))
+        assert(builder.path)(isSome(equalTo("path")))
       },
       testM("We can update the blueprint of a build with 'using'") {
         val builder = chrome using ChromeBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER)

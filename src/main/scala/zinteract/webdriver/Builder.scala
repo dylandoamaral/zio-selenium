@@ -2,8 +2,6 @@ package zinteract.webdriver
 
 import zio.{Task, UIO, ZIO, ZLayer}
 
-import ChromeBlueprintOps.ChromeBlueprint
-import FirefoxBlueprintOps.FirefoxBlueprint
 import zinteract.session.Session
 
 import org.openqa.selenium.{WebDriver => SeleniumWebDriver}
@@ -36,108 +34,88 @@ sealed trait Builder[Options, Driver] {
 }
 
 /**
-  * A builder specific to the chromedriver that uses chrome
-  * options for blueprint.
+  * A general Builder for Remote Web Driver
   */
-case class ChromeBuilder(path: String, blueprint: ChromeBlueprint = ChromeBlueprintOps.default)
-    extends Builder[ChromeOptions, ChromeDriver] {
+sealed case class RemoteBuilder[Options, Driver](
+    path: Option[String],
+    blueprint: Blueprint[Options],
+    pathProperty: String,
+    createOptions: () => Options,
+    createDriver: Options => Driver
+) extends Builder[Options, Driver] {
 
   /**
     * Returns a builder using the new path.
     */
-  def at(path: String): ChromeBuilder = this.copy(path = path)
+  def at(path: String): RemoteBuilder[Options, Driver] = this.copy(path = Some(path))
 
   /**
     * Operator alias for `at`.
     */
-  def >(path: String): ChromeBuilder = at(path)
+  def >(path: String): RemoteBuilder[Options, Driver] = at(path)
 
   /**
     * Returns a builder using the new blueprint.
     */
-  def using(blueprint: ChromeBlueprint): ChromeBuilder = this.copy(blueprint = blueprint)
+  def using(blueprint: Blueprint[Options]): RemoteBuilder[Options, Driver] =
+    this.copy(blueprint = blueprint)
 
   /**
     * Operator alias for `>>`.
     */
-  def >>(blueprint: ChromeBlueprint): ChromeBuilder = using(blueprint)
+  def >>(blueprint: Blueprint[Options]): RemoteBuilder[Options, Driver] = using(blueprint)
 
   /**
-    * Builds a ChromeOptions by applying the blueprint.
+    * Builds Options by applying the blueprint.
     */
-  def buildOptions: Task[ChromeOptions] =
+  def buildOptions: Task[Options] =
     for {
-      options <- ZIO.effect(new ChromeOptions())
+      options <- ZIO.effect(createOptions())
       _       <- blueprint.link(options)
     } yield options
 
   /**
-    * Builds a ChromeDriver by applying the blueprint.
+    * Builds a Driver by applying the blueprint.
     */
-  def buildDriver: Task[ChromeDriver] =
+  def buildDriver: Task[Driver] =
     for {
-      _       <- ZIO.effect(System.setProperty("webdriver.chrome.driver", path))
+      _ <- path match {
+        case None       => ZIO.succeed()
+        case Some(path) => ZIO.effect(System.setProperty(pathProperty, path))
+
+      }
       options <- this.buildOptions
-      driver  <- ZIO.effect(new ChromeDriver(options))
-    } yield driver
-}
-
-/**
-  * A builder specific to the gechodriver that uses firefox
-  * options for blueprint.
-  */
-case class FirefoxBuilder(path: String, blueprint: FirefoxBlueprint = FirefoxBlueprintOps.default)
-    extends Builder[FirefoxOptions, FirefoxDriver] {
-
-  /**
-    * Returns a builder using the new path.
-    */
-  def at(path: String): FirefoxBuilder = this.copy(path = path)
-
-  /**
-    * Operator alias for `at`.
-    */
-  def >(path: String): FirefoxBuilder = at(path)
-
-  /**
-    * Returns a builder using the new blueprint.
-    */
-  def using(blueprint: FirefoxBlueprint): FirefoxBuilder = this.copy(blueprint = blueprint)
-
-  /**
-    * Operator alias for `>>`.
-    */
-  def >>(blueprint: FirefoxBlueprint): FirefoxBuilder = using(blueprint)
-
-  /**
-    * Builds a ChromeOptions by applying the blueprint.
-    */
-  def buildOptions: Task[FirefoxOptions] =
-    for {
-      options <- ZIO.effect(new FirefoxOptions())
-      _       <- blueprint.link(options)
-    } yield options
-
-  /**
-    * Builds a ChromeDriver by applying the blueprint.
-    */
-  def buildDriver: Task[FirefoxDriver] =
-    for {
-      _       <- ZIO.effect(System.setProperty("webdriver.gecko.driver", path))
-      options <- this.buildOptions
-      driver  <- ZIO.effect(new FirefoxDriver(options))
+      driver  <- ZIO.effect(createDriver(options))
     } yield driver
 }
 
 object BuilderOps {
 
+  type ChromeBuilder = RemoteBuilder[ChromeOptions, ChromeDriver]
+
   /**
     * Create an unit chrome builder.
     */
-  def chrome: ChromeBuilder = ChromeBuilder("")
+  def chrome: ChromeBuilder =
+    RemoteBuilder(
+      None,
+      ChromeBlueprintOps.default,
+      "webdriver.chrome.driver",
+      () => new ChromeOptions(),
+      options => new ChromeDriver(options)
+    )
+
+  type FirefoxBuilder = RemoteBuilder[FirefoxOptions, FirefoxDriver]
 
   /**
     * Create an unit firefox builder.
     */
-  def firefox: FirefoxBuilder = FirefoxBuilder("")
+  def firefox: FirefoxBuilder =
+    RemoteBuilder(
+      None,
+      FirefoxBlueprintOps.default,
+      "webdriver.gecko.driver",
+      () => new FirefoxOptions(),
+      options => new FirefoxDriver(options)
+    )
 }
