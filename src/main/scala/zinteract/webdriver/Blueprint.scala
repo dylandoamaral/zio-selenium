@@ -2,11 +2,9 @@ package zinteract.webdriver
 
 import zio.Task
 
-import org.openqa.selenium.{MutableCapabilities, PageLoadStrategy, Proxy}
+import org.openqa.selenium.{MutableCapabilities, PageLoadStrategy}
 import org.openqa.selenium.chrome.ChromeOptions
-
-import scala.jdk.CollectionConverters._
-import java.io.File
+import org.openqa.selenium.firefox.FirefoxOptions
 
 /**
   * The Blueprint describe a chaining of capabaility for
@@ -57,8 +55,7 @@ object ChromeBlueprintOps {
   /**
     * Default configuration for the chrome blueprint.
     */
-  val default: ChromeBlueprint =
-    setLoadPageStrategy(PageLoadStrategy.NORMAL)
+  val default: ChromeBlueprint = CommonBlueprintOps.unit.asInstanceOf[ChromeBlueprint]
 
   /**
     * Adds command-line arguments to use when starting Chrome.
@@ -124,59 +121,55 @@ object ChromeBlueprintOps {
     * Runs in headless mode, i.e., without a UI or display server dependencies.
     */
   def headless: ChromeBlueprint = setHeadless(true)
+}
+
+/**
+  * FirefoxBlueprint instances usable by FirefoxBuilder.
+  */
+object FirefoxBlueprintOps {
+  type FirefoxBlueprint = Blueprint[FirefoxOptions]
 
   /**
-    * Doesn't run in headless mode.
+    * Default configuration for the firefox blueprint.
     */
-  def headfull: ChromeBlueprint = setHeadless(false)
+  val default: FirefoxBlueprint = CommonBlueprintOps.unit.asInstanceOf[FirefoxBlueprint]
 
   /**
-    * Sets the path to the Chrome executable. This path should exist on the
-    * machine which will launch Chrome. The path should either be absolute or
-    * relative to the location of running ChromeDriver server.
+    * Adds command-line arguments to use when starting Firefox.
+    * Arguments with an associated value should be separated by a '=' sign
+    * (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
+    *
+    * See [[https://firefox-source-docs.mozilla.org/testing/geckodriver/Flags.html here]] for a list of Firefox arguments.
     */
-  def setBinary(path: String): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.setBinary(path)))
+  def addArguments(args: List[String]): FirefoxBlueprint =
+    Blueprint(options => Task.effect(options.addArguments(args: _*)))
 
   /**
-    * Sets the path to the Chrome executable. This path should exist on the
-    * machine which will launch Chrome. The path should either be absolute or
-    * relative to the location of running ChromeDriver server.
+    * Adds a command-line argument to use when starting Firefox.
+    * Arguments with an associated value should be separated by a '=' sign
+    * (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
+    *
+    * See [[https://firefox-source-docs.mozilla.org/testing/geckodriver/Flags.html here]] for a list of Firefox arguments.
     */
-  def setBinary(path: File): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.setBinary(path)))
+  def addArgument(arg: String): FirefoxBlueprint =
+    addArguments(List(arg))
 
   /**
-    * Adds a new Chrome extension to install on browser startup. Each path should
-    * specify a packed Chrome extension (CRX file).
+    * Defines the current session’s page loading strategy.
+    *
+    * See [[https://www.selenium.dev/documentation/en/webdriver/page_loading_strategy/ here]] for more information.
     */
-  def addExtension(extension: File): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addExtensions(extension)))
+  def setLoadPageStrategy(strategy: PageLoadStrategy): FirefoxBlueprint =
+    Blueprint(options => Task.effect(options.setPageLoadStrategy(strategy)))
 
   /**
-    * Adds new Chrome extensions to install on browser startup. Each path should
-    * specify a packed Chrome extension (CRX file).
+    * Chooses if you want to run in headless mode or not
     */
-  def addExtensions(extensions: List[File]): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addExtensions(extensions.asJava)))
+  def setHeadless(bool: Boolean): FirefoxBlueprint =
+    Blueprint(options => Task.effect(options.setHeadless(bool)))
 
   /**
-    * Adds a new Chrome extension to install on browser startup. Each string data should
-    * specify a Base64 encoded string of packed Chrome extension (CRX file).
+    * Runs in headless mode, i.e., without a UI or display server dependencies.
     */
-  def addEncodedExtension(encoded: String): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addEncodedExtensions(encoded)))
-
-  /**
-    * Adds a new Chrome extension to install on browser startup. Each string data should
-    * specify a Base64 encoded string of packed Chrome extension (CRX file).
-    */
-  def addEncodedExtensions(encoded: List[String]): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addEncodedExtensions(encoded.asJava)))
-
-  /**
-    * Set a proxy to the ChromeDriver.
-    */
-  def setProxy(proxy: Proxy): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.setProxy(proxy)))
+  def headless: FirefoxBlueprint = setHeadless(true)
 }

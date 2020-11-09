@@ -76,16 +76,18 @@ jobs:
           path: ~/.sbt
           key: ${{ runner.os }}-sbt-cache-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
-      - name: Install chrome
-        run: |
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo dpkg -i google-chrome*.deb
+      - name: Create Webdriver folder
+        run: mkdir ~/Webdriver
 
       - name: Install chromedriver
         run: |
           wget https://chromedriver.storage.googleapis.com/86.0.4240.22/chromedriver_linux64.zip
-          mkdir ~/WebDrive
           unzip chromedriver*.zip -d ~/Webdriver
+
+      - name: Install geckodriver
+        run: |
+          wget https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux32.tar.gz
+          tar zxvf geckodriver*.tar.gz -C ~/Webdriver
 
       - name: Check formatting
         run: sbt ++${{ matrix.scala }} scalafmtCheck
