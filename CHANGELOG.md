@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 0.1.1 (2020-11-09)
+
+Features:
+
+- Add firefox webdriver by @dylandoamaral [#51](https://github.com/dylandoamaral/zinteract/pull/51)
+- Improve webdriver creation by @dylandoamaral ([#36](https://github.com/dylandoamaral/zinteract/pull/36), [#45](https://github.com/dylandoamaral/zinteract/pull/45), [#46](https://github.com/dylandoamaral/zinteract/pull/46))
+- Handle alerts, confirmations and prompts by @dylandoamaral [#33](https://github.com/dylandoamaral/zinteract/pull/33)
+- Handle cookies [#32](https://github.com/dylandoamaral/zinteract/pull/32)
+
 ## 0.1.0 (2020-10-20)
 
 Features:
