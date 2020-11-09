@@ -53,9 +53,9 @@ ThisBuild / githubWorkflowPublish := Seq(
 
 ThisBuild / githubWorkflowBuildPreamble := Seq(
   WorkflowStep.Run(
-    name = Some("Create Webdriver foler"),
+    name = Some("Create Webdriver folder"),
     commands = List(
-      "mkdir ~/WebDrive"
+      "mkdir ~/Webdriver"
     )
   ),
   WorkflowStep.Run(

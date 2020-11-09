@@ -76,8 +76,8 @@ jobs:
           path: ~/.sbt
           key: ${{ runner.os }}-sbt-cache-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
-      - name: Create Webdriver foler
-        run: mkdir ~/WebDrive
+      - name: Create Webdriver folder
+        run: mkdir ~/Webdriver
 
       - name: Install chromedriver
         run: |
