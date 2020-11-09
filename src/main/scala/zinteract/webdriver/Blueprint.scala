@@ -2,12 +2,9 @@ package zinteract.webdriver
 
 import zio.Task
 
-import org.openqa.selenium.{MutableCapabilities, PageLoadStrategy, Proxy}
+import org.openqa.selenium.{MutableCapabilities, PageLoadStrategy}
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.firefox.FirefoxOptions
-
-import scala.jdk.CollectionConverters._
-import java.io.File
 
 /**
   * The Blueprint describe a chaining of capabaility for
