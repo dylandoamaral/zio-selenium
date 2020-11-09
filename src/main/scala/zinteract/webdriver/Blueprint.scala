@@ -193,6 +193,26 @@ object FirefoxBlueprintOps {
   val default: FirefoxBlueprint = CommonBlueprintOps.unit.asInstanceOf[FirefoxBlueprint]
 
   /**
+    * Adds command-line arguments to use when starting Firefox.
+    * Arguments with an associated value should be separated by a '=' sign
+    * (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
+    *
+    * See [[https://firefox-source-docs.mozilla.org/testing/geckodriver/Flags.html here]] for a list of Firefox arguments.
+    */
+  def addArguments(args: List[String]): FirefoxBlueprint =
+    Blueprint(options => Task.effect(options.addArguments(args: _*)))
+
+  /**
+    * Adds a command-line argument to use when starting Firefox.
+    * Arguments with an associated value should be separated by a '=' sign
+    * (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
+    *
+    * See [[https://firefox-source-docs.mozilla.org/testing/geckodriver/Flags.html here]] for a list of Firefox arguments.
+    */
+  def addArgument(arg: String): FirefoxBlueprint =
+    addArguments(List(arg))
+
+  /**
     * Defines the current session’s page loading strategy.
     *
     * See [[https://www.selenium.dev/documentation/en/webdriver/page_loading_strategy/ here]] for more information.

@@ -132,12 +132,12 @@ case class FirefoxBuilder(path: String, blueprint: FirefoxBlueprint = FirefoxBlu
 object BuilderOps {
 
   /**
-    * Create a unit chrome builder.
+    * Create an unit chrome builder.
     */
   def chrome: ChromeBuilder = ChromeBuilder("")
 
   /**
-    * Create a unit firefox builder.
+    * Create an unit firefox builder.
     */
   def firefox: FirefoxBuilder = FirefoxBuilder("")
 }

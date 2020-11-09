@@ -7,6 +7,7 @@ import zio.test.Assertion._
 import zinteract.webdriver.BuilderOps.firefox
 import zinteract.webdriver.FirefoxBlueprintOps
 import zinteract.webdriver.FirefoxBlueprintOps.FirefoxBlueprint
+import zinteract.webdriver.CommonBlueprintOps
 
 import scala.jdk.CollectionConverters._
 import org.openqa.selenium.{PageLoadStrategy}
@@ -61,6 +62,26 @@ object FirefoxBuilderSpec extends DefaultRunnableSpec {
         val blueprint = FirefoxBlueprintOps.default &&
           FirefoxBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER)
         assertCapability(blueprint)("pageLoadStrategy", "eager")
+      },
+      testM("Firefox Blueprint can compose two action") {
+        val blueprint = FirefoxBlueprintOps.addArgument("--argument") and FirefoxBlueprintOps.addArgument("--argument2")
+        assertArgument(blueprint)("--argument")
+        assertArgument(blueprint)("--argument2")
+      },
+      testM("Firefox Blueprint can set capability") {
+        val blueprint = CommonBlueprintOps.setCapability("key", "value") && FirefoxBlueprintOps.default
+        assertCapability(blueprint)("key", "value")
+      },
+      testM("Firefox Blueprint can set another pageLoadStrategy") {
+        assertCapability(FirefoxBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER))("pageLoadStrategy", "eager")
+      },
+      testM("Firefox Blueprint can add an argument") {
+        assertArgument(FirefoxBlueprintOps.addArgument("--argument"))("--argument")
+      },
+      testM("Firefox Blueprint can add arguments") {
+        val blueprint = FirefoxBlueprintOps.addArguments(List("--argument", "--argument2"))
+        assertArgument(blueprint)("--argument")
+        assertArgument(blueprint)("--argument2")
       }
     )
 
