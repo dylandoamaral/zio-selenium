@@ -11,7 +11,7 @@ object Link extends App {
     _ <- session.link("https://www.selenium.dev/documentation/en/")
   } yield ()
 
-  val builder = chrome at "/path/to/webdriver/chromedriver" using default
+  val builder = chrome at "/path/to/chromedriver" using default
 
   override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
     app

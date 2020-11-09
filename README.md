@@ -12,13 +12,13 @@ A ZIO friendly library to interact with a browser using Selenium.
 
 ## Using Zinteract
 
-The latest version is 0.1.0, which is avaible for scala 2.13.
+The latest version is 0.1.1, which is avaible for scala 2.13.
 
 If you're using sbt, add the following to your build:
 
 ```bash
 libraryDependencies ++= Seq(
-  "dev.doamaral" %% "zinteract" % "0.1.0"
+  "dev.doamaral" %% "zinteract" % "0.1.1"
 )
 ```
 
@@ -43,7 +43,7 @@ object FindElement extends App {
     _       <- console.putStrLn(s"Title: ${element.getText()}")
   } yield ()
 
-  val builder = chrome at "/path/to/webdriver/chromedriver" using default
+  val builder = chrome at "/path/to/chromedriver" using default
 
   override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
     app
