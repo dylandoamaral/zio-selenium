@@ -6,7 +6,7 @@ import zio.test.Assertion._
 
 import zinteract.test.TestDriver.testLayer
 import zinteract.element._
-import zinteract.session
+import zinteract.webdriver
 
 import org.openqa.selenium.By
 
@@ -18,8 +18,8 @@ object ElementSpec extends DefaultRunnableSpec {
     suite("Interact Element Spec")(
       testM("Element such as input should be writable") {
         val effect = for {
-          _      <- session.link(testWebsite)
-          search <- session.findElement(By.id("input"))
+          _      <- webdriver.link(testWebsite)
+          search <- webdriver.findElement(By.id("input"))
           _      <- search.sendKeysM("test")
         } yield assert(search.getAttribute("value"))(equalTo("test"))
 
@@ -27,8 +27,8 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element such as input should be cleanable") {
         val effect = for {
-          _      <- session.link(testWebsite)
-          search <- session.findElement(By.id("input"))
+          _      <- webdriver.link(testWebsite)
+          search <- webdriver.findElement(By.id("input"))
           _      <- search.sendKeysM("test")
           _      <- search.clearM
         } yield assert(search.getAttribute("value"))(isEmptyString)
@@ -37,20 +37,20 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element such as button should be clickable") {
         val effect = for {
-          _      <- session.link(testWebsite)
-          button <- session.findElement(By.tagName("a"))
+          _      <- webdriver.link(testWebsite)
+          button <- webdriver.findElement(By.tagName("a"))
           _      <- button.clickM
-          url    <- session.url
+          url    <- webdriver.url
         } yield assert(url)(equalTo("https://www.google.com/"))
 
         effect.provideCustomLayer(testLayer())
       },
       testM("Element such as form should be submitable") {
         val effect = for {
-          _    <- session.link(testWebsite)
-          form <- session.findElement(By.tagName("form"))
+          _    <- webdriver.link(testWebsite)
+          form <- webdriver.findElement(By.tagName("form"))
           _    <- form.submitM
-          url  <- session.url
+          url  <- webdriver.url
         } yield assert(url)(equalTo("https://www.google.com/"))
 
         effect.provideCustomLayer(testLayer())
@@ -61,8 +61,8 @@ object ElementSpec extends DefaultRunnableSpec {
     suite("Getter Element Spec")(
       testM("Element has attributes") {
         val effect = for {
-          _     <- session.link(testWebsite)
-          h1    <- session.findElement(By.id("test"))
+          _     <- webdriver.link(testWebsite)
+          h1    <- webdriver.findElement(By.id("test"))
           title <- h1.getAttributeM("title")
         } yield assert(title)(equalTo("Test 1"))
 
@@ -70,8 +70,8 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element can have a text") {
         val effect = for {
-          _    <- session.link(testWebsite)
-          h1   <- session.findElement(By.id("test"))
+          _    <- webdriver.link(testWebsite)
+          h1   <- webdriver.findElement(By.id("test"))
           text <- h1.getTextM
         } yield assert(text)(equalTo("Test 1"))
 
@@ -79,8 +79,8 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element has css values") {
         val effect = for {
-          _     <- session.link(testWebsite)
-          h1    <- session.findElement(By.id("test"))
+          _     <- webdriver.link(testWebsite)
+          h1    <- webdriver.findElement(By.id("test"))
           value <- h1.getCssValueM("color")
         } yield assert(value)(equalTo("rgba(0, 0, 255, 0.5)"))
 
@@ -88,8 +88,8 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element has a tag name") {
         val effect = for {
-          _   <- session.link(testWebsite)
-          h1  <- session.findElement(By.tagName("h1"))
+          _   <- webdriver.link(testWebsite)
+          h1  <- webdriver.findElement(By.tagName("h1"))
           tag <- h1.getTagNameM
         } yield assert(tag)(equalTo("h1"))
 
@@ -98,8 +98,8 @@ object ElementSpec extends DefaultRunnableSpec {
       testM("Element has a location, as size and a rect") {
         val effect =
           for {
-            _        <- session.link(testWebsite)
-            h1       <- session.findElement(By.tagName("h1"))
+            _        <- webdriver.link(testWebsite)
+            h1       <- webdriver.findElement(By.tagName("h1"))
             location <- h1.getLocationM
             size     <- h1.getSizeM
             rect     <- h1.getRectM
@@ -115,8 +115,8 @@ object ElementSpec extends DefaultRunnableSpec {
       testM("Element is show by default") {
         val effect =
           for {
-            _         <- session.link(testWebsite)
-            element   <- session.findElement(By.id("show"))
+            _         <- webdriver.link(testWebsite)
+            element   <- webdriver.findElement(By.id("show"))
             displayed <- element.isDisplayedM
           } yield assert(displayed)(isTrue)
 
@@ -125,8 +125,8 @@ object ElementSpec extends DefaultRunnableSpec {
       testM("Element can be hidden") {
         val effect =
           for {
-            _         <- session.link(testWebsite)
-            element   <- session.findElement(By.id("hide"))
+            _         <- webdriver.link(testWebsite)
+            element   <- webdriver.findElement(By.id("hide"))
             displayed <- element.isDisplayedM
           } yield assert(displayed)(isFalse)
 
@@ -135,8 +135,8 @@ object ElementSpec extends DefaultRunnableSpec {
       testM("Element is enable by default") {
         val effect =
           for {
-            _       <- session.link(testWebsite)
-            element <- session.findElement(By.id("enable"))
+            _       <- webdriver.link(testWebsite)
+            element <- webdriver.findElement(By.id("enable"))
             enabled <- element.isEnabledM
           } yield assert(enabled)(isTrue)
 
@@ -145,8 +145,8 @@ object ElementSpec extends DefaultRunnableSpec {
       testM("Element can be disable") {
         val effect =
           for {
-            _       <- session.link(testWebsite)
-            element <- session.findElement(By.id("disable"))
+            _       <- webdriver.link(testWebsite)
+            element <- webdriver.findElement(By.id("disable"))
             enabled <- element.isEnabledM
           } yield assert(enabled)(isFalse)
 
@@ -155,8 +155,8 @@ object ElementSpec extends DefaultRunnableSpec {
       testM("Element is unselected by default") {
         val effect =
           for {
-            _        <- session.link(testWebsite)
-            element  <- session.findElement(By.id("unselected"))
+            _        <- webdriver.link(testWebsite)
+            element  <- webdriver.findElement(By.id("unselected"))
             selected <- element.isSelectedM
           } yield assert(selected)(isFalse)
 
@@ -165,8 +165,8 @@ object ElementSpec extends DefaultRunnableSpec {
       testM("Element can be selected") {
         val effect =
           for {
-            _        <- session.link(testWebsite)
-            element  <- session.findElement(By.id("selected"))
+            _        <- webdriver.link(testWebsite)
+            element  <- webdriver.findElement(By.id("selected"))
             selected <- element.isSelectedM
           } yield assert(selected)(isTrue)
 
@@ -178,8 +178,8 @@ object ElementSpec extends DefaultRunnableSpec {
     suite("Find Elements Spec")(
       testM("Element can find an element") {
         val effect = for {
-          result <- session.link(testWebsite)
-          div    <- session.findElement(By.id("div"))
+          result <- webdriver.link(testWebsite)
+          div    <- webdriver.findElement(By.id("div"))
           p      <- div.findElementM(By.tagName("p"))
           text   <- p.getTextM
         } yield assert(text)(equalTo("Test 3"))
@@ -188,8 +188,8 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element can find several elements") {
         val effect = for {
-          result <- session.link(testWebsite)
-          div    <- session.findElement(By.id("div"))
+          result <- webdriver.link(testWebsite)
+          div    <- webdriver.findElement(By.id("div"))
           ps     <- div.findElementsM(By.tagName("p"))
           texts  <- ZIO.succeed(ps.map(_.getText()))
         } yield assert(texts)(equalTo(List("Test 3")))
@@ -198,8 +198,8 @@ object ElementSpec extends DefaultRunnableSpec {
       },
       testM("Element can check if an element exist") {
         val effect = for {
-          result <- session.link(testWebsite)
-          div    <- session.findElement(By.id("div"))
+          result <- webdriver.link(testWebsite)
+          div    <- webdriver.findElement(By.id("div"))
           bool   <- div.hasElementM(By.tagName("p"))
         } yield assert(bool)(isTrue)
 

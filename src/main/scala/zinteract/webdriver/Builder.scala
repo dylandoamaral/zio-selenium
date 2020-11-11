@@ -2,8 +2,6 @@ package zinteract.webdriver
 
 import zio.{Task, UIO, ZIO, ZLayer}
 
-import zinteract.session.Session
-
 import org.openqa.selenium.{WebDriver => SeleniumWebDriver}
 import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
 import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions}
@@ -27,10 +25,8 @@ sealed trait Builder[Options, Driver] {
   /**
     * Build the ZLayer from the builder description.
     */
-  def buildLayer: ZLayer[Any, Throwable, Session] =
-    ZLayer.fromAcquireRelease(buildDriver.map(_.asInstanceOf[SeleniumWebDriver]))(driver =>
-      UIO(driver.quit())
-    ) >>> Session.Service.live
+  def buildLayer: ZLayer[Any, Throwable, WebDriver] =
+    ZLayer.fromAcquireRelease(buildDriver.map(_.asInstanceOf[SeleniumWebDriver]))(driver => UIO(driver.quit()))
 }
 
 /**
