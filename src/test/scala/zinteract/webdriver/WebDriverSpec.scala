@@ -60,7 +60,7 @@ object WebDriverSpec extends DefaultRunnableSpec {
 
         val effect = for {
           _    <- webdriver.link(testWebsite)
-          raw  <- webdriver.getPageSource
+          raw  <- webdriver.source
           html <- ZIO.succeed(raw.replace("\r\n", "\n"))
         } yield assert(clean(html))(equalTo(clean(source)))
 
@@ -75,8 +75,23 @@ object WebDriverSpec extends DefaultRunnableSpec {
 
         assertM(effect.provideCustomLayer(testLayer()))(equalTo("about:blank"))
       },
-      testM("WebDriver should link correctly to a correct url") {
+      testM("WebDriver should link correctly to a correct url using `navigate.to`") {
+        val effect = webdriver.navigate.to("https://www.google.com/") *> webdriver.url
+
+        assertM(effect.provideCustomLayer(testLayer()))(equalTo("https://www.google.com/"))
+      },
+      testM("WebDriver should link correctly to a correct url using `link`") {
         val effect = webdriver.link("https://www.google.com/") *> webdriver.url
+
+        assertM(effect.provideCustomLayer(testLayer()))(equalTo("https://www.google.com/"))
+      },
+      testM("WebDriver should link correctly to a correct url using `goto`") {
+        val effect = webdriver.goto("https://www.google.com/") *> webdriver.url
+
+        assertM(effect.provideCustomLayer(testLayer()))(equalTo("https://www.google.com/"))
+      },
+      testM("WebDriver should link correctly to a correct url using `get`") {
+        val effect = webdriver.get("https://www.google.com/") *> webdriver.url
 
         assertM(effect.provideCustomLayer(testLayer()))(equalTo("https://www.google.com/"))
       },
