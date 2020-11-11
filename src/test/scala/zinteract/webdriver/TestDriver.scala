@@ -1,7 +1,6 @@
 package zinteract.test
 
 import zinteract.webdriver.WebDriver.Service.webdriver
-import zinteract.session.Session
 
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import com.gargoylesoftware.htmlunit.WebClient
@@ -19,5 +18,5 @@ object TestDriver {
     webdriver(new TestDriver(cssEnabled, jsEnabled))
 
   def testLayer(cssEnabled: Boolean = false, jsEnabled: Boolean = false) =
-    TestDriver.testDriver(cssEnabled, jsEnabled) >>> Session.Service.live
+    TestDriver.testDriver(cssEnabled, jsEnabled)
 }

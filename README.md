@@ -30,7 +30,7 @@ Here is a sample to link to a particular website and retrieve the title:
 import zio.{App, ExitCode}
 import zio.console
 
-import zinteract.session
+import zinteract.webdriver
 import zinteract.webdriver.ChromeBlueprintOps.default
 import zinteract.webdriver.BuilderOps.chrome
 
@@ -38,8 +38,8 @@ import org.openqa.selenium.By
 
 object FindElement extends App {
   val app = for {
-    _       <- session.link("https://www.selenium.dev/documentation/en/")
-    element <- session.findElement(By.id("the-selenium-browser-automation-project"))
+    _       <- webdriver.link("https://www.selenium.dev/documentation/en/")
+    element <- webdriver.findElement(By.id("the-selenium-browser-automation-project"))
     _       <- console.putStrLn(s"Title: ${element.getText()}")
   } yield ()
 
