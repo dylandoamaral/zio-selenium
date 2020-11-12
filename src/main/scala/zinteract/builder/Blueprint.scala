@@ -1,4 +1,4 @@
-package zinteract.webdriver
+package zinteract.builder
 
 import zio.Task
 
@@ -31,7 +31,7 @@ case class Blueprint[A](link: A => Task[Unit]) {
 /**
   * CommonBlueprint instances usable by any builder.
   */
-object CommonBlueprintOps {
+object CommonBlueprint {
   type CommonBlueprint = Blueprint[MutableCapabilities]
 
   /**
@@ -49,13 +49,13 @@ object CommonBlueprintOps {
 /**
   * ChromeBlueprint instances usable by ChromeBuilder.
   */
-object ChromeBlueprintOps {
+object ChromeBlueprint {
   type ChromeBlueprint = Blueprint[ChromeOptions]
 
   /**
     * Default configuration for the chrome blueprint.
     */
-  val default: ChromeBlueprint = CommonBlueprintOps.unit.asInstanceOf[ChromeBlueprint]
+  val default: ChromeBlueprint = CommonBlueprint.unit.asInstanceOf[ChromeBlueprint]
 
   /**
     * Adds command-line arguments to use when starting Chrome.
@@ -126,13 +126,13 @@ object ChromeBlueprintOps {
 /**
   * FirefoxBlueprint instances usable by FirefoxBuilder.
   */
-object FirefoxBlueprintOps {
+object FirefoxBlueprint {
   type FirefoxBlueprint = Blueprint[FirefoxOptions]
 
   /**
     * Default configuration for the firefox blueprint.
     */
-  val default: FirefoxBlueprint = CommonBlueprintOps.unit.asInstanceOf[FirefoxBlueprint]
+  val default: FirefoxBlueprint = CommonBlueprint.unit.asInstanceOf[FirefoxBlueprint]
 
   /**
     * Adds command-line arguments to use when starting Firefox.

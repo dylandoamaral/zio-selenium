@@ -4,8 +4,8 @@ import zio.ZIO
 import zio.test._
 import zio.test.Assertion._
 
-import zinteract.webdriver.Blueprint
-import zinteract.webdriver.RemoteBuilder
+import zinteract.builder.Blueprint
+import zinteract.builder.RemoteBuilder
 
 import org.openqa.selenium.MutableCapabilities
 
