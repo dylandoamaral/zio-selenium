@@ -3,10 +3,10 @@ package zinteract.test
 import zio.test._
 import zio.test.Assertion._
 
-import zinteract.webdriver.BuilderOps.chrome
-import zinteract.webdriver.ChromeBlueprintOps
-import zinteract.webdriver.ChromeBlueprintOps.ChromeBlueprint
-import zinteract.webdriver.CommonBlueprintOps
+import zinteract.builder.chrome
+import zinteract.builder.CommonBlueprint
+import zinteract.builder.ChromeBlueprint
+import zinteract.builder.ChromeBlueprint.ChromeBlueprint
 
 import org.openqa.selenium.{PageLoadStrategy}
 
@@ -36,11 +36,11 @@ object ChromeBuilderSpec extends DefaultRunnableSpec {
         assert(builder.path)(isSome(equalTo("path")))
       },
       testM("We can update the blueprint of a build with 'using'") {
-        val builder = chrome using ChromeBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER)
+        val builder = chrome using ChromeBlueprint.setLoadPageStrategy(PageLoadStrategy.EAGER)
         assertCapability(builder.blueprint)("pageLoadStrategy", "eager")
       },
       testM("We can update the blueprint of a build with '>>'") {
-        val builder = chrome >> ChromeBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER)
+        val builder = chrome >> ChromeBlueprint.setLoadPageStrategy(PageLoadStrategy.EAGER)
         assertCapability(builder.blueprint)("pageLoadStrategy", "eager")
       }
     )
@@ -48,47 +48,47 @@ object ChromeBuilderSpec extends DefaultRunnableSpec {
   def suiteChromeBlueprint =
     suite("Chrome Default Blueprint Spec")(
       testM("Chrome Blueprint can overload default blueprint") {
-        val blueprint = ChromeBlueprintOps.default &&
-          ChromeBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER)
+        val blueprint = ChromeBlueprint.default &&
+          ChromeBlueprint.setLoadPageStrategy(PageLoadStrategy.EAGER)
         assertCapability(blueprint)("pageLoadStrategy", "eager")
       },
       testM("Chrome Blueprint can compose two action") {
-        val blueprint = ChromeBlueprintOps.noGpu and ChromeBlueprintOps.noExtensions
+        val blueprint = ChromeBlueprint.noGpu and ChromeBlueprint.noExtensions
         assertArgument(blueprint)("--disable-gpu")
         assertArgument(blueprint)("--disable-extensions")
       },
       testM("Chrome Blueprint can set capability") {
-        val blueprint = CommonBlueprintOps.setCapability("key", "value") && ChromeBlueprintOps.default
+        val blueprint = CommonBlueprint.setCapability("key", "value") && ChromeBlueprint.default
         assertCapability(blueprint)("key", "value")
       },
       testM("Chrome Blueprint can set another pageLoadStrategy") {
-        assertCapability(ChromeBlueprintOps.setLoadPageStrategy(PageLoadStrategy.EAGER))("pageLoadStrategy", "eager")
+        assertCapability(ChromeBlueprint.setLoadPageStrategy(PageLoadStrategy.EAGER))("pageLoadStrategy", "eager")
       },
       testM("Chrome Blueprint can add an argument") {
-        assertArgument(ChromeBlueprintOps.addArgument("--argument"))("--argument")
+        assertArgument(ChromeBlueprint.addArgument("--argument"))("--argument")
       },
       testM("Chrome Blueprint can add arguments") {
-        val blueprint = ChromeBlueprintOps.addArguments(List("--argument", "--argument2"))
+        val blueprint = ChromeBlueprint.addArguments(List("--argument", "--argument2"))
         assertArgument(blueprint)("--argument")
         assertArgument(blueprint)("--argument2")
       },
       testM("Chrome Blueprint can disable gpu") {
-        assertArgument(ChromeBlueprintOps.noGpu)("--disable-gpu")
+        assertArgument(ChromeBlueprint.noGpu)("--disable-gpu")
       },
       testM("Chrome Blueprint can disable extensions") {
-        assertArgument(ChromeBlueprintOps.noExtensions)("--disable-extensions")
+        assertArgument(ChromeBlueprint.noExtensions)("--disable-extensions")
       },
       testM("Chrome Blueprint can disable popup blocking") {
-        assertArgument(ChromeBlueprintOps.noPopupBlocking)("--disable-popup-blocking")
+        assertArgument(ChromeBlueprint.noPopupBlocking)("--disable-popup-blocking")
       },
       testM("Chrome Blueprint can start fullscreen") {
-        assertArgument(ChromeBlueprintOps.fullscreen)("--start-fullscreen")
+        assertArgument(ChromeBlueprint.fullscreen)("--start-fullscreen")
       },
       testM("Chrome Blueprint can be headless") {
-        assertArgument(ChromeBlueprintOps.headless)("--headless")
-        assertArgument(ChromeBlueprintOps.headless)("--disable-gpu")
+        assertArgument(ChromeBlueprint.headless)("--headless")
+        assertArgument(ChromeBlueprint.headless)("--disable-gpu")
       }
     )
 
-  def spec = suite("Chrome Builder Spec")(suiteChromeBuilder, suiteChromeBlueprint)
+  def spec = suite("Chrome Blueprint Spec")(suiteChromeBlueprint)
 }

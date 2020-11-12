@@ -6,8 +6,8 @@ import zio.duration.durationInt
 
 import zinteract.webdriver
 import zinteract.element._
-import zinteract.webdriver.ChromeBlueprintOps.default
-import zinteract.webdriver.BuilderOps.chrome
+import zinteract.builder.chrome
+import zinteract.builder.ChromeBlueprint.default
 
 import org.openqa.selenium.By
 

@@ -31,8 +31,8 @@ import zio.{App, ExitCode}
 import zio.console
 
 import zinteract.webdriver
-import zinteract.webdriver.ChromeBlueprintOps.default
-import zinteract.webdriver.BuilderOps.chrome
+import zinteract.builder.chrome
+import zinteract.builder.ChromeBlueprint.default
 
 import org.openqa.selenium.By
 
