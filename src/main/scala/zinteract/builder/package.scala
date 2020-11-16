@@ -8,36 +8,30 @@ import org.openqa.selenium.{WebDriver => SeleniumWebDriver}
 import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
 import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions}
 
-/**
-  * Builder provides methods to create driver easily and purely.
+/** Builder provides methods to create driver easily and purely.
   */
 package object builder {
 
-  /**
-    * The builder is a tool to describe a webdriver
+  /** The builder is a tool to describe a webdriver
     * thanks to its blueprint.
     */
   sealed trait Builder[Options, Driver] {
 
-    /**
-      * Build the options configuration from the builder description.
+    /** Build the options configuration from the builder description.
       */
     def buildOptions: Task[Options]
 
-    /**
-      * Build the WebDriver from the builder description.
+    /** Build the WebDriver from the builder description.
       */
     def buildDriver: Task[Driver]
 
-    /**
-      * Build the ZLayer from the builder description.
+    /** Build the ZLayer from the builder description.
       */
     def buildLayer: ZLayer[Any, Throwable, WebDriver] =
       ZLayer.fromAcquireRelease(buildDriver.map(_.asInstanceOf[SeleniumWebDriver]))(driver => UIO(driver.quit()))
   }
 
-  /**
-    * A general Builder for Remote Web Driver
+  /** A general Builder for Remote Web Driver
     */
   sealed case class RemoteBuilder[Options, Driver](
       path: Option[String],
@@ -47,29 +41,24 @@ package object builder {
       createDriver: Options => Driver
   ) extends Builder[Options, Driver] {
 
-    /**
-      * Returns a builder using the new path.
+    /** Returns a builder using the new path.
       */
     def at(path: String): RemoteBuilder[Options, Driver] = this.copy(path = Some(path))
 
-    /**
-      * Operator alias for `at`.
+    /** Operator alias for `at`.
       */
     def >(path: String): RemoteBuilder[Options, Driver] = at(path)
 
-    /**
-      * Returns a builder using the new blueprint.
+    /** Returns a builder using the new blueprint.
       */
     def using(blueprint: Blueprint[Options]): RemoteBuilder[Options, Driver] =
       this.copy(blueprint = blueprint)
 
-    /**
-      * Operator alias for `>>`.
+    /** Operator alias for `>>`.
       */
     def >>(blueprint: Blueprint[Options]): RemoteBuilder[Options, Driver] = using(blueprint)
 
-    /**
-      * Builds Options by applying the blueprint.
+    /** Builds Options by applying the blueprint.
       */
     def buildOptions: Task[Options] =
       for {
@@ -77,8 +66,7 @@ package object builder {
         _       <- blueprint.link(options)
       } yield options
 
-    /**
-      * Builds a Driver by applying the blueprint.
+    /** Builds a Driver by applying the blueprint.
       */
     def buildDriver: Task[Driver] =
       for {
@@ -95,8 +83,7 @@ package object builder {
   type ChromeBuilder  = RemoteBuilder[ChromeOptions, ChromeDriver]
   type FirefoxBuilder = RemoteBuilder[FirefoxOptions, FirefoxDriver]
 
-  /**
-    * Create an unit chrome builder.
+  /** Create an unit chrome builder.
     */
   def chrome: ChromeBuilder =
     RemoteBuilder(
@@ -107,8 +94,7 @@ package object builder {
       options => new ChromeDriver(options)
     )
 
-  /**
-    * Create an unit firefox builder.
+  /** Create an unit firefox builder.
     */
   def firefox: FirefoxBuilder =
     RemoteBuilder(
