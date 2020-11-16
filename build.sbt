@@ -35,7 +35,7 @@ ThisBuild / githubWorkflowPublishTargetBranches ++=
   Seq(RefPredicate.StartsWith(Ref.Tag("v")))
 
 ThisBuild / githubWorkflowPublishPreamble +=
-  WorkflowStep.Use("olafurpg", "setup-gpg", "v2")
+  WorkflowStep.Use("olafurpg", "setup-gpg", "v3")
 
 ThisBuild / githubWorkflowPublish := Seq(
   WorkflowStep.Sbt(
