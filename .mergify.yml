@@ -1,0 +1,9 @@
+pull_request_rules:
+  - name: Automatic merge for scala steward 🐱
+    conditions:
+      - author=scala-steward
+      - check-success~=^Build and Test
+      - check-success=codecov/project
+    actions:
+      merge:
+        method: squash
