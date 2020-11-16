@@ -8,14 +8,12 @@ import org.openqa.selenium.{By, SearchContext, WebElement}
 import scala.jdk.CollectionConverters._
 import java.util.ArrayList
 
-/**
-  * Context provides methods to find an element which are use by
+/** Context provides methods to find an element which are use by
   * webdriver and element packages.
   */
 package object context {
 
-  /**
-    * Finds all WebElements using the given method.
+  /** Finds all WebElements using the given method.
     */
   def findElementFrom(
       context: SearchContext
@@ -28,8 +26,7 @@ package object context {
     effect
   }
 
-  /**
-    * Finds all WebElements using the given method.
+  /** Finds all WebElements using the given method.
     */
   def findElementsFrom(
       context: SearchContext
@@ -44,8 +41,7 @@ package object context {
     effect.map(_.asScala.toList)
   }
 
-  /**
-    * Checks if the given method find an element.
+  /** Checks if the given method find an element.
     */
   def hasElementFrom(context: SearchContext)(by: By)(implicit wait: WaitConfig = None): RIO[Clock, Boolean] =
     findElementsFrom(context)(by)(wait).map(!_.isEmpty)
