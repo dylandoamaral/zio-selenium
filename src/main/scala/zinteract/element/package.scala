@@ -7,8 +7,7 @@ import zinteract.context._
 
 import org.openqa.selenium.{By, Dimension, Keys, Point, Rectangle, WebElement}
 
-/**
-  * Element provides a way to interact purely with webelement
+/** Element provides a way to interact purely with webelement
   *
   * {{{
   * val effect = for {
@@ -22,14 +21,12 @@ import org.openqa.selenium.{By, Dimension, Keys, Point, Rectangle, WebElement}
   */
 package object element {
 
-  /**
-    * Provides implicit definition for fonction of element that can
+  /** Provides implicit definition for fonction of element that can
     * be called directly from a webelement.
     */
   implicit class ZinteractWebElement(element: WebElement) {
 
-    /**
-      * Click this element. If this causes a new page to load, you
+    /** Click this element. If this causes a new page to load, you
       * should discard all references to this element and any further
       * operations performed on this element will throw a
       * StaleElementReferenceException.
@@ -46,8 +43,7 @@ package object element {
     val clickM: Task[Unit] =
       clickOn(element)
 
-    /**
-      * If this element is a text entry element, this will clear the value. Has no effect on other
+    /** If this element is a text entry element, this will clear the value. Has no effect on other
       * elements. Text entry elements are INPUT and TEXTAREA elements.
       *
       * Note that the events fired by this event may not be as you'd expect. In particular, we don't
@@ -56,28 +52,24 @@ package object element {
     val clearM: Task[Unit] =
       clearOn(element)
 
-    /**
-      * Use this method to simulate typing into an element, which may set its value.
+    /** Use this method to simulate typing into an element, which may set its value.
       */
     def sendKeysM(text: CharSequence): Task[Unit] =
       sendKeysOn(element)(text)
 
-    /**
-      * Use this method to simulate the key enter into an element.
+    /** Use this method to simulate the key enter into an element.
       */
     val pressEnterM: Task[Unit] =
       pressEnterOn(element)
 
-    /**
-      * If this current element is a form, or an element within a form, then this will be submitted to
+    /** If this current element is a form, or an element within a form, then this will be submitted to
       * the remote server. If this causes the current page to change, then this method will block until
       * the new page is loaded.
       */
     val submitM: Task[Unit] =
       submitOn(element)
 
-    /**
-      * Gets the value of the given attribute of the element. Will return the current value, even if
+    /** Gets the value of the given attribute of the element. Will return the current value, even if
       * this has been modified after the page has been loaded.
       *
       * <p>More exactly, this method will return the value of the property with the given name, if it
@@ -111,14 +103,12 @@ package object element {
     def getAttributeM(name: String): Task[String] =
       getAttributeOf(element)(name)
 
-    /**
-      * Get the visible (i.e. not hidden by CSS) text of this element, including sub-elements.
+    /** Get the visible (i.e. not hidden by CSS) text of this element, including sub-elements.
       */
     val getTextM: Task[String] =
       getTextOf(element)
 
-    /**
-      * Gets the value of a given CSS property.
+    /** Gets the value of a given CSS property.
       * Color values should be returned as rgba strings, so,
       * for example if the "background-color" property is set as "green" in the
       * HTML source, the returned value will be "rgba(0, 255, 0, 1)".
@@ -133,40 +123,34 @@ package object element {
     def getCssValueM(propertyName: String): Task[String] =
       getCssValueOf(element)(propertyName)
 
-    /**
-      * Gets the tag name of this element. <b>Not</b> the value of the name attribute: will return
+    /** Gets the tag name of this element. <b>Not</b> the value of the name attribute: will return
       * <code>"input"</code> for the element <code>&lt;input name="foo" /&gt;</code>.
       */
     val getTagNameM: Task[String] =
       getTagNameOf(element)
 
-    /**
-      * Where on the page is the top left-hand corner of the rendered element.
+    /** Where on the page is the top left-hand corner of the rendered element.
       */
     val getLocationM: Task[Point] =
       getLocationOf(element)
 
-    /**
-      * Returns the location and size of the rendered element.
+    /** Returns the location and size of the rendered element.
       */
     val getRectM: Task[Rectangle] =
       getRectOf(element)
 
-    /**
-      * Returns The size of the element on the page.
+    /** Returns The size of the element on the page.
       */
     val getSizeM: Task[Dimension] =
       getSizeOf(element)
 
-    /**
-      * Returns if this element displayed or not. This method avoids the problem of having to
+    /** Returns if this element displayed or not. This method avoids the problem of having to
       * parse an element's "style" attribute.
       */
     val isDisplayedM: Task[Boolean] =
       isDisplayed(element)
 
-    /**
-      * Returns if the element currently enabled or not. This will generally return true for everything but
+    /** Returns if the element currently enabled or not. This will generally return true for everything but
       * disabled input elements.
       *
       * @return True if the element is enabled, false otherwise.
@@ -174,8 +158,7 @@ package object element {
     val isEnabledM: Task[Boolean] =
       isEnabled(element)
 
-    /**
-      * Determines whether or not this element is selected or not. This operation only applies to input
+    /** Determines whether or not this element is selected or not. This operation only applies to input
       * elements such as checkboxes, options in a select and radio buttons.
       * For more information on which elements this method supports,
       * refer to the <a href="https://w3c.github.io/webdriver/webdriver-spec.html#is-element-selected">specification</a>.
@@ -183,27 +166,23 @@ package object element {
     val isSelectedM: Task[Boolean] =
       isSelected(element)
 
-    /**
-      * Finds the first WebElement using the given method.
+    /** Finds the first WebElement using the given method.
       */
     def findElementM(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, Throwable, WebElement] =
       findElementFrom(element)(by)(wait)
 
-    /**
-      * Finds all WebElements using the given method.
+    /** Finds all WebElements using the given method.
       */
     def findElementsM(by: By)(implicit wait: WaitConfig = None): RIO[Clock, List[WebElement]] =
       findElementsFrom(element)(by)(wait)
 
-    /**
-      * Checks if the given method find an element.
+    /** Checks if the given method find an element.
       */
     def hasElementM(by: By)(implicit wait: WaitConfig = None): RIO[Clock, Boolean] =
       hasElementFrom(element)(by)(wait)
   }
 
-  /**
-    * Click this element. If this causes a new page to load, you
+  /** Click this element. If this causes a new page to load, you
     * should discard all references to this element and any further
     * operations performed on this element will throw a
     * StaleElementReferenceException.
@@ -220,8 +199,7 @@ package object element {
   def clickOn(element: WebElement): Task[Unit] =
     ZIO.effect(element.click)
 
-  /**
-    * If this element is a text entry element, this will clear the value. Has no effect on other
+  /** If this element is a text entry element, this will clear the value. Has no effect on other
     * elements. Text entry elements are INPUT and TEXTAREA elements.
     *
     * Note that the events fired by this event may not be as you'd expect. In particular, we don't
@@ -230,28 +208,24 @@ package object element {
   def clearOn(element: WebElement): Task[Unit] =
     ZIO.effect(element.clear)
 
-  /**
-    * Simulates typing into an element, which may set its value.
+  /** Simulates typing into an element, which may set its value.
     */
   def sendKeysOn(element: WebElement)(text: CharSequence): Task[Unit] =
     ZIO.effect(element.sendKeys(text))
 
-  /**
-    * Simulates the key enter into an element.
+  /** Simulates the key enter into an element.
     */
   def pressEnterOn(element: WebElement): Task[Unit] =
     sendKeysOn(element)(Keys.ENTER)
 
-  /**
-    * If this current element is a form, or an element within a form, then this will be submitted to
+  /** If this current element is a form, or an element within a form, then this will be submitted to
     * the remote server. If this causes the current page to change, then this method will block until
     * the new page is loaded.
     */
   def submitOn(element: WebElement): Task[Unit] =
     ZIO.effect(element.submit)
 
-  /**
-    * Gets the value of the given attribute of the element. Will return the current value, even if
+  /** Gets the value of the given attribute of the element. Will return the current value, even if
     * this has been modified after the page has been loaded.
     *
     * <p>More exactly, this method will return the value of the property with the given name, if it
@@ -285,14 +259,12 @@ package object element {
   def getAttributeOf(element: WebElement)(name: String): Task[String] =
     ZIO.effect(element.getAttribute(name))
 
-  /**
-    * Gets the visible (i.e. not hidden by CSS) text of this element, including sub-elements.
+  /** Gets the visible (i.e. not hidden by CSS) text of this element, including sub-elements.
     */
   def getTextOf(element: WebElement): Task[String] =
     ZIO.effect(element.getText)
 
-  /**
-    * Gets the value of a given CSS property.
+  /** Gets the value of a given CSS property.
     * Color values should be returned as rgba strings, so,
     * for example if the "background-color" property is set as "green" in the
     * HTML source, the returned value will be "rgba(0, 255, 0, 1)".
@@ -307,40 +279,34 @@ package object element {
   def getCssValueOf(element: WebElement)(propertyName: String): Task[String] =
     ZIO.effect(element.getCssValue(propertyName))
 
-  /**
-    * Gets the tag name of this element. <b>Not</b> the value of the name attribute: will return
+  /** Gets the tag name of this element. <b>Not</b> the value of the name attribute: will return
     * <code>"input"</code> for the element <code>&lt;input name="foo" /&gt;</code>.
     */
   def getTagNameOf(element: WebElement): Task[String] =
     ZIO.effect(element.getTagName)
 
-  /**
-    * Where on the page is the top left-hand corner of the rendered element.
+  /** Where on the page is the top left-hand corner of the rendered element.
     */
   def getLocationOf(element: WebElement): Task[Point] =
     ZIO.effect(element.getLocation)
 
-  /**
-    * Returns the location and size of the rendered element.
+  /** Returns the location and size of the rendered element.
     */
   def getRectOf(element: WebElement): Task[Rectangle] =
     ZIO.effect(element.getRect)
 
-  /**
-    * Returns The size of the element on the page.
+  /** Returns The size of the element on the page.
     */
   def getSizeOf(element: WebElement): Task[Dimension] =
     ZIO.effect(element.getSize)
 
-  /**
-    * Returns if this element displayed or not. This method avoids the problem of having to
+  /** Returns if this element displayed or not. This method avoids the problem of having to
     * parse an element's "style" attribute.
     */
   def isDisplayed(element: WebElement): Task[Boolean] =
     ZIO.effect(element.isDisplayed)
 
-  /**
-    * Returns if the element currently enabled or not. This will generally return true for everything but
+  /** Returns if the element currently enabled or not. This will generally return true for everything but
     * disabled input elements.
     *
     * @return True if the element is enabled, false otherwise.
@@ -348,8 +314,7 @@ package object element {
   def isEnabled(element: WebElement): Task[Boolean] =
     ZIO.effect(element.isEnabled)
 
-  /**
-    * Determines whether or not this element is selected or not. This operation only applies to input
+  /** Determines whether or not this element is selected or not. This operation only applies to input
     * elements such as checkboxes, options in a select and radio buttons.
     * For more information on which elements this method supports,
     * refer to the <a href="https://w3c.github.io/webdriver/webdriver-spec.html#is-element-selected">specification</a>.
