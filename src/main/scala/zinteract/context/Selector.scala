@@ -73,6 +73,7 @@ object Selector {
   }
   case class AttributeSelectorValue(attribute: String, method: SearchingMethod, value: String) extends AttributeSelector
   case class ElementSelector(tagS: TagSelector, attributeS: AttributeSelector)                 extends Selector
+  case class NotSelector(selector: Selector)                                                   extends Selector
   case class AndSelector(first: Selector, second: Selector)                                    extends Selector
   case class AfterSelector(previous: Selector, after: Selector)                                extends Selector
   case class BeforeSelector(previous: Selector, after: Selector)                               extends Selector
@@ -95,6 +96,7 @@ object Selector {
       case AttributeSelectorValue(attribute, method, value) => s"[$attribute${method.symbol}=$value]"
       case ElementSelector(tagS, attributeS) =>
         interpret(tagS, true) + interpret(attributeS) + interpretFlags(tagS.flags)
+      case NotSelector(selector)              => s":not(${interpret(selector)})"
       case AndSelector(first, second)         => interpret(first) + "," + interpret(second)
       case AfterSelector(previous, after)     => interpret(previous) + "+" + interpret(after)
       case BeforeSelector(previous, after)    => interpret(after) + "~" + interpret(previous)
@@ -130,7 +132,6 @@ object Selector {
     val input      = InputSelectorLink()
     val li         = TagSelectorCommon("li")
     val link       = TagSelectorCommon("link")
-    val main       = TagSelectorCommon("main")
     val meta       = TagSelectorCommon("meta")
     val nav        = TagSelectorCommon("nav")
     val ol         = TagSelectorCommon("ol")
@@ -140,7 +141,6 @@ object Selector {
     val root       = TagSelectorCommon(":root")
     val script     = TagSelectorCommon("script")
     val span       = TagSelectorCommon("span")
-    val style      = TagSelectorCommon("style")
     val ul         = TagSelectorCommon("ul")
   }
 
@@ -157,36 +157,36 @@ object Selector {
   }
 
   object Flag {
-    val visited               = FlagSelector("visited")
-    val unvisited             = FlagSelector("link")
-    val hovered               = FlagSelector("hover")
-    val active                = FlagSelector("active")
-    val checked               = FlagSelector("checked")
-    val default               = FlagSelector("default")
-    val disabled              = FlagSelector("disabled")
-    val enabled               = FlagSelector("enabled")
-    val focused               = FlagSelector("focus")
-    val inRange               = FlagSelector("in-range")
-    val indeterminate         = FlagSelector("inderterminate")
-    val invalid               = FlagSelector("invalid")
-    val optimal               = FlagSelector("optimal")
-    val outOfRange            = FlagSelector("out-of-range")
-    val placeholder           = FlagSelector(":placeholder")
-    val readOnly              = FlagSelector("read-only")
-    val notReadWrite          = FlagSelector("read-write")
-    val required              = FlagSelector("required")
-    val valid                 = FlagSelector("valid")
-    def lang(lang: String)    = FlagSelector(s"lang($lang)")
-    val empty                 = FlagSelector("empty")
-    val firstChild            = FlagSelector("first-child")
-    val firstOfType           = FlagSelector("first-of-type")
-    val lastChild             = FlagSelector("last-child")
-    val lastOfType            = FlagSelector("last-of-type")
-    def nthChild(n: Int)      = FlagSelector(s"nth-child($n)")
-    def nthLastChild(n: Int)  = FlagSelector(s"nth-last-child($n)")
-    def nthLastOfType(n: Int) = FlagSelector(s"nth-last-of-type($n)")
-    def nthOfType(n: Int)     = FlagSelector(s"nth-of-type($n)")
-    val onlyOfType            = FlagSelector("only-of-type")
-    val onlyChild             = FlagSelector("only-child")
+    val visited       = FlagSelector("visited")
+    val unvisited     = FlagSelector("link")
+    val hovered       = FlagSelector("hover")
+    val active        = FlagSelector("active")
+    val checked       = FlagSelector("checked")
+    val default       = FlagSelector("default")
+    val disabled      = FlagSelector("disabled")
+    val enabled       = FlagSelector("enabled")
+    val focused       = FlagSelector("focus")
+    val inRange       = FlagSelector("in-range")
+    val indeterminate = FlagSelector("indeterminate")
+    val invalid       = FlagSelector("invalid")
+    val optimal       = FlagSelector("optimal")
+    val outOfRange    = FlagSelector("out-of-range")
+    val placeholder   = FlagSelector(":placeholder")
+    val readOnly      = FlagSelector("read-only")
+    val notReadWrite  = FlagSelector("read-write")
+    val required      = FlagSelector("required")
+    val valid         = FlagSelector("valid")
+    val lang          = (lang: String) => FlagSelector(s"lang($lang)")
+    val empty         = FlagSelector("empty")
+    val firstChild    = FlagSelector("first-child")
+    val firstOfType   = FlagSelector("first-of-type")
+    val lastChild     = FlagSelector("last-child")
+    val lastOfType    = FlagSelector("last-of-type")
+    val nthChild      = (n: Int) => FlagSelector(s"nth-child($n)")
+    val nthLastChild  = (n: Int) => FlagSelector(s"nth-last-child($n)")
+    val nthLastOfType = (n: Int) => FlagSelector(s"nth-last-of-type($n)")
+    val nthOfType     = (n: Int) => FlagSelector(s"nth-of-type($n)")
+    val onlyOfType    = FlagSelector("only-of-type")
+    val onlyChild     = FlagSelector("only-child")
   }
 }
