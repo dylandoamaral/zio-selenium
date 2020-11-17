@@ -1,6 +1,6 @@
 val zioVersion            = "1.0.3"
 val seleniumVersion       = "3.141.59"
-val htmlUnitDriverVersion = "2.44.0"
+val htmlUnitDriverVersion = "2.45.0"
 
 ThisBuild / scalaVersion := "2.13.3"
 ThisBuild / scalacOptions += "-Wunused:imports"
@@ -28,8 +28,6 @@ ThisBuild / description := "A ZIO wrapper to interact with a browser using Selen
 ThisBuild / licenses := List("Apache 2" -> new URL("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 ThisBuild / homepage := Some(url("https://github.com/dylandoamaral/zinteract"))
 
-ThisBuild / pomIncludeRepository := { _ => false }
-
 ThisBuild / coverageExcludedPackages := ".*zinteract.example.*"
 
 ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
@@ -37,7 +35,7 @@ ThisBuild / githubWorkflowPublishTargetBranches ++=
   Seq(RefPredicate.StartsWith(Ref.Tag("v")))
 
 ThisBuild / githubWorkflowPublishPreamble +=
-  WorkflowStep.Use("olafurpg", "setup-gpg", "v2")
+  WorkflowStep.Use("olafurpg", "setup-gpg", "v3")
 
 ThisBuild / githubWorkflowPublish := Seq(
   WorkflowStep.Sbt(
