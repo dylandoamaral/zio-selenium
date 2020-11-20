@@ -6,13 +6,7 @@ import zio.test.Assertion._
 import zinteract.test.TestDriver.testLayer
 import zinteract.webdriver
 import zinteract.element._
-import zinteract.context.Selector.{by, interpret, TagSelector}
-import zinteract.context.Selector.Tag._
-import zinteract.context.Selector.Attribute._
-import zinteract.context.Selector.Flag._
-import zinteract.context.Selector.FlagSelector
-import zinteract.context.Selector.AttributeSelectorAlone
-import zinteract.context.Selector.AttributeSelectorValue
+import zinteract.context.Selector._
 
 object SelectorSpec extends DefaultRunnableSpec {
   val flagSelectorPath      = getClass.getResource("/FlagSelectorSpec.html").getPath
