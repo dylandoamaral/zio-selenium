@@ -2,6 +2,15 @@ package zinteract.context
 
 import org.openqa.selenium.By
 
+/** Selector is a DSL to create css selector in
+  * an english way.
+  *
+  * Examples:
+  * - href contains "test" in a
+  * - id equalsTo "my-id" in p
+  * - h1 and h2
+  * - id.not
+  */
 object Selector {
   sealed trait SearchingMethod { def symbol: String }
   case object Equal     extends SearchingMethod { def symbol: String = ""  }
@@ -44,6 +53,8 @@ object Selector {
 
   def interpretFlags(flags: Set[FlagSelector]): String = flags.map(interpret(_)).mkString
 
+  /** Interpret a Selector structure into a css selector statement
+    */
   def interpret(selector: Selector, ignoreTag: Boolean = false): String =
     selector match {
       case FlagSelector(flag)                               => s":$flag"
@@ -59,6 +70,8 @@ object Selector {
       case InsideSelector(container, content) => interpret(container) + " " + interpret(content)
     }
 
+  /** Interpret a Selector structure into a By css selector
+    */
   def by(selector: Selector): By = By.cssSelector(interpret(selector))
 
   val a      = TagSelector("a")
