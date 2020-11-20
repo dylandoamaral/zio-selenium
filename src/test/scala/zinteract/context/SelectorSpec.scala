@@ -12,6 +12,7 @@ import zinteract.context.Selector.Attribute._
 import zinteract.context.Selector.Flag._
 import zinteract.context.Selector.FlagSelector
 import zinteract.context.Selector.AttributeSelectorAlone
+import zinteract.context.Selector.AttributeSelectorValue
 
 object SelectorSpec extends DefaultRunnableSpec {
   val flagSelectorPath      = getClass.getResource("/FlagSelectorSpec.html").getPath
@@ -96,6 +97,19 @@ object SelectorSpec extends DefaultRunnableSpec {
       effect.provideCustomLayer(testLayer(false, true))
     }
 
+  def testAttributeSearchingMethod(attributeSelector: AttributeSelectorValue, result: String) =
+    testM(f"Attribute selector can select an attribute using $result") {
+      val selector = attributeSelector
+
+      val effect = for {
+        _       <- webdriver.link(testWebsite(attributeSelectorPath))
+        element <- webdriver.findElement(by(selector))
+        id      <- element.getAttributeM("id")
+      } yield assert(id)(equalTo(result))
+
+      effect.provideCustomLayer(testLayer(false, true))
+    }
+
   def suiteAttributeSelector =
     suite("Attribute Selector Spec")(
       testAttribute(klass, Some("class")),
@@ -106,7 +120,10 @@ object SelectorSpec extends DefaultRunnableSpec {
       testAttribute(rel),
       testAttribute(src),
       testAttribute(style),
-      testAttribute(tipe, Some("type"))
+      testAttribute(tipe, Some("type")),
+      testAttributeSearchingMethod(klass contains "test", "contains"),
+      testAttributeSearchingMethod(klass startsWith "test", "startsWith"),
+      testAttributeSearchingMethod(klass endsWith "test", "endsWith")
     )
 
   def testFlag(tagSelector: TagSelector, flagSelector: FlagSelector) =
