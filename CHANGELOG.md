@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.2.0 (2020-11-20)
+
+Features:
+
+- Add a DSL for a new By selector [#71](https://github.com/dylandoamaral/zinteract/pull/71)
+- Move builder and blueprint to builder package [#57](https://github.com/dylandoamaral/zinteract/pull/57)
+- Replace session by webdriver accessor methods [#56](https://github.com/dylandoamaral/zinteract/pull/56)
+
 ## 0.1.1 (2020-11-09)
 
 Features:
