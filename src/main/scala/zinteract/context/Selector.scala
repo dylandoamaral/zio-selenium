@@ -10,11 +10,11 @@ object Selector {
   case object EndWith   extends SearchingMethod { def symbol: String = "$" }
 
   sealed trait Selector {
-    def and(that: Selector)       = AndSelector(this, that)
+    def and(that: Selector)       = AndSelector(that, this)
     def after(that: Selector)     = AfterSelector(that, this)
-    def before(that: Selector)    = BeforeSelector(this, that)
     def inside(that: Selector)    = InsideSelector(that, this)
     def childOf(parent: Selector) = ChildSelector(parent, this)
+    def not                       = NotSelector(this)
   }
   sealed trait AttributeSelector extends Selector {
     def in(tagS: TagSelector) = ElementSelector(tagS, this)
@@ -36,7 +36,6 @@ object Selector {
   case class NotSelector(selector: Selector)                                                   extends Selector
   case class AndSelector(first: Selector, second: Selector)                                    extends Selector
   case class AfterSelector(previous: Selector, after: Selector)                                extends Selector
-  case class BeforeSelector(previous: Selector, after: Selector)                               extends Selector
   case class ChildSelector(parent: Selector, child: Selector)                                  extends Selector
   case class InsideSelector(container: Selector, content: Selector)                            extends Selector
 
@@ -56,7 +55,6 @@ object Selector {
       case NotSelector(selector)              => s":not(${interpret(selector)})"
       case AndSelector(first, second)         => interpret(first) + "," + interpret(second)
       case AfterSelector(previous, after)     => interpret(previous) + "+" + interpret(after)
-      case BeforeSelector(previous, after)    => interpret(after) + "~" + interpret(previous)
       case ChildSelector(parent, child)       => interpret(parent) + ">" + interpret(child)
       case InsideSelector(container, content) => interpret(container) + " " + interpret(content)
     }

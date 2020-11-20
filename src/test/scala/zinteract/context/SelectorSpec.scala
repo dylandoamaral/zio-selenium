@@ -17,6 +17,7 @@ object SelectorSpec extends DefaultRunnableSpec {
   val flagSelectorPath      = getClass.getResource("/FlagSelectorSpec.html").getPath
   val tagSelectorPath       = getClass.getResource("/TagSelectorSpec.html").getPath
   val attributeSelectorPath = getClass.getResource("/AttributeSelectorSpec.html").getPath
+  val logicSelectorPath     = getClass.getResource("/LogicSelectorSpec.html").getPath
   val testWebsite           = (path: String) => s"file://$path"
 
   def suiteSelector =
@@ -141,10 +142,65 @@ object SelectorSpec extends DefaultRunnableSpec {
       testFlag(h2, onlyChild)
     )
 
+  def suiteLogicSelector =
+    suite("Logic Selector Spec")(
+      testM("And selector can select all h1 and h2 elements") {
+        val selector = h1 and h2
+
+        val effect = for {
+          _        <- webdriver.link(testWebsite(logicSelectorPath))
+          elements <- webdriver.findElements(by(selector))
+        } yield assert(elements.length)(equalTo(8))
+
+        effect.provideCustomLayer(testLayer(false, true))
+      },
+      testM("After selector can select all h2 after h1 elements") {
+        val selector = h2 after h1
+
+        val effect = for {
+          _        <- webdriver.link(testWebsite(logicSelectorPath))
+          elements <- webdriver.findElements(by(selector))
+        } yield assert(elements.length)(equalTo(2))
+
+        effect.provideCustomLayer(testLayer(false, true))
+      },
+      testM("Inside selector can select all h2 inside div elements") {
+        val selector = h2 inside div
+
+        val effect = for {
+          _        <- webdriver.link(testWebsite(logicSelectorPath))
+          elements <- webdriver.findElements(by(selector))
+        } yield assert(elements.length)(equalTo(3))
+
+        effect.provideCustomLayer(testLayer(false, true))
+      },
+      testM("ChildOf selector can select all h2 inside div elements") {
+        val selector = h2 childOf div
+
+        val effect = for {
+          _        <- webdriver.link(testWebsite(logicSelectorPath))
+          elements <- webdriver.findElements(by(selector))
+        } yield assert(elements.length)(equalTo(3))
+
+        effect.provideCustomLayer(testLayer(false, true))
+      },
+      testM("Not selector can select all not h2") {
+        val selector = h2.not
+
+        val effect = for {
+          _        <- webdriver.link(testWebsite(logicSelectorPath))
+          elements <- webdriver.findElements(by(selector))
+        } yield assert(elements.length)(equalTo(9))
+
+        effect.provideCustomLayer(testLayer(false, true))
+      }
+    )
+
   def spec = suite("Selector Spec")(
     suiteSelector,
     suiteTagSelector,
     suiteAttributeSelector,
-    suiteFlagSelector
+    suiteFlagSelector,
+    suiteLogicSelector
   )
 }
