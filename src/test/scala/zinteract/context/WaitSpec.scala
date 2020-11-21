@@ -1,14 +1,14 @@
 package zinteract.test
 
-import zio.{Schedule, ZIO}
-import zio.test._
-import zio.test.Assertion._
-import zio.test.environment._
 import zio.duration.durationInt
+import zio.test.Assertion._
+import zio.test._
+import zio.test.environment._
+import zio.{Schedule, ZIO}
 
-import zinteract.test.TestDriver.testLayer
-import zinteract.element._
 import zinteract.context._
+import zinteract.element._
+import zinteract.test.TestDriver.testLayer
 import zinteract.webdriver
 
 import org.openqa.selenium.By

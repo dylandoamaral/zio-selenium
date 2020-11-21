@@ -1,11 +1,11 @@
 package zinteract.test
 
 import zio.ZIO
-import zio.test._
 import zio.test.Assertion._
+import zio.test._
 
-import zinteract.test.TestDriver.testLayer
 import zinteract.element._
+import zinteract.test.TestDriver.testLayer
 import zinteract.webdriver
 
 import org.openqa.selenium.By

@@ -1,11 +1,10 @@
 package zinteract.test
 
 import zio.ZIO
-import zio.test._
 import zio.test.Assertion._
+import zio.test._
 
-import zinteract.builder.Blueprint
-import zinteract.builder.RemoteBuilder
+import zinteract.builder.{Blueprint, RemoteBuilder}
 
 import org.openqa.selenium.MutableCapabilities
 

@@ -2,16 +2,16 @@ package zinteract.test
 
 import zio.ZIO
 import zio.duration.durationInt
-import zio.test._
 import zio.test.Assertion._
+import zio.test._
 import zio.test.environment._
 
+import zinteract.element._
 import zinteract.test.TestDriver.testLayer
 import zinteract.webdriver
-import zinteract.element._
 
-import org.openqa.selenium.{By, Cookie, NoSuchCookieException, TimeoutException, WebDriverException}
 import org.openqa.selenium.support.ui.WebDriverWait
+import org.openqa.selenium.{By, Cookie, NoSuchCookieException, TimeoutException, WebDriverException}
 
 import scala.io.Source
 

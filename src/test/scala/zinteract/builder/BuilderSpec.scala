@@ -1,11 +1,10 @@
 package zinteract.test
 
-import zio.test._
 import zio.test.Assertion._
+import zio.test._
 
+import zinteract.builder.{ChromeBlueprint, FirefoxBlueprint, chrome, firefox}
 import zinteract.webdriver
-import zinteract.builder.{chrome, firefox}
-import zinteract.builder.{ChromeBlueprint, FirefoxBlueprint}
 
 object BuilderSpec extends DefaultRunnableSpec {
   def suiteWebdriverLayer =

@@ -1,12 +1,12 @@
 package zinteract.test
 
-import zio.test._
 import zio.test.Assertion._
+import zio.test._
 
+import zinteract.context.Selector._
+import zinteract.element._
 import zinteract.test.TestDriver.testLayer
 import zinteract.webdriver
-import zinteract.element._
-import zinteract.context.Selector._
 
 object SelectorSpec extends DefaultRunnableSpec {
   val flagSelectorPath      = getClass.getResource("/FlagSelectorSpec.html").getPath

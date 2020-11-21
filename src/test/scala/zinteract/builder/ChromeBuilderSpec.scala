@@ -1,14 +1,12 @@
 package zinteract.test
 
-import zio.test._
 import zio.test.Assertion._
+import zio.test._
 
-import zinteract.builder.chrome
-import zinteract.builder.CommonBlueprint
-import zinteract.builder.ChromeBlueprint
 import zinteract.builder.ChromeBlueprint.ChromeBlueprint
+import zinteract.builder.{ChromeBlueprint, CommonBlueprint, chrome}
 
-import org.openqa.selenium.{PageLoadStrategy}
+import org.openqa.selenium.PageLoadStrategy
 
 import scala.jdk.CollectionConverters._
 
