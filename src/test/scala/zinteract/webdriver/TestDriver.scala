@@ -3,6 +3,7 @@ package zinteract.test
 import zinteract.webdriver.WebDriver.Service.webdriver
 
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+
 import com.gargoylesoftware.htmlunit.WebClient
 
 class TestDriver(cssEnabled: Boolean, jsEnabled: Boolean) extends HtmlUnitDriver(jsEnabled) {

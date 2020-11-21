@@ -2,7 +2,7 @@ package zinteract
 
 import zio.{Task, ZIO}
 
-import org.openqa.selenium.{Alert}
+import org.openqa.selenium.Alert
 
 /** Alert provides a way to interact purely with alert.
   */

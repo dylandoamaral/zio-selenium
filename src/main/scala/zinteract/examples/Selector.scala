@@ -1,12 +1,11 @@
 package zinteract.example
 
-import zio.{App, ExitCode}
-import zio.console
+import zio.{App, ExitCode, console}
 
-import zinteract.webdriver
-import zinteract.builder.chrome
 import zinteract.builder.ChromeBlueprint.default
+import zinteract.builder.chrome
 import zinteract.context.Selector.{a, by, href}
+import zinteract.webdriver
 
 object Selector extends App {
   val app = for {

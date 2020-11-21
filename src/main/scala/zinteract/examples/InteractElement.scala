@@ -1,13 +1,12 @@
 package zinteract.example
 
-import zio.{App, ExitCode}
-import zio.clock
 import zio.duration.durationInt
+import zio.{App, ExitCode, clock}
 
-import zinteract.webdriver
-import zinteract.element._
-import zinteract.builder.chrome
 import zinteract.builder.ChromeBlueprint.default
+import zinteract.builder.chrome
+import zinteract.element._
+import zinteract.webdriver
 
 import org.openqa.selenium.By
 

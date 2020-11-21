@@ -1,12 +1,12 @@
 package zinteract.test
 
 import zio.duration.durationInt
-import zio.test._
 import zio.test.Assertion._
+import zio.test._
 
-import zinteract.test.TestDriver.testLayer
-import zinteract.element._
 import zinteract.alert._
+import zinteract.element._
+import zinteract.test.TestDriver.testLayer
 import zinteract.webdriver
 
 import org.openqa.selenium.{By, TimeoutException}

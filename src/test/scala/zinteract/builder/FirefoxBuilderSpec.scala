@@ -1,14 +1,12 @@
 package zinteract.test
 
-import zio.test._
 import zio.test.Assertion._
+import zio.test._
 
-import zinteract.builder.firefox
-import zinteract.builder.CommonBlueprint
-import zinteract.builder.FirefoxBlueprint
 import zinteract.builder.FirefoxBlueprint.FirefoxBlueprint
+import zinteract.builder.{CommonBlueprint, FirefoxBlueprint, firefox}
 
-import org.openqa.selenium.{PageLoadStrategy}
+import org.openqa.selenium.PageLoadStrategy
 
 import scala.jdk.CollectionConverters._
 

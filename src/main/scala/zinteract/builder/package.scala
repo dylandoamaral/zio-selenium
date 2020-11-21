@@ -4,9 +4,9 @@ import zio.{Task, UIO, ZIO, ZLayer}
 
 import zinteract.webdriver.WebDriver
 
-import org.openqa.selenium.{WebDriver => SeleniumWebDriver}
 import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
 import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions}
+import org.openqa.selenium.{WebDriver => SeleniumWebDriver}
 
 /** Builder provides methods to create driver easily and purely.
   */

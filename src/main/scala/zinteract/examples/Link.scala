@@ -2,9 +2,9 @@ package zinteract.example
 
 import zio.{App, ExitCode}
 
-import zinteract.webdriver
-import zinteract.builder.chrome
 import zinteract.builder.ChromeBlueprint.default
+import zinteract.builder.chrome
+import zinteract.webdriver
 
 object Link extends App {
   val app = for {

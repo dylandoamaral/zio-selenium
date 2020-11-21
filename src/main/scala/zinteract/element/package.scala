@@ -1,7 +1,7 @@
 package zinteract
 
-import zio.{RIO, Task, ZIO}
 import zio.clock.Clock
+import zio.{RIO, Task, ZIO}
 
 import zinteract.context._
 
