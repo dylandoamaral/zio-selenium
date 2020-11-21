@@ -1,24 +1,15 @@
 package zinteract
 
-import zio.{Has, RIO, UIO, ZIO, ZLayer}
 import zio.clock.Clock
 import zio.duration.{Duration, DurationOps}
+import zio.{Has, RIO, UIO, ZIO, ZLayer}
 
 import zinteract.context._
 
-import org.openqa.selenium.{
-  Alert,
-  By,
-  Cookie,
-  NoSuchElementException,
-  NoSuchCookieException,
-  WebElement,
-  WebDriverException,
-  WebDriver => SeleniumWebDriver
-}
 import org.openqa.selenium.support.ui.{ExpectedConditions, FluentWait, Wait}
-import java.net.URI
+import org.openqa.selenium.{Alert, By, Cookie, NoSuchCookieException, NoSuchElementException, WebDriver => SeleniumWebDriver, WebDriverException, WebElement}
 
+import java.net.URI
 import scala.jdk.CollectionConverters._
 
 /** Provides some tools to use Selenium WebDriver has

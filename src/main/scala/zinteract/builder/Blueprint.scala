@@ -2,9 +2,9 @@ package zinteract.builder
 
 import zio.Task
 
-import org.openqa.selenium.{MutableCapabilities, PageLoadStrategy}
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.firefox.FirefoxOptions
+import org.openqa.selenium.{MutableCapabilities, PageLoadStrategy}
 
 /** The Blueprint describe a chaining of capabaility for
   * a particular driver.

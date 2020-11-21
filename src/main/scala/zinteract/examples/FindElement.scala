@@ -1,11 +1,10 @@
 package zinteract.example
 
-import zio.{App, ExitCode}
-import zio.console
+import zio.{App, ExitCode, console}
 
-import zinteract.webdriver
-import zinteract.builder.chrome
 import zinteract.builder.ChromeBlueprint.default
+import zinteract.builder.chrome
+import zinteract.webdriver
 
 import org.openqa.selenium.By
 
