@@ -7,7 +7,16 @@ import zio.{Has, RIO, UIO, ZIO, ZLayer}
 import zinteract.context._
 
 import org.openqa.selenium.support.ui.{ExpectedConditions, FluentWait, Wait}
-import org.openqa.selenium.{Alert, By, Cookie, NoSuchCookieException, NoSuchElementException, WebDriver => SeleniumWebDriver, WebDriverException, WebElement}
+import org.openqa.selenium.{
+  Alert,
+  By,
+  Cookie,
+  NoSuchCookieException,
+  NoSuchElementException,
+  WebDriver => SeleniumWebDriver,
+  WebDriverException,
+  WebElement
+}
 
 import java.net.URI
 import scala.jdk.CollectionConverters._

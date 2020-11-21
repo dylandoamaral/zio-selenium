@@ -1,7 +1,7 @@
 package zinteract.example
 
 import zio.duration.durationInt
-import zio.{App, ExitCode, clock}
+import zio.{clock, App, ExitCode}
 
 import zinteract.builder.ChromeBlueprint.default
 import zinteract.builder.chrome

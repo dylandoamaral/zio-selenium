@@ -1,6 +1,6 @@
 package zinteract.example
 
-import zio.{App, ExitCode, console}
+import zio.{console, App, ExitCode}
 
 import zinteract.builder.ChromeBlueprint.default
 import zinteract.builder.chrome
