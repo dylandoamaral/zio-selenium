@@ -32,11 +32,13 @@ ThisBuild / homepage := Some(url("https://github.com/dylandoamaral/zinteract"))
 ThisBuild / coverageExcludedPackages := ".*zinteract.example.*"
 
 ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
-ThisBuild / githubWorkflowPublishTargetBranches ++=
-  Seq(RefPredicate.StartsWith(Ref.Tag("v")))
+ThisBuild / githubWorkflowPublishTargetBranches := Seq(
+  RefPredicate.Equals(Ref.Branch("master")),
+  RefPredicate.StartsWith(Ref.Tag("v"))
+)
 
 ThisBuild / githubWorkflowPublishPreamble +=
-  WorkflowStep.Use("olafurpg", "setup-gpg", "v3")
+  WorkflowStep.Use(UseRef.Public("olafurpg", "setup-gpg", "v3"))
 
 ThisBuild / githubWorkflowPublish := Seq(
   WorkflowStep.Sbt(
