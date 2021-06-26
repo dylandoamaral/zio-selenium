@@ -62,7 +62,7 @@ ThisBuild / githubWorkflowBuildPreamble := Seq(
   WorkflowStep.Run(
     name = Some("Install chromedriver"),
     commands = List(
-      "wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip",
+      "wget https://chromedriver.storage.googleapis.com/91.0.4472.101/chromedriver_linux64.zip",
       "unzip chromedriver*.zip -d ~/Webdriver"
     )
   ),
