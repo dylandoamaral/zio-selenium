@@ -1,9 +1,9 @@
-val zioVersion             = "1.0.6"
+val zioVersion             = "1.0.9"
 val seleniumVersion        = "3.141.59"
-val htmlUnitDriverVersion  = "2.49.1"
+val htmlUnitDriverVersion  = "2.50.0"
 val organizeImportsVersion = "0.5.0"
 
-ThisBuild / scalaVersion := "2.13.3"
+ThisBuild / scalaVersion := "2.13.6"
 ThisBuild / scalacOptions += "-Wunused:imports"
 
 ThisBuild / organization := "dev.doamaral"
@@ -62,7 +62,7 @@ ThisBuild / githubWorkflowBuildPreamble := Seq(
   WorkflowStep.Run(
     name = Some("Install chromedriver"),
     commands = List(
-      "wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip",
+      "wget https://chromedriver.storage.googleapis.com/91.0.4472.101/chromedriver_linux64.zip",
       "unzip chromedriver*.zip -d ~/Webdriver"
     )
   ),
