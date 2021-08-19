@@ -12,8 +12,7 @@ import org.openqa.selenium.{WebDriver => SeleniumWebDriver}
   */
 package object builder {
 
-  /** The builder is a tool to describe a webdriver
-    * thanks to its blueprint.
+  /** The builder is a tool to describe a webdriver thanks to its blueprint.
     */
   sealed trait Builder[Options, Driver] {
 
