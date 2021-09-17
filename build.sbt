@@ -1,4 +1,4 @@
-val zioVersion             = "1.0.10"
+val zioVersion             = "1.0.11"
 val seleniumVersion        = "3.141.59"
 val htmlUnitDriverVersion  = "2.52.0"
 val organizeImportsVersion = "0.5.0"
@@ -6,8 +6,8 @@ val organizeImportsVersion = "0.5.0"
 ThisBuild / scalaVersion := "2.13.6"
 ThisBuild / scalacOptions += "-Wunused:imports"
 
-ThisBuild / organization := "dev.doamaral"
-ThisBuild / organizationName := "doamaral"
+ThisBuild / organization         := "dev.doamaral"
+ThisBuild / organizationName     := "doamaral"
 ThisBuild / organizationHomepage := Some(url("https://www.dylan.doamaral.dev/"))
 
 ThisBuild / scmInfo := Some(
@@ -26,8 +26,8 @@ ThisBuild / developers := List(
 )
 
 ThisBuild / description := "A ZIO wrapper to interact with a browser using Selenium."
-ThisBuild / licenses := List("Apache 2" -> new URL("http://www.apache.org/licenses/LICENSE-2.0.txt"))
-ThisBuild / homepage := Some(url("https://github.com/dylandoamaral/zinteract"))
+ThisBuild / licenses    := List("Apache 2" -> new URL("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+ThisBuild / homepage    := Some(url("https://github.com/dylandoamaral/zinteract"))
 
 ThisBuild / coverageExcludedPackages := ".*zinteract.example.*"
 
@@ -92,8 +92,8 @@ ThisBuild / githubWorkflowBuildPostamble := Seq(
   )
 )
 
-ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / semanticdbEnabled                              := true
+ThisBuild / semanticdbVersion                              := scalafixSemanticdb.revision
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % organizeImportsVersion
 
 lazy val root = (project in file("."))

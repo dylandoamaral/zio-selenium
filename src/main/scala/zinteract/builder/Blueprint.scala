@@ -6,8 +6,7 @@ import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.firefox.FirefoxOptions
 import org.openqa.selenium.{MutableCapabilities, PageLoadStrategy}
 
-/** The Blueprint describe a chaining of capabaility for
-  * a particular driver.
+/** The Blueprint describe a chaining of capabaility for a particular driver.
   */
 case class Blueprint[A](link: A => Task[Unit]) {
 
@@ -49,26 +48,23 @@ object ChromeBlueprint {
     */
   val default: ChromeBlueprint = CommonBlueprint.unit.asInstanceOf[ChromeBlueprint]
 
-  /** Adds command-line arguments to use when starting Chrome.
-    * Arguments with an associated value should be separated by a '=' sign
-    * (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
+  /** Adds command-line arguments to use when starting Chrome. Arguments with an associated value should be separated by
+    * a '=' sign (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
     *
     * See [[https://peter.sh/experiments/chromium-command-line-switches/ here]] for a list of Chrome arguments.
     */
   def addArguments(args: List[String]): ChromeBlueprint =
     Blueprint(options => Task.effect(options.addArguments(args: _*)))
 
-  /** Adds a command-line argument to use when starting Chrome.
-    * Arguments with an associated value should be separated by a '=' sign
-    * (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
+  /** Adds a command-line argument to use when starting Chrome. Arguments with an associated value should be separated
+    * by a '=' sign (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
     *
     * See [[https://peter.sh/experiments/chromium-command-line-switches/ here]] for a list of Chrome arguments.
     */
   def addArgument(arg: String): ChromeBlueprint =
     addArguments(List(arg))
 
-  /** Specifies if the browser should start in fullscreen mode, like if
-    * the user had pressed F11 right after startup.
+  /** Specifies if the browser should start in fullscreen mode, like if the user had pressed F11 right after startup.
     */
   def fullscreen: ChromeBlueprint =
     addArgument("--start-fullscreen")
@@ -83,8 +79,7 @@ object ChromeBlueprint {
   def noPopupBlocking: ChromeBlueprint =
     addArgument("--disable-popup-blocking")
 
-  /** Disables GPU hardware acceleration. If software renderer is not in place,
-    * then the GPU process won't launch.
+  /** Disables GPU hardware acceleration. If software renderer is not in place, then the GPU process won't launch.
     */
   def noGpu: ChromeBlueprint =
     addArgument("--disable-gpu")
@@ -115,20 +110,20 @@ object FirefoxBlueprint {
     */
   val default: FirefoxBlueprint = CommonBlueprint.unit.asInstanceOf[FirefoxBlueprint]
 
-  /** Adds command-line arguments to use when starting Firefox.
-    * Arguments with an associated value should be separated by a '=' sign
-    * (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
+  /** Adds command-line arguments to use when starting Firefox. Arguments with an associated value should be separated
+    * by a '=' sign (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
     *
-    * See [[https://firefox-source-docs.mozilla.org/testing/geckodriver/Flags.html here]] for a list of Firefox arguments.
+    * See [[https://firefox-source-docs.mozilla.org/testing/geckodriver/Flags.html here]] for a list of Firefox
+    * arguments.
     */
   def addArguments(args: List[String]): FirefoxBlueprint =
     Blueprint(options => Task.effect(options.addArguments(args: _*)))
 
-  /** Adds a command-line argument to use when starting Firefox.
-    * Arguments with an associated value should be separated by a '=' sign
-    * (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
+  /** Adds a command-line argument to use when starting Firefox. Arguments with an associated value should be separated
+    * by a '=' sign (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
     *
-    * See [[https://firefox-source-docs.mozilla.org/testing/geckodriver/Flags.html here]] for a list of Firefox arguments.
+    * See [[https://firefox-source-docs.mozilla.org/testing/geckodriver/Flags.html here]] for a list of Firefox
+    * arguments.
     */
   def addArgument(arg: String): FirefoxBlueprint =
     addArguments(List(arg))

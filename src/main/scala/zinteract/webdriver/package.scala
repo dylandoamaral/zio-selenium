@@ -21,9 +21,7 @@ import org.openqa.selenium.{
 import java.net.URI
 import scala.jdk.CollectionConverters._
 
-/** Provides some tools to use Selenium WebDriver has
-  * ZLayer that are mandatory to use when dealing with
-  * Zinteract.
+/** Provides some tools to use Selenium WebDriver has ZLayer that are mandatory to use when dealing with Zinteract.
   */
 package object webdriver {
 
@@ -43,12 +41,11 @@ package object webdriver {
 
   object navigate {
 
-    /** Loads a new web page in the current browser window. This is done using an HTTP GET operation,
-      * and the method will block until the load is complete. This will follow redirects issued either
-      * by the server or as a meta-redirect from within the returned HTML. Should a meta-redirect
-      * "rest" for any duration of time, it is best to wait until this timeout is over, since should
-      * the underlying page change whilst your test is executing the results of future calls against
-      * this interface will be against the freshly loaded page.
+    /** Loads a new web page in the current browser window. This is done using an HTTP GET operation, and the method
+      * will block until the load is complete. This will follow redirects issued either by the server or as a
+      * meta-redirect from within the returned HTML. Should a meta-redirect "rest" for any duration of time, it is best
+      * to wait until this timeout is over, since should the underlying page change whilst your test is executing the
+      * results of future calls against this interface will be against the freshly loaded page.
       */
     def to(url: String): ZIO[WebDriver, WebDriverException, Unit] =
       effect(_.navigate.to(url)).refineToOrDie[WebDriverException]
@@ -58,8 +55,7 @@ package object webdriver {
     def back: ZIO[WebDriver, Throwable, Unit] =
       effect(_.navigate.back)
 
-    /** Moves a single "item" forward in the browser's history. Does nothing if we are on the latest
-      * page viewed.
+    /** Moves a single "item" forward in the browser's history. Does nothing if we are on the latest page viewed.
       */
     def forward: ZIO[WebDriver, Throwable, Unit] =
       effect(_.navigate.forward)
@@ -72,14 +68,13 @@ package object webdriver {
 
   object manage {
 
-    /** Adds a specific cookie. If the cookie's domain name is left blank, it is assumed that the
-      * cookie is meant for the domain of the current document.
+    /** Adds a specific cookie. If the cookie's domain name is left blank, it is assumed that the cookie is meant for
+      * the domain of the current document.
       */
     def addCookie(cookie: Cookie): ZIO[WebDriver, Throwable, Unit] =
       effect(_.manage.addCookie(cookie))
 
-    /** Adds a specific cookie only using a key and a name. The domain is the domain of the
-      * current document
+    /** Adds a specific cookie only using a key and a name. The domain is the domain of the current document
       */
     def addCookie(key: String, value: String): ZIO[WebDriver, Throwable, Unit] =
       addCookie(new Cookie(key, value))
@@ -92,8 +87,8 @@ package object webdriver {
         case cookie => ZIO.succeed(cookie)
       })
 
-    /** Gets all the cookies for the current domain. This is the equivalent of calling
-      * "document.cookie" and parsing the result
+    /** Gets all the cookies for the current domain. This is the equivalent of calling "document.cookie" and parsing the
+      * result
       */
     def getAllCookies: ZIO[WebDriver, Throwable, List[Cookie]] =
       effect(_.manage.getCookies.asScala.toList)

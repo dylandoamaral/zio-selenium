@@ -2,14 +2,13 @@ package zinteract.context
 
 import org.openqa.selenium.By
 
-/** Selector is a DSL to create css selector in
-  * an english way.
+/** Selector is a DSL to create css selector in an english way.
   *
   * Examples:
-  * - href contains "test" in a
-  * - id equalsTo "my-id" in p
-  * - h1 and h2
-  * - id.not
+  *   - href contains "test" in a
+  *   - id equalsTo "my-id" in p
+  *   - h1 and h2
+  *   - id.not
   */
 object Selector {
   sealed trait SearchingMethod { def symbol: String }
