@@ -33,7 +33,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@v12
+        uses: olafurpg/setup-scala@v13
         with:
           java-version: ${{ matrix.java }}
 
@@ -65,15 +65,15 @@ jobs:
           tar zxvf geckodriver*.tar.gz -C ~/Webdriver
 
       - name: Check formatting
-        run: sbt --client '++${{ matrix.scala }}; scalafmtCheck'
+        run: sbt ++${{ matrix.scala }} scalafmtCheck
 
       - name: Check linting
-        run: sbt --client '++${{ matrix.scala }}; scalafix --check'
+        run: sbt ++${{ matrix.scala }} 'scalafix --check'
 
       - name: Check that workflows are up to date
-        run: sbt --client '++${{ matrix.scala }}; githubWorkflowCheck'
+        run: sbt ++${{ matrix.scala }} githubWorkflowCheck
 
-      - run: sbt --client '++${{ matrix.scala }}; coverage; test'
+      - run: sbt ++${{ matrix.scala }} coverage test
 
       - name: Generate coverage
         run: 'sbt coverageReport && bash <(curl -s https://codecov.io/bash)'
@@ -104,7 +104,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@v12
+        uses: olafurpg/setup-scala@v13
         with:
           java-version: ${{ matrix.java }}
 
@@ -137,4 +137,4 @@ jobs:
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-        run: sbt --client '++${{ matrix.scala }}; ci-release'
+        run: sbt ++${{ matrix.scala }} ci-release
