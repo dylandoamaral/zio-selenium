@@ -23,8 +23,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [2.13.7]
-        java: [adopt@1.8]
+        scala: [2.13.6]
+        java: [temurin@11]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout current branch (full)
@@ -32,10 +32,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@v12
+      - name: Setup Java (temurin@11)
+        if: matrix.java == 'temurin@11'
+        uses: actions/setup-java@v2
         with:
-          java-version: ${{ matrix.java }}
+          distribution: temurin
+          java-version: 11
 
       - name: Cache sbt
         uses: actions/cache@v2
@@ -65,15 +67,15 @@ jobs:
           tar zxvf geckodriver*.tar.gz -C ~/Webdriver
 
       - name: Check formatting
-        run: sbt --client '++${{ matrix.scala }}; scalafmtCheck'
+        run: sbt ++${{ matrix.scala }} scalafmtCheck
 
       - name: Check linting
-        run: sbt --client '++${{ matrix.scala }}; scalafix --check'
+        run: sbt ++${{ matrix.scala }} 'scalafix --check'
 
       - name: Check that workflows are up to date
-        run: sbt --client '++${{ matrix.scala }}; githubWorkflowCheck'
+        run: sbt ++${{ matrix.scala }} githubWorkflowCheck
 
-      - run: sbt --client '++${{ matrix.scala }}; coverage; test'
+      - run: sbt ++${{ matrix.scala }} coverage test
 
       - name: Generate coverage
         run: 'sbt coverageReport && bash <(curl -s https://codecov.io/bash)'
@@ -94,8 +96,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [2.13.7]
-        java: [adopt@1.8]
+        scala: [2.13.6]
+        java: [temurin@11]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout current branch (full)
@@ -103,10 +105,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@v12
+      - name: Setup Java (temurin@11)
+        if: matrix.java == 'temurin@11'
+        uses: actions/setup-java@v2
         with:
-          java-version: ${{ matrix.java }}
+          distribution: temurin
+          java-version: 11
 
       - name: Cache sbt
         uses: actions/cache@v2
@@ -137,4 +141,4 @@ jobs:
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-        run: sbt --client '++${{ matrix.scala }}; ci-release'
+        run: sbt ++${{ matrix.scala }} ci-release
