@@ -3,7 +3,7 @@ val seleniumVersion        = "3.141.59"
 val htmlUnitDriverVersion  = "2.56.0"
 val organizeImportsVersion = "0.6.0"
 
-ThisBuild / scalaVersion := "2.13.7"
+ThisBuild / scalaVersion := "2.13.8"
 ThisBuild / scalacOptions += "-Wunused:imports"
 
 ThisBuild / organization         := "dev.doamaral"
