@@ -1,9 +1,9 @@
 val zioVersion             = "1.0.13"
-val seleniumVersion        = "4.1.1"
-val htmlUnitDriverVersion  = "2.56.0"
+val seleniumVersion        = "3.141.59"
+val htmlUnitDriverVersion  = "2.57.0"
 val organizeImportsVersion = "0.6.0"
 
-ThisBuild / scalaVersion := "2.13.7"
+ThisBuild / scalaVersion := "2.13.8"
 ThisBuild / scalacOptions += "-Wunused:imports"
 
 ThisBuild / organization         := "dev.doamaral"
