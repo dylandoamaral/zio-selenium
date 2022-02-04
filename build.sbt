@@ -1,6 +1,6 @@
 val zioVersion             = "2.0.0-RC2"
-val seleniumVersion        = "3.141.59"
-val htmlUnitDriverVersion  = "2.57.0"
+val seleniumVersion        = "4.1.2"
+val htmlUnitDriverVersion  = "3.57.0"
 val organizeImportsVersion = "0.6.0"
 
 ThisBuild / scalaVersion := "2.13.8"
@@ -71,7 +71,7 @@ ThisBuild / githubWorkflowBuildPreamble := Seq(
   WorkflowStep.Run(
     name = Some("Install geckodriver"),
     commands = List(
-      "wget https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux32.tar.gz",
+      "wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux32.tar.gz",
       "tar zxvf geckodriver*.tar.gz -C ~/Webdriver"
     )
   ),
