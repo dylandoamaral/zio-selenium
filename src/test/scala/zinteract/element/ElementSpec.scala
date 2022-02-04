@@ -1,22 +1,19 @@
-package zinteract.test
+package zinteract.element
 
-import zio.ZIO
+import org.openqa.selenium.By
+import zinteract.TestDriver.testLayer
+import zinteract.webdriver
+import zio.{ZEnv, ZIO}
 import zio.test.Assertion._
 import zio.test._
 
-import zinteract.element._
-import zinteract.test.TestDriver.testLayer
-import zinteract.webdriver
-
-import org.openqa.selenium.By
-
 object ElementSpec extends DefaultRunnableSpec {
-  val testPath    = getClass.getResource("/ElementSpec.html").getPath
-  val testWebsite = s"file://$testPath"
+  val testPath: String = getClass.getResource("/ElementSpec.html").getPath
+  val testWebsite      = s"file://$testPath"
 
-  def suiteInteractElement =
+  def suiteInteractElement: Spec[ZEnv, TestFailure[Throwable], TestSuccess] =
     suite("Interact Element Spec")(
-      testM("Element such as input should be writable") {
+      test("Element such as input should be writable") {
         val effect = for {
           _      <- webdriver.link(testWebsite)
           search <- webdriver.findElement(By.id("input"))
@@ -25,7 +22,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer())
       },
-      testM("Element such as input should be cleanable") {
+      test("Element such as input should be cleanable") {
         val effect = for {
           _      <- webdriver.link(testWebsite)
           search <- webdriver.findElement(By.id("input"))
@@ -35,31 +32,31 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer())
       },
-      testM("Element such as button should be clickable") {
+      test("Element such as button should be clickable") {
         val effect = for {
           _      <- webdriver.link(testWebsite)
           button <- webdriver.findElement(By.tagName("a"))
           _      <- button.clickM
           url    <- webdriver.url
-        } yield assert(url)(equalTo("https://www.google.com/"))
+        } yield assert(url)(equalTo("https://github.com/"))
 
         effect.provideCustomLayer(testLayer())
       },
-      testM("Element such as form should be submitable") {
+      test("Element such as form should be submitable") {
         val effect = for {
           _    <- webdriver.link(testWebsite)
           form <- webdriver.findElement(By.tagName("form"))
           _    <- form.submitM
           url  <- webdriver.url
-        } yield assert(url)(equalTo("https://www.google.com/"))
+        } yield assert(url)(equalTo("https://github.com/"))
 
         effect.provideCustomLayer(testLayer())
       }
     )
 
-  def suiteGetterElement =
+  def suiteGetterElement: Spec[ZEnv, TestFailure[Throwable], TestSuccess] =
     suite("Getter Element Spec")(
-      testM("Element has attributes") {
+      test("Element has attributes") {
         val effect = for {
           _     <- webdriver.link(testWebsite)
           h1    <- webdriver.findElement(By.id("test"))
@@ -68,7 +65,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer())
       },
-      testM("Element can have a text") {
+      test("Element can have a text") {
         val effect = for {
           _    <- webdriver.link(testWebsite)
           h1   <- webdriver.findElement(By.id("test"))
@@ -77,7 +74,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer())
       },
-      testM("Element has css values") {
+      test("Element has css values") {
         val effect = for {
           _     <- webdriver.link(testWebsite)
           h1    <- webdriver.findElement(By.id("test"))
@@ -86,7 +83,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer(true, false))
       },
-      testM("Element has a tag name") {
+      test("Element has a tag name") {
         val effect = for {
           _   <- webdriver.link(testWebsite)
           h1  <- webdriver.findElement(By.tagName("h1"))
@@ -95,7 +92,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer())
       },
-      testM("Element has a location, as size and a rect") {
+      test("Element has a location, as size and a rect") {
         val effect =
           for {
             _        <- webdriver.link(testWebsite)
@@ -112,7 +109,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer())
       },
-      testM("Element is show by default") {
+      test("Element is show by default") {
         val effect =
           for {
             _         <- webdriver.link(testWebsite)
@@ -122,7 +119,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer(true, true))
       },
-      testM("Element can be hidden") {
+      test("Element can be hidden") {
         val effect =
           for {
             _         <- webdriver.link(testWebsite)
@@ -132,7 +129,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer(true, true))
       },
-      testM("Element is enable by default") {
+      test("Element is enable by default") {
         val effect =
           for {
             _       <- webdriver.link(testWebsite)
@@ -142,7 +139,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer())
       },
-      testM("Element can be disable") {
+      test("Element can be disable") {
         val effect =
           for {
             _       <- webdriver.link(testWebsite)
@@ -152,7 +149,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer())
       },
-      testM("Element is unselected by default") {
+      test("Element is unselected by default") {
         val effect =
           for {
             _        <- webdriver.link(testWebsite)
@@ -162,7 +159,7 @@ object ElementSpec extends DefaultRunnableSpec {
 
         effect.provideCustomLayer(testLayer())
       },
-      testM("Element can be selected") {
+      test("Element can be selected") {
         val effect =
           for {
             _        <- webdriver.link(testWebsite)
@@ -174,38 +171,39 @@ object ElementSpec extends DefaultRunnableSpec {
       }
     )
 
-  def suiteElements =
+  def suiteElements: Spec[ZEnv, TestFailure[Throwable], TestSuccess] =
     suite("Find Elements Spec")(
-      testM("Element can find an element") {
+      test("Element can find an element") {
         val effect = for {
-          result <- webdriver.link(testWebsite)
-          div    <- webdriver.findElement(By.id("div"))
-          p      <- div.findElementM(By.tagName("p"))
-          text   <- p.getTextM
+          _    <- webdriver.link(testWebsite)
+          div  <- webdriver.findElement(By.id("div"))
+          p    <- div.findElementM(By.tagName("p"))
+          text <- p.getTextM
         } yield assert(text)(equalTo("Test 3"))
 
         effect.provideCustomLayer(testLayer())
       },
-      testM("Element can find several elements") {
+      test("Element can find several elements") {
         val effect = for {
-          result <- webdriver.link(testWebsite)
-          div    <- webdriver.findElement(By.id("div"))
-          ps     <- div.findElementsM(By.tagName("p"))
-          texts  <- ZIO.succeed(ps.map(_.getText()))
+          _     <- webdriver.link(testWebsite)
+          div   <- webdriver.findElement(By.id("div"))
+          ps    <- div.findElementsM(By.tagName("p"))
+          texts <- ZIO.succeed(ps.map(_.getText()))
         } yield assert(texts)(equalTo(List("Test 3")))
 
         effect.provideCustomLayer(testLayer())
       },
-      testM("Element can check if an element exist") {
+      test("Element can check if an element exist") {
         val effect = for {
-          result <- webdriver.link(testWebsite)
-          div    <- webdriver.findElement(By.id("div"))
-          bool   <- div.hasElementM(By.tagName("p"))
+          _    <- webdriver.link(testWebsite)
+          div  <- webdriver.findElement(By.id("div"))
+          bool <- div.hasElementM(By.tagName("p"))
         } yield assert(bool)(isTrue)
 
         effect.provideCustomLayer(testLayer())
       }
     )
 
-  def spec = suite("Element Spec")(suiteInteractElement, suiteGetterElement, suiteElements)
+  def spec: Spec[ZEnv, TestFailure[Throwable], TestSuccess] =
+    suite("Element Spec")(suiteInteractElement, suiteGetterElement, suiteElements)
 }

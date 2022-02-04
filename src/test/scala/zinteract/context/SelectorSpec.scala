@@ -1,21 +1,21 @@
-package zinteract.test
+package zinteract.context
 
+import zinteract.TestDriver.testLayer
 import zio.test.Assertion._
 import zio.test._
-
 import zinteract.context.Selector._
 import zinteract.element._
-import zinteract.test.TestDriver.testLayer
 import zinteract.webdriver
+import zio.ZEnv
 
 object SelectorSpec extends DefaultRunnableSpec {
-  val flagSelectorPath      = getClass.getResource("/FlagSelectorSpec.html").getPath
-  val tagSelectorPath       = getClass.getResource("/TagSelectorSpec.html").getPath
-  val attributeSelectorPath = getClass.getResource("/AttributeSelectorSpec.html").getPath
-  val logicSelectorPath     = getClass.getResource("/LogicSelectorSpec.html").getPath
-  val testWebsite           = (path: String) => s"file://$path"
+  val flagSelectorPath: String      = getClass.getResource("/FlagSelectorSpec.html").getPath
+  val tagSelectorPath: String       = getClass.getResource("/TagSelectorSpec.html").getPath
+  val attributeSelectorPath: String = getClass.getResource("/AttributeSelectorSpec.html").getPath
+  val logicSelectorPath: String     = getClass.getResource("/LogicSelectorSpec.html").getPath
+  val testWebsite: String => String = (path: String) => s"file://$path"
 
-  def suiteSelector =
+  def suiteSelector: Spec[Any, TestFailure[Nothing], TestSuccess] =
     suite("Selector Spec")(
       test("Methods 'in' and 'containing' are similar and reverse methods") {
         val attribute  = id equalsTo "hello"
@@ -26,8 +26,8 @@ object SelectorSpec extends DefaultRunnableSpec {
       }
     )
 
-  def testTag(tagSelector: TagSelector, maybeTag: Option[String] = None) =
-    testM(s"${tagSelector.tag.capitalize} is a tag selector") {
+  def testTag(tagSelector: TagSelector, maybeTag: Option[String] = None): ZSpec[ZEnv, Throwable] =
+    test(s"${tagSelector.tag.capitalize} is a tag selector") {
       val selector = tagSelector
 
       val effect = for {
@@ -39,7 +39,7 @@ object SelectorSpec extends DefaultRunnableSpec {
       effect.provideCustomLayer(testLayer(false, true))
     }
 
-  def suiteTagSelector =
+  def suiteTagSelector: Spec[ZEnv, TestFailure[Throwable], TestSuccess] =
     suite("Tag Selector Spec")(
       testTag(a),
       testTag(any, Some("html")),
@@ -77,22 +77,25 @@ object SelectorSpec extends DefaultRunnableSpec {
       testTag(ul)
     )
 
-  def testAttribute(attributeSelector: AttributeSelectorAlone, maybeAttribute: Option[String] = None) =
-    testM(s"${attributeSelector.attribute.capitalize} is an attribute selector") {
+  def testAttribute(
+      attributeSelector: AttributeSelectorAlone,
+      maybeAttribute: Option[String] = None
+  ): ZSpec[ZEnv, Throwable] =
+    test(s"${attributeSelector.attribute.capitalize} is an attribute selector") {
       val selector = attributeSelector
       val value    = maybeAttribute.getOrElse(attributeSelector.attribute)
 
       val effect = for {
-        _         <- webdriver.link(testWebsite(attributeSelectorPath))
-        element   <- webdriver.findElement(by(selector))
-        attribute <- element.getAttributeM(value)
+        _       <- webdriver.link(testWebsite(attributeSelectorPath))
+        element <- webdriver.findElement(by(selector))
+        _       <- element.getAttributeM(value)
       } yield assertCompletes
 
       effect.provideCustomLayer(testLayer(false, true))
     }
 
-  def testAttributeSearchingMethod(attributeSelector: AttributeSelectorValue, result: String) =
-    testM(f"Attribute selector can select an attribute using $result") {
+  def testAttributeSearchingMethod(attributeSelector: AttributeSelectorValue, result: String): ZSpec[ZEnv, Throwable] =
+    test(f"Attribute selector can select an attribute using $result") {
       val selector = attributeSelector
 
       val effect = for {
@@ -104,7 +107,7 @@ object SelectorSpec extends DefaultRunnableSpec {
       effect.provideCustomLayer(testLayer(false, true))
     }
 
-  def suiteAttributeSelector =
+  def suiteAttributeSelector: Spec[ZEnv, TestFailure[Throwable], TestSuccess] =
     suite("Attribute Selector Spec")(
       testAttribute(klass, Some("class")),
       testAttribute(content),
@@ -120,8 +123,8 @@ object SelectorSpec extends DefaultRunnableSpec {
       testAttributeSearchingMethod(klass endsWith "test", "endsWith")
     )
 
-  def testFlag(tagSelector: TagSelector, flagSelector: FlagSelector) =
-    testM(s"${tagSelector.tag.capitalize} Tag Selector can only select ${flagSelector.flag} ${tagSelector.tag}") {
+  def testFlag(tagSelector: TagSelector, flagSelector: FlagSelector): ZSpec[ZEnv, Throwable] =
+    test(s"${tagSelector.tag.capitalize} Tag Selector can only select ${flagSelector.flag} ${tagSelector.tag}") {
       val selector = tagSelector being flagSelector
 
       val effect = for {
@@ -133,7 +136,7 @@ object SelectorSpec extends DefaultRunnableSpec {
       effect.provideCustomLayer(testLayer(false, true))
     }
 
-  def suiteFlagSelector =
+  def suiteFlagSelector: Spec[ZEnv, TestFailure[Throwable], TestSuccess] =
     suite("Flag Selector Spec")(
       testFlag(input, checked),
       testFlag(input, disabled),
@@ -153,9 +156,9 @@ object SelectorSpec extends DefaultRunnableSpec {
       testFlag(h2, onlyChild)
     )
 
-  def suiteLogicSelector =
+  def suiteLogicSelector: Spec[ZEnv, TestFailure[Throwable], TestSuccess] =
     suite("Logic Selector Spec")(
-      testM("And selector can select all h1 and h2 elements") {
+      test("And selector can select all h1 and h2 elements") {
         val selector = h1 and h2
 
         val effect = for {
@@ -163,9 +166,9 @@ object SelectorSpec extends DefaultRunnableSpec {
           elements <- webdriver.findElements(by(selector))
         } yield assert(elements.length)(equalTo(8))
 
-        effect.provideCustomLayer(testLayer(false, true))
+        effect.provideCustomLayer(testLayer(jsEnabled = true))
       },
-      testM("After selector can select all h2 after h1 elements") {
+      test("After selector can select all h2 after h1 elements") {
         val selector = h2 after h1
 
         val effect = for {
@@ -173,9 +176,9 @@ object SelectorSpec extends DefaultRunnableSpec {
           elements <- webdriver.findElements(by(selector))
         } yield assert(elements.length)(equalTo(2))
 
-        effect.provideCustomLayer(testLayer(false, true))
+        effect.provideCustomLayer(testLayer(jsEnabled = true))
       },
-      testM("Inside selector can select all h2 inside div elements") {
+      test("Inside selector can select all h2 inside div elements") {
         val selector = h2 inside div
 
         val effect = for {
@@ -183,9 +186,9 @@ object SelectorSpec extends DefaultRunnableSpec {
           elements <- webdriver.findElements(by(selector))
         } yield assert(elements.length)(equalTo(3))
 
-        effect.provideCustomLayer(testLayer(false, true))
+        effect.provideCustomLayer(testLayer(jsEnabled = true))
       },
-      testM("ChildOf selector can select all h2 inside div elements") {
+      test("ChildOf selector can select all h2 inside div elements") {
         val selector = h2 childOf div
 
         val effect = for {
@@ -193,9 +196,9 @@ object SelectorSpec extends DefaultRunnableSpec {
           elements <- webdriver.findElements(by(selector))
         } yield assert(elements.length)(equalTo(3))
 
-        effect.provideCustomLayer(testLayer(false, true))
+        effect.provideCustomLayer(testLayer(jsEnabled = true))
       },
-      testM("Not selector can select all not h2") {
+      test("Not selector can select all not h2") {
         val selector = h2.not
 
         val effect = for {
@@ -203,11 +206,11 @@ object SelectorSpec extends DefaultRunnableSpec {
           elements <- webdriver.findElements(by(selector))
         } yield assert(elements.length)(equalTo(9))
 
-        effect.provideCustomLayer(testLayer(false, true))
+        effect.provideCustomLayer(testLayer(jsEnabled = true))
       }
     )
 
-  def spec = suite("Selector Spec")(
+  def spec: Spec[ZEnv, TestFailure[Throwable], TestSuccess] = suite("Selector Spec")(
     suiteSelector,
     suiteTagSelector,
     suiteAttributeSelector,

@@ -1,10 +1,8 @@
-package zinteract.test
+package zinteract.builder
 
 import zio.ZIO
 import zio.test.Assertion._
 import zio.test._
-
-import zinteract.builder.{Blueprint, RemoteBuilder}
 
 import org.openqa.selenium.MutableCapabilities
 
@@ -12,9 +10,9 @@ import scala.jdk.CollectionConverters._
 
 object BuilderUtils {
   def assertArgument[Driver, Options <: MutableCapabilities](
-      builder: RemoteBuilder[Options, Driver],
+      builder: RemoteBuilder[Options],
       blueprint: Blueprint[Options]
-  )(argument: String) =
+  )(argument: String): ZIO[Any, Throwable, TestResult] =
     for {
       options <- (builder using blueprint).buildOptions
       arguments <- ZIO.succeed({

@@ -1,35 +1,30 @@
-package zinteract.test
-
-import zio.duration.durationInt
-import zio.test.Assertion._
-import zio.test._
-import zio.test.environment._
-import zio.{Schedule, ZIO}
-
-import zinteract.context._
-import zinteract.element._
-import zinteract.test.TestDriver.testLayer
-import zinteract.webdriver
+package zinteract.context
 
 import org.openqa.selenium.By
+import zinteract.TestDriver.testLayer
+import zinteract.element._
+import zinteract.webdriver
+import zio.test.Assertion._
+import zio.test._
+import zio._
 
 object WaitSpec extends DefaultRunnableSpec {
-  val testPath    = getClass.getResource("/WaitSpec.html").getPath
-  val testWebsite = s"file://$testPath"
+  val testPath: String = getClass.getResource("/WaitSpec.html").getPath
+  val testWebsite      = s"file://$testPath"
 
-  def spec =
+  def spec: Spec[ZEnv with Live, TestFailure[Throwable], TestSuccess] =
     suite("Wait Spec")(
-      testM("Find element can not wait") {
+      test("Find element can not wait") {
         val effect = for {
-          _       <- webdriver.link(testWebsite)
-          element <- webdriver.findElement(By.tagName("p"))(None)
+          _ <- webdriver.link(testWebsite)
+          _ <- webdriver.findElement(By.tagName("p"))(DontWait)
         } yield ()
 
-        assertM(effect.provideCustomLayer(testLayer(false, true)).run)(
+        assertM(effect.provideCustomLayer(testLayer(jsEnabled = true)).exit)(
           fails(isSubtype[Throwable](anything))
         )
       },
-      testM("Find element can use fluent wait") {
+      test("Find element can use fluent wait") {
         val effect =
           for {
             _       <- webdriver.link(testWebsite)
@@ -38,10 +33,10 @@ object WaitSpec extends DefaultRunnableSpec {
             text    <- element.getTextM
           } yield assert(text)(equalTo("Test"))
 
-        effect.provideCustomLayer(testLayer(false, true))
+        effect.provideCustomLayer(testLayer(jsEnabled = true))
       },
-      testM("Find element can use scheduled wait") {
-        val waiter = Scheduled(Schedule.recurs(5) && Schedule.spaced(200.milliseconds))
+      test("Find element can use scheduled wait") {
+        val waiter = WaitUsingZIO(Schedule.recurs(5) && Schedule.spaced(200.milliseconds))
         val effect =
           for {
             _       <- webdriver.link(testWebsite)
@@ -49,18 +44,18 @@ object WaitSpec extends DefaultRunnableSpec {
             text    <- element.getTextM
           } yield assert(text)(equalTo("Test"))
 
-        Live.live(effect.provideCustomLayer(testLayer(false, true)))
+        Live.live(effect.provideCustomLayer(testLayer(jsEnabled = true)))
       },
-      testM("Find elements can not wait") {
+      test("Find elements can not wait") {
         val effect =
           for {
             _        <- webdriver.link(testWebsite)
             elements <- webdriver.findElements(By.tagName("p"))
           } yield assert(elements)(isEmpty)
 
-        effect.provideCustomLayer(testLayer(false, true))
+        effect.provideCustomLayer(testLayer(jsEnabled = true))
       },
-      testM("Find elements can use fluent wait") {
+      test("Find elements can use fluent wait") {
         val effect =
           for {
             _        <- webdriver.link(testWebsite)
@@ -69,9 +64,9 @@ object WaitSpec extends DefaultRunnableSpec {
             texts    <- ZIO.succeed(elements.map(_.getText()))
           } yield assert(texts)(equalTo(List("Test")))
 
-        effect.provideCustomLayer(testLayer(false, true))
+        effect.provideCustomLayer(testLayer(jsEnabled = true))
       },
-      testM("Find elements can use fluent wait and returns empty list if no element") {
+      test("Find elements can use fluent wait and returns empty list if no element") {
         val effect =
           for {
             _        <- webdriver.link(testWebsite)
@@ -79,10 +74,10 @@ object WaitSpec extends DefaultRunnableSpec {
             elements <- webdriver.findElements(By.id("notexist"))(waiter)
           } yield assert(elements)(isEmpty)
 
-        effect.provideCustomLayer(testLayer(false, true))
+        effect.provideCustomLayer(testLayer(jsEnabled = true))
       },
-      testM("Find elements can use scheduled wait") {
-        val waiter = Scheduled(Schedule.recurs(5) && Schedule.spaced(200.milliseconds))
+      test("Find elements can use scheduled wait") {
+        val waiter = WaitUsingZIO(Schedule.recurs(5) && Schedule.spaced(200.milliseconds))
         val effect =
           for {
             _        <- webdriver.link(testWebsite)
@@ -90,17 +85,17 @@ object WaitSpec extends DefaultRunnableSpec {
             texts    <- ZIO.succeed(elements.map(_.getText()))
           } yield assert(texts)(equalTo(List("Test")))
 
-        Live.live(effect.provideCustomLayer(testLayer(false, true)))
+        Live.live(effect.provideCustomLayer(testLayer(jsEnabled = true)))
       },
-      testM("Find elements can use scheduled wait and returns empty list if no element") {
-        val waiter = Scheduled(Schedule.recurs(5) && Schedule.spaced(200.milliseconds))
+      test("Find elements can use scheduled wait and returns empty list if no element") {
+        val waiter = WaitUsingZIO(Schedule.recurs(5) && Schedule.spaced(200.milliseconds))
         val effect =
           for {
             _        <- webdriver.link(testWebsite)
             elements <- webdriver.findElements(By.id("notexist"))(waiter)
           } yield assert(elements)(isEmpty)
 
-        Live.live(effect.provideCustomLayer(testLayer(false, true)))
+        Live.live(effect.provideCustomLayer(testLayer(jsEnabled = true)))
       }
     )
 }

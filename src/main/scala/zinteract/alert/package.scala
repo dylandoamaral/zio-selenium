@@ -34,20 +34,20 @@ package object alert {
   /** Accepts an alert.
     */
   def acceptOn(alert: Alert): Task[Unit] =
-    ZIO.effect(alert.accept)
+    ZIO.attemptBlocking(alert.accept())
 
   /** Dismisses an alert.
     */
   def dismissOn(alert: Alert): Task[Unit] =
-    ZIO.effect(alert.dismiss)
+    ZIO.attemptBlocking(alert.dismiss())
 
   /** Simulates typing into an alert.
     */
   def sendKeysOn(alert: Alert)(text: String): Task[Unit] =
-    ZIO.effect(alert.sendKeys(text))
+    ZIO.attemptBlocking(alert.sendKeys(text))
 
   /** Gets the text of the alert.
     */
   def getTextOn(alert: Alert): Task[String] =
-    ZIO.effect(alert.getText)
+    ZIO.attemptBlocking(alert.getText)
 }

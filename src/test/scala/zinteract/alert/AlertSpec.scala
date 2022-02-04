@@ -1,23 +1,20 @@
-package zinteract.test
+package zinteract.alert
 
-import zio.duration.durationInt
+import zio._
 import zio.test.Assertion._
 import zio.test._
-
-import zinteract.alert._
 import zinteract.element._
-import zinteract.test.TestDriver.testLayer
 import zinteract.webdriver
-
 import org.openqa.selenium.{By, TimeoutException}
+import zinteract.TestDriver.testLayer
 
 object AlertSpec extends DefaultRunnableSpec {
-  val testPath    = getClass.getResource("/AlertSpec.html").getPath
-  val testWebsite = s"file://$testPath"
+  val testPath: String = getClass.getResource("/AlertSpec.html").getPath
+  val testWebsite      = s"file://$testPath"
 
-  def suiteAlerts =
+  def suiteAlerts: Spec[ZEnv, TestFailure[Throwable], TestSuccess] =
     suite("Alerts Spec")(
-      testM("Alert has a text") {
+      test("Alert has a text") {
         val effect = for {
           _      <- webdriver.link(testWebsite)
           button <- webdriver.findElement(By.id("alert"))
@@ -26,13 +23,13 @@ object AlertSpec extends DefaultRunnableSpec {
           text   <- alert.getTextM
         } yield assert(text)(equalTo("Test alert"))
 
-        effect.provideCustomLayer(testLayer(false, true))
+        effect.provideCustomLayer(testLayer(jsEnabled = true))
       }
     )
 
-  def suiteConfirms =
+  def suiteConfirms: Spec[ZEnv, TestFailure[Nothing], TestSuccess] =
     suite("Confirms Spec")(
-      testM("Confirm can be dismiss") {
+      test("Confirm can be dismiss") {
         val effect = for {
           _      <- webdriver.link(testWebsite)
           button <- webdriver.findElement(By.id("confirm"))
@@ -42,15 +39,15 @@ object AlertSpec extends DefaultRunnableSpec {
           _      <- webdriver.getAlert(100.milliseconds, 500.milliseconds)
         } yield ()
 
-        assertM(effect.provideCustomLayer(testLayer(false, true)).run)(
+        assertM(effect.provideCustomLayer(testLayer(jsEnabled = true)).exit)(
           fails(isSubtype[TimeoutException](anything))
         )
       }
     )
 
-  def suitePrompts =
+  def suitePrompts: Spec[ZEnv, TestFailure[Throwable], TestSuccess] =
     suite("Prompts Spec")(
-      testM("Prompt can be dismiss") {
+      test("Prompt can be dismiss") {
         val effect = for {
           _      <- webdriver.link(testWebsite)
           button <- webdriver.findElement(By.id("prompt"))
@@ -60,11 +57,11 @@ object AlertSpec extends DefaultRunnableSpec {
           _      <- webdriver.getAlert(100.milliseconds, 500.milliseconds)
         } yield ()
 
-        assertM(effect.provideCustomLayer(testLayer(false, true)).run)(
+        assertM(effect.provideCustomLayer(testLayer(jsEnabled = true)).exit)(
           fails(isSubtype[TimeoutException](anything))
         )
       },
-      testM("Prompt can be accept") {
+      test("Prompt can be accept") {
         val effect = for {
           _      <- webdriver.link(testWebsite)
           button <- webdriver.findElement(By.id("prompt"))
@@ -74,11 +71,11 @@ object AlertSpec extends DefaultRunnableSpec {
           _      <- webdriver.getAlert(100.milliseconds, 500.milliseconds)
         } yield ()
 
-        assertM(effect.provideCustomLayer(testLayer(false, true)).run)(
+        assertM(effect.provideCustomLayer(testLayer(jsEnabled = true)).exit)(
           fails(isSubtype[TimeoutException](anything))
         )
       },
-      testM("Prompt has a text input") {
+      test("Prompt has a text input") {
         val effect = for {
           _      <- webdriver.link(testWebsite)
           button <- webdriver.findElement(By.id("prompt"))
@@ -87,9 +84,10 @@ object AlertSpec extends DefaultRunnableSpec {
           _      <- alert.sendKeysM("test")
         } yield assertCompletes
 
-        effect.provideCustomLayer(testLayer(false, true))
+        effect.provideCustomLayer(testLayer(jsEnabled = true))
       }
     )
 
-  def spec = suite("Alert Spec")(suiteAlerts, suiteConfirms, suitePrompts)
+  def spec: Spec[ZEnv, TestFailure[Throwable], TestSuccess] =
+    suite("Alert Spec")(suiteAlerts, suiteConfirms, suitePrompts)
 }
