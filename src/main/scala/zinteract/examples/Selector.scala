@@ -1,13 +1,14 @@
 package zinteract.examples
 
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.chrome.ChromeOptions
 import zio._
+
 import zinteract.builder.ChromeBlueprint.default
-import zinteract.builder.chrome
+import zinteract.builder.{RemoteBuilder, chrome}
 import zinteract.context.Selector.{a, by, href}
 import zinteract.webdriver
-import zinteract.builder.RemoteBuilder
+
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.chrome.ChromeOptions
 
 object Selector extends ZIOAppDefault {
   val app: ZIO[Console with WebDriver with Clock, Throwable, Unit] = for {

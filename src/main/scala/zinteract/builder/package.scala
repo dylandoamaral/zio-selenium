@@ -1,9 +1,10 @@
 package zinteract
 
+import zio.{Task, UIO, ZIO, ZLayer}
+
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
 import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions}
-import org.openqa.selenium.WebDriver
-import zio.{Task, ZLayer, UIO, ZIO}
 
 /** Builder provides methods to create driver easily and purely.
   */

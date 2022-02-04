@@ -1,11 +1,13 @@
 package zinteract.examples
 
-import org.openqa.selenium.chrome.ChromeOptions
 import zio._
+
 import zinteract.builder.ChromeBlueprint.default
 import zinteract.builder.{RemoteBuilder, chrome}
 import zinteract.element._
 import zinteract.webdriver
+
+import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.{By, WebDriver}
 
 object InteractElement extends ZIOAppDefault {

@@ -1,6 +1,7 @@
 package zinteract
 
 import zio._
+
 import zinteract.context._
 
 import org.openqa.selenium.support.ui.{ExpectedConditions, FluentWait, Wait}

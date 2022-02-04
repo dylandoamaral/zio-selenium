@@ -1,10 +1,9 @@
 package zinteract
 
 import zio._
+
 import org.openqa.selenium.{By, SearchContext, WebElement}
 
-import java.util
-import java.util.ArrayList
 import scala.jdk.CollectionConverters._
 
 /** Context provides methods to find an element which are use by webdriver and element packages.

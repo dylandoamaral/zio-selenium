@@ -1,11 +1,13 @@
 package zinteract.examples
 
 import zio._
+
 import zinteract.builder.ChromeBlueprint.default
 import zinteract.builder.{RemoteBuilder, chrome}
 import zinteract.webdriver
-import org.openqa.selenium.{By, WebDriver}
+
 import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.{By, WebDriver}
 
 object FindElement extends ZIOAppDefault {
   val app: ZIO[Console with WebDriver with Clock, Throwable, Unit] = for {

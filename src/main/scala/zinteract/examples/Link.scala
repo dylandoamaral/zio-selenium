@@ -1,11 +1,13 @@
 package zinteract.examples
 
-import org.openqa.selenium.chrome.ChromeOptions
-import org.openqa.selenium.{WebDriver, WebDriverException}
 import zio._
+
 import zinteract.builder.ChromeBlueprint.default
 import zinteract.builder.{RemoteBuilder, chrome}
 import zinteract.webdriver
+
+import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.{WebDriver, WebDriverException}
 
 object Link extends ZIOAppDefault {
   val app: ZIO[WebDriver, WebDriverException, Unit] = for {

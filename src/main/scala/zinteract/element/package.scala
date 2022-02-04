@@ -1,6 +1,7 @@
 package zinteract
 
 import zio._
+
 import zinteract.context._
 
 import org.openqa.selenium.{By, Dimension, Keys, Point, Rectangle, WebElement}
