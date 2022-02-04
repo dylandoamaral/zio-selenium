@@ -6,6 +6,7 @@ import zinteract.builder.FirefoxBlueprint.FirefoxBlueprint
 import org.openqa.selenium.PageLoadStrategy
 import zio.ZIO
 
+import java.util
 import scala.jdk.CollectionConverters._
 
 object FirefoxBuilderSpec extends DefaultRunnableSpec {
@@ -15,7 +16,21 @@ object FirefoxBuilderSpec extends DefaultRunnableSpec {
     } yield assert(capabilities.get(key).map(_.toString))(isSome(equalTo(value)))
 
   def assertArgument(blueprint: FirefoxBlueprint)(argument: String): ZIO[Any, Throwable, TestResult] =
-    BuilderUtils.assertArgument(firefox, blueprint)(argument)
+    for {
+      options <- (firefox using blueprint).buildOptions
+      arguments <- ZIO.succeed({
+        val field = options.getClass.getDeclaredField("firefoxOptions")
+        field.setAccessible(true)
+        field
+          .get(options)
+          .asInstanceOf[util.Map[String, util.ArrayList[String]]]
+          .values
+          .asScala
+          .head
+          .asScala
+          .toList
+      })
+    } yield assert(arguments)(contains(argument))
 
   def suiteFirefoxBuilder: Spec[Any, TestFailure[Throwable], TestSuccess] =
     suite("Firefox Builder Spec")(

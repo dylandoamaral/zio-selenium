@@ -6,6 +6,7 @@ import zinteract.builder.ChromeBlueprint.ChromeBlueprint
 import org.openqa.selenium.PageLoadStrategy
 import zio.ZIO
 
+import java.util
 import scala.jdk.CollectionConverters._
 
 object ChromeBuilderSpec extends DefaultRunnableSpec {
@@ -15,7 +16,18 @@ object ChromeBuilderSpec extends DefaultRunnableSpec {
     } yield assert(capabilities.get(key).map(_.toString))(isSome(equalTo(value)))
 
   def assertArgument(blueprint: ChromeBlueprint)(argument: String): ZIO[Any, Throwable, TestResult] =
-    BuilderUtils.assertArgument(chrome, blueprint)(argument)
+    for {
+      options <- (chrome using blueprint).buildOptions
+      arguments <- ZIO.succeed({
+        val field = options.getClass.getSuperclass.getDeclaredField("args")
+        field.setAccessible(true)
+        field
+          .get(options)
+          .asInstanceOf[util.List[String]]
+          .asScala
+          .toList
+      })
+    } yield assert(arguments)(contains(argument))
 
   def suiteChromeBuilder: Spec[Any, TestFailure[Throwable], TestSuccess] =
     suite("Chrome Builder Spec")(
@@ -86,10 +98,7 @@ object ChromeBuilderSpec extends DefaultRunnableSpec {
         assertArgument(ChromeBlueprint.fullscreen)("--start-fullscreen")
       },
       test("Chrome Blueprint can be headless") {
-        for {
-          a1 <- assertArgument(ChromeBlueprint.headless)("--headless")
-          a2 <- assertArgument(ChromeBlueprint.headless)("--disable-gpu")
-        } yield a1 && a2
+        assertArgument(ChromeBlueprint.headless)("--headless")
       }
     )
 
