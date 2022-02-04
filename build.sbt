@@ -71,7 +71,7 @@ ThisBuild / githubWorkflowBuildPreamble := Seq(
   WorkflowStep.Run(
     name = Some("Install geckodriver"),
     commands = List(
-      "wget https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux32.tar.gz",
+      "wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux32.tar.gz",
       "tar zxvf geckodriver*.tar.gz -C ~/Webdriver"
     )
   ),
