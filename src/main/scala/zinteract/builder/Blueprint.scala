@@ -1,6 +1,6 @@
 package zinteract.builder
 
-import zio.Task
+import zio._
 
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.firefox.FirefoxOptions
@@ -36,7 +36,7 @@ object CommonBlueprint {
   /** Set a new capability to the options.
     */
   def setCapability(key: String, value: Object): CommonBlueprint =
-    Blueprint(options => Task.effect(options.setCapability(key, value)))
+    Blueprint(options => ZIO.attemptBlocking(options.setCapability(key, value)))
 }
 
 /** ChromeBlueprint instances usable by ChromeBuilder.
@@ -54,7 +54,7 @@ object ChromeBlueprint {
     * See [[https://peter.sh/experiments/chromium-command-line-switches/ here]] for a list of Chrome arguments.
     */
   def addArguments(args: List[String]): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.addArguments(args: _*)))
+    Blueprint(options => ZIO.attemptBlocking(options.addArguments(args: _*)))
 
   /** Adds a command-line argument to use when starting Chrome. Arguments with an associated value should be separated
     * by a '=' sign (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
@@ -89,12 +89,12 @@ object ChromeBlueprint {
     * See [[https://www.selenium.dev/documentation/en/webdriver/page_loading_strategy/ here]] for more information.
     */
   def setLoadPageStrategy(strategy: PageLoadStrategy): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.setPageLoadStrategy(strategy)))
+    Blueprint(options => ZIO.attemptBlocking(options.setPageLoadStrategy(strategy)))
 
   /** Chooses if you want to run in headless mode or not
     */
   def setHeadless(bool: Boolean): ChromeBlueprint =
-    Blueprint(options => Task.effect(options.setHeadless(bool)))
+    Blueprint(options => ZIO.attemptBlocking(options.setHeadless(bool)))
 
   /** Runs in headless mode, i.e., without a UI or display server dependencies.
     */
@@ -117,7 +117,7 @@ object FirefoxBlueprint {
     * arguments.
     */
   def addArguments(args: List[String]): FirefoxBlueprint =
-    Blueprint(options => Task.effect(options.addArguments(args: _*)))
+    Blueprint(options => ZIO.attemptBlocking(options.addArguments(args: _*)))
 
   /** Adds a command-line argument to use when starting Firefox. Arguments with an associated value should be separated
     * by a '=' sign (e.g., ['start-maximized', 'user-data-dir=/tmp/temp_profile']).
@@ -133,12 +133,12 @@ object FirefoxBlueprint {
     * See [[https://www.selenium.dev/documentation/en/webdriver/page_loading_strategy/ here]] for more information.
     */
   def setLoadPageStrategy(strategy: PageLoadStrategy): FirefoxBlueprint =
-    Blueprint(options => Task.effect(options.setPageLoadStrategy(strategy)))
+    Blueprint(options => ZIO.attemptBlocking(options.setPageLoadStrategy(strategy)))
 
   /** Chooses if you want to run in headless mode or not
     */
   def setHeadless(bool: Boolean): FirefoxBlueprint =
-    Blueprint(options => Task.effect(options.setHeadless(bool)))
+    Blueprint(options => ZIO.attemptBlocking(options.setHeadless(bool)))
 
   /** Runs in headless mode, i.e., without a UI or display server dependencies.
     */

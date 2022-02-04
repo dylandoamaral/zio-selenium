@@ -1,9 +1,6 @@
 package zinteract
 
-import zio.clock.Clock
-import zio.duration.{Duration, DurationOps}
-import zio.{Has, RIO, UIO, ZIO, ZLayer}
-
+import zio._
 import zinteract.context._
 
 import org.openqa.selenium.support.ui.{ExpectedConditions, FluentWait, Wait}
@@ -13,7 +10,7 @@ import org.openqa.selenium.{
   Cookie,
   NoSuchCookieException,
   NoSuchElementException,
-  WebDriver => SeleniumWebDriver,
+  WebDriver,
   WebDriverException,
   WebElement
 }
@@ -25,17 +22,12 @@ import scala.jdk.CollectionConverters._
   */
 package object webdriver {
 
-  type WebDriver = Has[SeleniumWebDriver]
-
   object WebDriver {
     object Service {
 
-      /** Returns a WebDriver has a ZLayer.
-        */
-      def webdriver(webDriver: => SeleniumWebDriver): ZLayer[Any, Throwable, WebDriver] =
-        ZLayer.fromAcquireRelease(ZIO.effect({ webDriver.asInstanceOf[SeleniumWebDriver] }))(driver =>
-          UIO(driver.quit())
-        )
+      /** Returns a WebDriver has a ZLayer. */
+      def webdriver(webDriver: => WebDriver): ZLayer[Any, Throwable, WebDriver] =
+        ZLayer.fromAcquireRelease(ZIO.attempt({ webDriver }))(driver => UIO(driver.quit()))
     }
   }
 
@@ -111,13 +103,11 @@ package object webdriver {
 
   /** Get the underlying Selenium WebDriver.
     */
-  def underlying: RIO[WebDriver, SeleniumWebDriver] =
-    ZIO.access(_.get)
+  def underlying: RIO[WebDriver, WebDriver] = ZIO.service[WebDriver]
 
-  /** Allow side effects to fail purely inside accessor function
-    */
-  def effect[A](effect: SeleniumWebDriver => A): ZIO[WebDriver, Throwable, A] =
-    underlying.flatMap(webdriver => ZIO.effect(effect(webdriver)))
+  /** Describe a webdriver effect */
+  def effect[A](effect: WebDriver => A): ZIO[WebDriver, Throwable, A] =
+    underlying.flatMap(webdriver => ZIO.attemptBlocking(effect(webdriver)))
 
   /** Alias for `navigate.to`
     */
@@ -149,7 +139,7 @@ package object webdriver {
   def getDomain: ZIO[WebDriver, Throwable, String] =
     url.map(url => {
       val uri: URI       = new URI(url)
-      val domain: String = uri.getHost();
+      val domain: String = uri.getHost
 
       if (domain.startsWith("www.")) domain.substring(4) else domain
     })
@@ -181,25 +171,25 @@ package object webdriver {
 
   /** Finds the first WebElement using the given method.
     */
-  def findElement(by: By)(implicit wait: WaitConfig = None): ZIO[WebDriver with Clock, Throwable, WebElement] =
+  def findElement(by: By)(implicit wait: WaitKind = DontWait): ZIO[WebDriver with Clock, Throwable, WebElement] =
     underlying.flatMap(findElementFrom(_)(by)(wait))
 
   /** Finds all WebElements using the given method.
     */
-  def findElements(by: By)(implicit wait: WaitConfig = None): RIO[WebDriver with Clock, List[WebElement]] =
+  def findElements(by: By)(implicit wait: WaitKind = DontWait): RIO[WebDriver with Clock, List[WebElement]] =
     underlying.flatMap(findElementsFrom(_)(by)(wait))
 
   /** Checks if the given method find an element.
     */
-  def hasElement(by: By)(implicit wait: WaitConfig = None): RIO[WebDriver with Clock, Boolean] =
+  def hasElement(by: By)(implicit wait: WaitKind = DontWait): RIO[WebDriver with Clock, Boolean] =
     underlying.flatMap(hasElementFrom(_)(by)(wait))
 
   /** Returns a fluent wait
     */
-  def defineFluentWaiter(polling: Duration, timeout: Duration): RIO[WebDriver, Fluent] =
+  def defineFluentWaiter(polling: Duration, timeout: Duration): RIO[WebDriver, WaitUsingSelenium] =
     effect(webdriver =>
-      Fluent(
-        new FluentWait[SeleniumWebDriver](webdriver)
+      WaitUsingSelenium(
+        new FluentWait[WebDriver](webdriver)
           .pollingEvery(polling.asJava)
           .withTimeout(timeout.asJava)
           .ignoring(classOf[NoSuchElementException])
@@ -208,8 +198,8 @@ package object webdriver {
 
   /** Gets the current alert using a Selenium wait.
     */
-  def getAlert(wait: Wait[SeleniumWebDriver]): ZIO[WebDriver, Throwable, Alert] =
-    ZIO.effect(wait.until(ExpectedConditions.alertIsPresent))
+  def getAlert(wait: Wait[WebDriver]): ZIO[WebDriver, Throwable, Alert] =
+    ZIO.attemptBlocking(wait.until(ExpectedConditions.alertIsPresent))
 
   /** Gets the current alert by providing a polling and timeout duration.
     */

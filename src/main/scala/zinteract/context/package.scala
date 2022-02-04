@@ -1,10 +1,9 @@
 package zinteract
 
-import zio.clock.Clock
-import zio.{RIO, ZIO}
-
+import zio._
 import org.openqa.selenium.{By, SearchContext, WebElement}
 
+import java.util
 import java.util.ArrayList
 import scala.jdk.CollectionConverters._
 
@@ -16,11 +15,11 @@ package object context {
     */
   def findElementFrom(
       context: SearchContext
-  )(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, Throwable, WebElement] = {
+  )(by: By)(implicit wait: WaitKind = DontWait): ZIO[Clock, Throwable, WebElement] = {
     val effect = wait match {
-      case None                => ZIO.effect(context.findElement(by))
-      case Fluent(waiter)      => ZIO.effect(waiter.until(_ => context.findElement(by)))
-      case Scheduled(schedule) => ZIO.effect(context.findElement(by)).retry(schedule)
+      case DontWait                  => ZIO.attemptBlocking(context.findElement(by))
+      case WaitUsingSelenium(waiter) => ZIO.attemptBlocking(waiter.until(_ => context.findElement(by)))
+      case WaitUsingZIO(schedule)    => ZIO.attemptBlocking(context.findElement(by)).retry(schedule)
     }
     effect
   }
@@ -29,19 +28,17 @@ package object context {
     */
   def findElementsFrom(
       context: SearchContext
-  )(by: By)(implicit wait: WaitConfig = None): RIO[Clock, List[WebElement]] = {
+  )(by: By)(implicit wait: WaitKind = DontWait): RIO[Clock, List[WebElement]] = {
     val effect = wait match {
-      case None => ZIO.effect(context.findElements(by))
-      case Fluent(waiter) =>
-        findElementFrom(context)(by)(wait).fold(_ => new ArrayList(), _ => context.findElements(by))
-      case Scheduled(schedule) =>
-        findElementFrom(context)(by)(wait).fold(_ => new ArrayList(), _ => context.findElements(by))
+      case DontWait => ZIO.attemptBlocking(context.findElements(by).asScala)
+      case _        => findElementFrom(context)(by)(wait).fold(_ => List(), _ => context.findElements(by).asScala)
     }
-    effect.map(_.asScala.toList)
+
+    effect.map(_.toList)
   }
 
   /** Checks if the given method find an element.
     */
-  def hasElementFrom(context: SearchContext)(by: By)(implicit wait: WaitConfig = None): RIO[Clock, Boolean] =
-    findElementsFrom(context)(by)(wait).map(!_.isEmpty)
+  def hasElementFrom(context: SearchContext)(by: By)(implicit wait: WaitKind = DontWait): RIO[Clock, Boolean] =
+    findElementsFrom(context)(by)(wait).map(_.nonEmpty)
 }

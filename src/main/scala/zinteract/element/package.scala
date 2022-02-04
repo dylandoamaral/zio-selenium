@@ -1,8 +1,6 @@
 package zinteract
 
-import zio.clock.Clock
-import zio.{RIO, Task, ZIO}
-
+import zio._
 import zinteract.context._
 
 import org.openqa.selenium.{By, Dimension, Keys, Point, Rectangle, WebElement}
@@ -152,17 +150,17 @@ package object element {
 
     /** Finds the first WebElement using the given method.
       */
-    def findElementM(by: By)(implicit wait: WaitConfig = None): ZIO[Clock, Throwable, WebElement] =
+    def findElementM(by: By)(implicit wait: WaitKind = DontWait): ZIO[Clock, Throwable, WebElement] =
       findElementFrom(element)(by)(wait)
 
     /** Finds all WebElements using the given method.
       */
-    def findElementsM(by: By)(implicit wait: WaitConfig = None): RIO[Clock, List[WebElement]] =
+    def findElementsM(by: By)(implicit wait: WaitKind = DontWait): RIO[Clock, List[WebElement]] =
       findElementsFrom(element)(by)(wait)
 
     /** Checks if the given method find an element.
       */
-    def hasElementM(by: By)(implicit wait: WaitConfig = None): RIO[Clock, Boolean] =
+    def hasElementM(by: By)(implicit wait: WaitKind = DontWait): RIO[Clock, Boolean] =
       hasElementFrom(element)(by)(wait)
   }
 
@@ -176,7 +174,7 @@ package object element {
     * and width greater then 0.
     */
   def clickOn(element: WebElement): Task[Unit] =
-    ZIO.effect(element.click)
+    ZIO.attemptBlocking(element.click())
 
   /** If this element is a text entry element, this will clear the value. Has no effect on other elements. Text entry
     * elements are INPUT and TEXTAREA elements.
@@ -185,12 +183,12 @@ package object element {
     * mouse events.
     */
   def clearOn(element: WebElement): Task[Unit] =
-    ZIO.effect(element.clear)
+    ZIO.attemptBlocking(element.clear())
 
   /** Simulates typing into an element, which may set its value.
     */
   def sendKeysOn(element: WebElement)(text: CharSequence): Task[Unit] =
-    ZIO.effect(element.sendKeys(text))
+    ZIO.attemptBlocking(element.sendKeys(text))
 
   /** Simulates the key enter into an element.
     */
@@ -201,7 +199,7 @@ package object element {
     * If this causes the current page to change, then this method will block until the new page is loaded.
     */
   def submitOn(element: WebElement): Task[Unit] =
-    ZIO.effect(element.submit)
+    ZIO.attemptBlocking(element.submit())
 
   /** Gets the value of the given attribute of the element. Will return the current value, even if this has been
     * modified after the page has been loaded.
@@ -228,12 +226,12 @@ package object element {
     * should evaluate Javascript to obtain the result you desire.
     */
   def getAttributeOf(element: WebElement)(name: String): Task[String] =
-    ZIO.effect(element.getAttribute(name))
+    ZIO.attemptBlocking(element.getAttribute(name))
 
   /** Gets the visible (i.e. not hidden by CSS) text of this element, including sub-elements.
     */
   def getTextOf(element: WebElement): Task[String] =
-    ZIO.effect(element.getText)
+    ZIO.attemptBlocking(element.getText)
 
   /** Gets the value of a given CSS property. Color values should be returned as rgba strings, so, for example if the
     * "background-color" property is set as "green" in the HTML source, the returned value will be "rgba(0, 255, 0, 1)".
@@ -244,34 +242,34 @@ package object element {
     *   - you should directly access the longhand properties (e.g. background-color) to access the desired values.
     */
   def getCssValueOf(element: WebElement)(propertyName: String): Task[String] =
-    ZIO.effect(element.getCssValue(propertyName))
+    ZIO.attemptBlocking(element.getCssValue(propertyName))
 
   /** Gets the tag name of this element. <b>Not</b> the value of the name attribute: will return <code>"input"</code>
     * for the element <code>&lt;input name="foo" /&gt;</code>.
     */
   def getTagNameOf(element: WebElement): Task[String] =
-    ZIO.effect(element.getTagName)
+    ZIO.attemptBlocking(element.getTagName)
 
   /** Where on the page is the top left-hand corner of the rendered element.
     */
   def getLocationOf(element: WebElement): Task[Point] =
-    ZIO.effect(element.getLocation)
+    ZIO.attemptBlocking(element.getLocation)
 
   /** Returns the location and size of the rendered element.
     */
   def getRectOf(element: WebElement): Task[Rectangle] =
-    ZIO.effect(element.getRect)
+    ZIO.attemptBlocking(element.getRect)
 
   /** Returns The size of the element on the page.
     */
   def getSizeOf(element: WebElement): Task[Dimension] =
-    ZIO.effect(element.getSize)
+    ZIO.attemptBlocking(element.getSize)
 
   /** Returns if this element displayed or not. This method avoids the problem of having to parse an element's "style"
     * attribute.
     */
   def isDisplayed(element: WebElement): Task[Boolean] =
-    ZIO.effect(element.isDisplayed)
+    ZIO.attemptBlocking(element.isDisplayed)
 
   /** Returns if the element currently enabled or not. This will generally return true for everything but disabled input
     * elements.
@@ -280,12 +278,12 @@ package object element {
     *   True if the element is enabled, false otherwise.
     */
   def isEnabled(element: WebElement): Task[Boolean] =
-    ZIO.effect(element.isEnabled)
+    ZIO.attemptBlocking(element.isEnabled)
 
   /** Determines whether or not this element is selected or not. This operation only applies to input elements such as
     * checkboxes, options in a select and radio buttons. For more information on which elements this method supports,
     * refer to the <a href="https://w3c.github.io/webdriver/webdriver-spec.html#is-element-selected">specification</a>.
     */
   def isSelected(element: WebElement): Task[Boolean] =
-    ZIO.effect(element.isSelected)
+    ZIO.attemptBlocking(element.isSelected)
 }

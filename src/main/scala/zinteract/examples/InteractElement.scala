@@ -1,29 +1,27 @@
-package zinteract.example
+package zinteract.examples
 
-import zio.duration.durationInt
-import zio.{App, ExitCode, clock}
-
+import org.openqa.selenium.chrome.ChromeOptions
+import zio._
 import zinteract.builder.ChromeBlueprint.default
-import zinteract.builder.chrome
+import zinteract.builder.{RemoteBuilder, chrome}
 import zinteract.element._
 import zinteract.webdriver
+import org.openqa.selenium.{By, WebDriver}
 
-import org.openqa.selenium.By
-
-object InteractElement extends App {
-  val app = for {
+object InteractElement extends ZIOAppDefault {
+  val app: ZIO[WebDriver with Clock, Throwable, Unit] = for {
     _          <- webdriver.link("https://www.selenium.dev/documentation/en/")
     search     <- webdriver.findElement(By.cssSelector("[type=search]"))
     _          <- search.sendKeysM("Introduction")
-    _          <- clock.sleep(2.seconds)
+    _          <- Clock.sleep(2.seconds)
     suggestion <- webdriver.findElement(By.className("autocomplete-suggestion"))
     _          <- suggestion.clickM
-    _          <- clock.sleep(2.seconds)
+    _          <- Clock.sleep(2.seconds)
   } yield ()
 
-  val builder = chrome at "/path/to/chromedriver" using default
+  val builder: RemoteBuilder[ChromeOptions] = chrome at "/path/to/chromedriver" using default
 
-  override def run(args: List[String]): zio.URIO[zio.ZEnv, ExitCode] =
+  override def run: URIO[ZEnv, ExitCode] =
     app
       .provideCustomLayer(builder.buildLayer)
       .exitCode
