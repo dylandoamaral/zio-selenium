@@ -1,4 +1,4 @@
-package zio.selenium.examples
+package zio.selenium.example
 
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.chrome.ChromeDriver

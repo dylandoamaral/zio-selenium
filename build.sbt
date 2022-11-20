@@ -30,7 +30,7 @@ ThisBuild / description := "A ZIO wrapper to interact with a browser using Selen
 ThisBuild / licenses    := List("Apache 2" -> new URL("https://github.com/dylandoamaral/zinteract/blob/master/LICENSE"))
 ThisBuild / homepage    := Some(url("https://github.com/dylandoamaral/zio-selenium"))
 
-ThisBuild / coverageExcludedPackages := ".*zinteract.example.*"
+ThisBuild / coverageExcludedPackages := ".*zio.selenium.example.*"
 
 ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
 
