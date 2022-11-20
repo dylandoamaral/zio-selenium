@@ -1,10 +1,10 @@
 package zio.selenium.example
 
+import org.openqa.selenium.{By, WebDriverException}
+import org.openqa.selenium.chrome.ChromeDriver
+
 import zio._
 import zio.selenium._
-
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.{By, WebDriverException}
 
 object FindElement extends ZIOAppDefault {
 

@@ -1,9 +1,9 @@
 package zio.selenium
 
+import org.openqa.selenium.{By, Dimension, Point, Rectangle, WebDriverException, WebElement => SeleniumWebElement}
+
 import zio._
 import zio.selenium.internal._
-
-import org.openqa.selenium.{By, Dimension, Point, Rectangle, WebDriverException, WebElement => SeleniumWebElement}
 
 trait WebElement {
   def sendKeys(keysToSend: String): ZIO[WebDriver, WebDriverException, Unit]
