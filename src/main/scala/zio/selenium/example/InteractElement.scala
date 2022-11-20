@@ -8,7 +8,7 @@ import zio.selenium._
 
 object InteractElement extends ZIOAppDefault {
 
-  val app: ZIO[WebDriver with Clock, Throwable, Unit] =
+  val app: ZIO[WebDriver, Throwable, Unit] =
     for {
       _          <- WebDriver.get("https://www.selenium.dev/documentation/en/")
       search     <- WebDriver.findElement(By.cssSelector("[type=search]"))

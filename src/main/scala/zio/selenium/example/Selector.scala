@@ -9,7 +9,7 @@ import zio.selenium.Selector._
 
 object Selector extends ZIOAppDefault {
 
-  val app: ZIO[Console with WebDriver with Clock, Throwable, Unit] =
+  val app: ZIO[WebDriver, Throwable, Unit] =
     for {
       _       <- WebDriver.get("https://github.com/dylandoamaral/zinteract")
       element <- WebDriver.findElement(by(href equalsTo "/dylandoamaral/zinteract" in a))
