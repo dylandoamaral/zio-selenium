@@ -1,8 +1,8 @@
 package zio.selenium
 
-import org.openqa.selenium.WebDriverException
-
 import zio.IO
+
+import org.openqa.selenium.WebDriverException
 
 import java.net.URL
 

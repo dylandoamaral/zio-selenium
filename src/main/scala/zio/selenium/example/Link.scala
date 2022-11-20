@@ -1,10 +1,10 @@
 package zio.selenium.example
 
-import org.openqa.selenium.WebDriverException
-import org.openqa.selenium.chrome.ChromeDriver
-
 import zio._
 import zio.selenium._
+
+import org.openqa.selenium.WebDriverException
+import org.openqa.selenium.chrome.ChromeDriver
 
 object Link extends ZIOAppDefault {
 

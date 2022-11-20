@@ -1,13 +1,12 @@
 package zio.selenium
 
-import org.openqa.selenium.{By, Cookie, WebDriver => SeleniumWebDriver, WebDriverException}
-
 import zio._
 import zio.selenium.internal._
 
-import scala.jdk.CollectionConverters._
+import org.openqa.selenium.{By, Cookie, WebDriver => SeleniumWebDriver, WebDriverException}
 
 import java.net.{URI, URL}
+import scala.jdk.CollectionConverters._
 
 trait WebDriver {
   def getCurrentUrl: IO[WebDriverException, String]

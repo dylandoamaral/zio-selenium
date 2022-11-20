@@ -1,9 +1,9 @@
 package zio.selenium
 
-import org.openqa.selenium.{WebDriverException, WebElement => SeleniumWebElement}
-
 import zio._
 import zio.selenium.WebElement.WebElementLive
+
+import org.openqa.selenium.{WebDriverException, WebElement => SeleniumWebElement}
 
 import scala.jdk.CollectionConverters._
 

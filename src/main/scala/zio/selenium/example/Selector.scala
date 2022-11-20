@@ -1,11 +1,11 @@
 package zio.selenium.example
 
+import zio._
+import zio.selenium.Selector._
+import zio.selenium._
+
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.chrome.ChromeDriver
-
-import zio._
-import zio.selenium._
-import zio.selenium.Selector._
 
 object Selector extends ZIOAppDefault {
 

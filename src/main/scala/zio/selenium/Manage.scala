@@ -1,8 +1,8 @@
 package zio.selenium
 
-import org.openqa.selenium.{Cookie, WebDriverException}
-
 import zio._
+
+import org.openqa.selenium.{Cookie, WebDriverException}
 
 trait Manage {
 
