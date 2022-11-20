@@ -51,21 +51,6 @@ jobs:
             ~/Library/Caches/Coursier/v1
           key: ${{ runner.os }}-sbt-cache-v2-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
-      - name: Create Webdriver folder
-        run: mkdir ~/Webdriver
-
-      - name: Install chromedriver
-        run: |
-          CHROME_VERSION=$(google-chrome --version | cut -f 3 -d ' ' | cut -d '.' -f 1)
-          CHROMEDRIVER_RELEASE=$(curl --location --fail --retry 3 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION})
-          wget https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_RELEASE}/chromedriver_linux64.zip
-          unzip chromedriver*.zip -d ~/Webdriver
-
-      - name: Install geckodriver
-        run: |
-          wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux32.tar.gz
-          tar zxvf geckodriver*.tar.gz -C ~/Webdriver
-
       - name: Check formatting
         run: sbt ++${{ matrix.scala }} scalafmtCheck
 

@@ -56,31 +56,6 @@ ThisBuild / githubWorkflowPublish := Seq(
 )
 
 ThisBuild / githubWorkflowBuildPreamble := Seq(
-  WorkflowStep.Run(
-    name = Some("Create Webdriver folder"),
-    commands =
-      List(
-        "mkdir ~/Webdriver"
-      )
-  ),
-  WorkflowStep.Run(
-    name = Some("Install chromedriver"),
-    commands =
-      List(
-        "CHROME_VERSION=$(google-chrome --version | cut -f 3 -d ' ' | cut -d '.' -f 1)",
-        "CHROMEDRIVER_RELEASE=$(curl --location --fail --retry 3 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION})",
-        "wget https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_RELEASE}/chromedriver_linux64.zip",
-        "unzip chromedriver*.zip -d ~/Webdriver"
-      )
-  ),
-  WorkflowStep.Run(
-    name = Some("Install geckodriver"),
-    commands =
-      List(
-        "wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux32.tar.gz",
-        "tar zxvf geckodriver*.tar.gz -C ~/Webdriver"
-      )
-  ),
   WorkflowStep.Sbt(
     name     = Some("Check formatting"),
     commands = List("scalafmtCheck")
