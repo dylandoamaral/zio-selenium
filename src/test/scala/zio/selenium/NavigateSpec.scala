@@ -2,11 +2,8 @@ package zio.selenium
 
 import org.openqa.selenium.{By, WebDriverException}
 
-import zio._
 import zio.test._
 import zio.test.TestAspect.sequential
-
-import scala.io.Source
 
 object NavigateSpec extends SharedWebDriverSpec {
 

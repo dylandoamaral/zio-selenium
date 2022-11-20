@@ -16,7 +16,7 @@ trait Manage {
    * @param cookie
    *   The cookie to add.
    */
-  def addCookie(cookie: Cookie): IO[WebDriverException, Unit]
+  def addCookie(cookie: Cookie)(implicit trace: Trace): IO[WebDriverException, Unit]
 
   /**
    * Add a specific cookie. If the cookie's domain name is left blank,
@@ -28,7 +28,8 @@ trait Manage {
    * @param cookie
    *   The cookie to add.
    */
-  def addCookie(key: String, value: String): IO[WebDriverException, Unit] = addCookie(new Cookie(key, value))
+  def addCookie(key: String, value: String)(implicit trace: Trace): IO[WebDriverException, Unit] =
+    addCookie(new Cookie(key, value))
 
   /**
    * Add cookies. For each cookie, if the cookie's domain name is left
@@ -40,7 +41,8 @@ trait Manage {
    * @param cookies
    *   The cookies to add.
    */
-  def addCookies(cookies: Seq[Cookie]): IO[WebDriverException, Unit] = ZIO.foreachDiscard(cookies)(addCookie)
+  def addCookies(cookies: Seq[Cookie])(implicit trace: Trace): IO[WebDriverException, Unit] =
+    ZIO.foreachDiscard(cookies)(addCookie)
 
   /**
    * Get a cookie with a given name. <p> See <a
@@ -52,7 +54,7 @@ trait Manage {
    * @return
    *   the cookie, or null if no cookie with the given name is present
    */
-  def getCookieNamed(key: String): IO[WebDriverException, Option[Cookie]]
+  def getCookieNamed(key: String)(implicit trace: Trace): IO[WebDriverException, Option[Cookie]]
 
   /**
    * Get all the cookies for the current domain. <p> See <a
@@ -62,7 +64,7 @@ trait Manage {
    * @return
    *   A Set of cookies for the current domain.
    */
-  def getAllCookies: IO[WebDriverException, Set[Cookie]]
+  def getAllCookies(implicit trace: Trace): IO[WebDriverException, Set[Cookie]]
 
   /**
    * Delete a cookie from the browser's "cookie jar". The domain of the
@@ -71,7 +73,7 @@ trait Manage {
    * @param cookie
    *   The cookies to delete.
    */
-  def deleteCookie(cookie: Cookie): IO[WebDriverException, Unit]
+  def deleteCookie(cookie: Cookie)(implicit trace: Trace): IO[WebDriverException, Unit]
 
   /**
    * Delete the named cookie from the current domain. This is equivalent
@@ -83,12 +85,12 @@ trait Manage {
    * @param name
    *   The name of the cookie to delete
    */
-  def deleteCookieNamed(key: String): IO[WebDriverException, Unit]
+  def deleteCookieNamed(key: String)(implicit trace: Trace): IO[WebDriverException, Unit]
 
   /**
    * Delete all the cookies for the current domain. <p> See <a
    * href="https://w3c.github.io/webdriver/#delete-all-cookies">W3C
    * WebDriver specification</a> for more details.
    */
-  def deleteAllCookies: IO[WebDriverException, Unit]
+  def deleteAllCookies(implicit trace: Trace): IO[WebDriverException, Unit]
 }

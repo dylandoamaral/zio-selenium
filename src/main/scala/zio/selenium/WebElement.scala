@@ -6,27 +6,28 @@ import zio._
 import zio.selenium.internal._
 
 trait WebElement {
-  def sendKeys(keysToSend: String): ZIO[WebDriver, WebDriverException, Unit]
+  def sendKeys(keysToSend: String)(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Unit]
 
-  def getText: ZIO[WebDriver, WebDriverException, String]
-  def getAttribute(name: String): ZIO[WebDriver, WebDriverException, Option[String]]
-  def getCssValue(propertyName: String): ZIO[WebDriver, WebDriverException, Option[String]]
-  def getTagName: ZIO[WebDriver, WebDriverException, String]
-  def getLocation: ZIO[WebDriver, WebDriverException, Point]
-  def getSize: ZIO[WebDriver, WebDriverException, Dimension]
-  def getRect: ZIO[WebDriver, WebDriverException, Rectangle]
+  def getText(implicit trace: Trace): ZIO[WebDriver, WebDriverException, String]
+  def getAttribute(name: String)(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Option[String]]
+  def getCssValue(propertyName: String)(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Option[String]]
+  def getTagName(implicit trace: Trace): ZIO[WebDriver, WebDriverException, String]
+  def getLocation(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Point]
+  def getSize(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Dimension]
+  def getRect(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Rectangle]
 
-  def isSelected: ZIO[WebDriver, WebDriverException, Boolean]
-  def isEnabled: ZIO[WebDriver, WebDriverException, Boolean]
+  def isSelected(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Boolean]
+  def isEnabled(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Boolean]
 
-  def findElement(by: By): ZIO[WebDriver, WebDriverException, WebElement]
-  def findElements(by: By): ZIO[WebDriver, WebDriverException, List[WebElement]]
+  def findElement(by: By)(implicit trace: Trace): ZIO[WebDriver, WebDriverException, WebElement]
+  def findElements(by: By)(implicit trace: Trace): ZIO[WebDriver, WebDriverException, List[WebElement]]
 
-  def hasElement(by: By): ZIO[WebDriver, WebDriverException, Boolean] = findElements(by).map(_.nonEmpty)
+  def hasElement(by: By)(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Boolean] =
+    findElements(by).map(_.nonEmpty)
 
-  def click: ZIO[WebDriver, WebDriverException, Unit]
-  def submit: ZIO[WebDriver, WebDriverException, Unit]
-  def clear: ZIO[WebDriver, WebDriverException, Unit]
+  def click(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Unit]
+  def submit(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Unit]
+  def clear(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Unit]
 }
 
 object WebElement {
@@ -42,7 +43,8 @@ object WebElement {
      * @param keysToSend
      *   character sequence to send to the element
      */
-    def sendKeys(keysToSend: String): ZIO[WebDriver, WebDriverException, Unit] = attempt(element.sendKeys(keysToSend))
+    def sendKeys(keysToSend: String)(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Unit] =
+      attempt(element.sendKeys(keysToSend))
 
     /**
      * Get the visible (i.e. not hidden by CSS) text of this element,
@@ -53,7 +55,7 @@ object WebElement {
      * @return
      *   The visible text of this element.
      */
-    override def getText: ZIO[WebDriver, WebDriverException, String] = attempt(element.getText)
+    override def getText(implicit trace: Trace): ZIO[WebDriver, WebDriverException, String] = attempt(element.getText)
 
     /**
      * Get the value of the given attribute of the element. Will return
@@ -89,7 +91,7 @@ object WebElement {
      * @return
      *   The attribute/property's current value.
      */
-    override def getAttribute(name: String): ZIO[WebDriver, WebDriverException, Option[String]] =
+    override def getAttribute(name: String)(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Option[String]] =
       attempt(element.getAttribute(name)).map {
         case "" => None
         case v  => Some(v)
@@ -118,7 +120,9 @@ object WebElement {
      * @return
      *   The current, computed value of the property.
      */
-    override def getCssValue(propertyName: String): ZIO[WebDriver, WebDriverException, Option[String]] =
+    override def getCssValue(
+        propertyName: String
+    )(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Option[String]] =
       attempt(element.getCssValue(propertyName)).map {
         case "" => None
         case v  => Some(v)
@@ -134,7 +138,8 @@ object WebElement {
      * @return
      *   The tag name of this element.
      */
-    override def getTagName: ZIO[WebDriver, WebDriverException, String] = attempt(element.getTagName)
+    override def getTagName(implicit trace: Trace): ZIO[WebDriver, WebDriverException, String] =
+      attempt(element.getTagName)
 
     /**
      * Where on the page is the top left-hand corner of the rendered
@@ -146,7 +151,8 @@ object WebElement {
      *   A point, containing the location of the top left-hand corner of
      *   the element
      */
-    override def getLocation: ZIO[WebDriver, WebDriverException, Point] = attempt(element.getLocation)
+    override def getLocation(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Point] =
+      attempt(element.getLocation)
 
     /**
      * What is the width and height of the rendered element? <p> See <a
@@ -156,7 +162,8 @@ object WebElement {
      * @return
      *   The size of the element on the page.
      */
-    override def getSize: ZIO[WebDriver, WebDriverException, Dimension] = attempt(element.getSize)
+    override def getSize(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Dimension] =
+      attempt(element.getSize)
 
     /**
      * @return
@@ -164,7 +171,8 @@ object WebElement {
      *   href="https://w3c.github.io/webdriver/#get-element-rect">W3C
      *   WebDriver specification</a> for more details.
      */
-    override def getRect: ZIO[WebDriver, WebDriverException, Rectangle] = attempt(element.getRect)
+    override def getRect(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Rectangle] =
+      attempt(element.getRect)
 
     /**
      * Determine whether this element is selected or not. This operation
@@ -180,7 +188,8 @@ object WebElement {
      *   True if the element is currently selected or checked, false
      *   otherwise.
      */
-    override def isSelected: ZIO[WebDriver, WebDriverException, Boolean] = attempt(element.isSelected)
+    override def isSelected(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Boolean] =
+      attempt(element.isSelected)
 
     /**
      * Is the element currently enabled or not? This will generally
@@ -191,7 +200,8 @@ object WebElement {
      * @return
      *   True if the element is enabled, false otherwise.
      */
-    override def isEnabled: ZIO[WebDriver, WebDriverException, Boolean] = attempt(element.isEnabled)
+    override def isEnabled(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Boolean] =
+      attempt(element.isEnabled)
 
     /**
      * Find the first {@link WebElement} using the given method. See the
@@ -216,7 +226,7 @@ object WebElement {
      * @see
      *   org.openqa.selenium.WebDriver.Timeouts
      */
-    override def findElement(by: By): ZIO[WebDriver, WebDriverException, WebElement] =
+    override def findElement(by: By)(implicit trace: Trace): ZIO[WebDriver, WebDriverException, WebElement] =
       attemptWebElement(element.findElement(by))
 
     /**
@@ -245,7 +255,8 @@ object WebElement {
      */
     override def findElements(
         by: By
-    ): ZIO[WebDriver, WebDriverException, List[WebElement]] = attemptWebElements(element.findElements(by))
+    )(implicit trace: Trace): ZIO[WebDriver, WebDriverException, List[WebElement]] =
+      attemptWebElements(element.findElements(by))
 
     /**
      * Click this element. If this causes a new page to load, you should
@@ -264,7 +275,7 @@ object WebElement {
      * @throws StaleElementReferenceException
      *   If the element no longer exists as initially defined
      */
-    override def click: ZIO[WebDriver, WebDriverException, Unit] = attempt(element.click())
+    override def click(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Unit] = attempt(element.click())
 
     /**
      * If this current element is a form, or an element within a form,
@@ -275,7 +286,7 @@ object WebElement {
      * @throws NoSuchElementException
      *   If the given element is not within a form
      */
-    override def submit: ZIO[WebDriver, WebDriverException, Unit] = attempt(element.submit())
+    override def submit(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Unit] = attempt(element.submit())
 
     /**
      * If this element is a form entry element, this will reset its
@@ -285,6 +296,6 @@ object WebElement {
      * href="https://html.spec.whatwg.org/#concept-form-reset-control">HTML
      * specification</a> for more details.
      */
-    override def clear: ZIO[WebDriver, WebDriverException, Unit] = attempt(element.clear())
+    override def clear(implicit trace: Trace): ZIO[WebDriver, WebDriverException, Unit] = attempt(element.clear())
   }
 }
