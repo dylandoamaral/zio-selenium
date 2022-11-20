@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/dylandoamaral/zinteract/master/images/zinteract.png" />
 </p>
 
-<h1 align="center">Zinteract</h1>
+<h1 align="center">ZIO Selenium</h1>
 
 <p align="center">
   <a href="https://github.com/dylandoamaral/zinteract/actions">
@@ -29,9 +29,9 @@ For <img src="https://raw.githubusercontent.com/dylandoamaral/zinteract/master/i
  - You want to retry elegantly using zio schedule
  - You want to use selenium purely
 
-## Using Zinteract 🏢
+## Using ZIO Selenium
 
-The latest version is 0.2.0, which is avaible for scala 2.13.
+The latest version is 0.2.0, which is available for scala 2.13.
 
 If you're using sbt, add the following to your build:
 
@@ -41,38 +41,35 @@ libraryDependencies ++= Seq(
 )
 ```
 
-## How it works 🔧
+## How it works
 
 Here is a sample to link to a particular website and retrieve the title:
 
 ```scala
+import org.openqa.selenium.{By, WebDriverException}
+import org.openqa.selenium.chrome.ChromeDriver
+
 import zio._
-
-import zinteract.webdriver
-import zinteract.builder.chrome
-import zinteract.builder.ChromeBlueprint.default
-
-import org.openqa.selenium.By
+import zio.selenium._
 
 object FindElement extends ZIOAppDefault {
-  val app = for {
-    _       <- webdriver.link("https://www.selenium.dev/documentation/en/")
-    element <- webdriver.findElement(By.id("the-selenium-browser-automation-project"))
-    _       <- Console.printLine(s"Title: ${element.getText}")
-  } yield ()
 
-  val builder = chrome at "/path/to/chromedriver" using default
+  val app: ZIO[WebDriver, Throwable, Unit] =
+    for {
+      _       <- WebDriver.get("https://www.selenium.dev/documentation/en/")
+      element <- WebDriver.findElement(By.id("the-selenium-browser-automation-project"))
+      text    <- element.getText
+      _       <- Console.printLine(s"Title: $text")
+    } yield ()
 
-  override def run =
-    app
-      .provideCustomLayer(builder.buildLayer)
-      .exitCode
+  val layer: Layer[WebDriverException, WebDriver] = WebDriver.layer(new ChromeDriver())
+
+  override def run = app.provide(layer)
 }
-
 ```
 
 ## Community 🤝
 
-If you have a problem using zinteract or if you want to add features, issues and pull requests are welcome.
+If you have a problem using ZIO Selenium or if you want to add features, issues and pull requests are welcome.
 
 Don't hesitate to give a ⭐ to the project if you like it!

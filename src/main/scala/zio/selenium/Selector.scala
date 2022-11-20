@@ -1,15 +1,16 @@
-package zinteract.context
+package zio.selenium
 
 import org.openqa.selenium.By
 
-/** Selector is a DSL to create css selector in an english way.
-  *
-  * Examples:
-  *   - href contains "test" in a
-  *   - id equalsTo "my-id" in p
-  *   - h1 and h2
-  *   - id.not
-  */
+/**
+ * Selector is a DSL to create css selector in an english way.
+ *
+ * Examples:
+ *   - href contains "test" in a
+ *   - id equalsTo "my-id" in p
+ *   - h1 and h2
+ *   - id.not
+ */
 object Selector {
   sealed trait SearchingMethod { def symbol: String }
   case object Equal     extends SearchingMethod { def symbol: String = ""  }
@@ -24,15 +25,18 @@ object Selector {
     def childOf(parent: Selector): ChildSelector = ChildSelector(parent, this)
     def not: NotSelector                         = NotSelector(this)
   }
+
   sealed trait AttributeSelector extends Selector {
     def in(tagS: TagSelector): ElementSelector = ElementSelector(tagS, this)
   }
 
   case class FlagSelector(flag: String) extends Selector
+
   case class TagSelector(tag: String, flags: Set[FlagSelector] = Set.empty) extends Selector {
     def being(flagS: FlagSelector): TagSelector                    = TagSelector(tag, flags + flagS)
     def containing(attributeS: AttributeSelector): ElementSelector = ElementSelector(this, attributeS)
   }
+
   case class AttributeSelectorAlone(attribute: String) extends AttributeSelector {
     def equalsTo(value: String): AttributeSelectorValue   = AttributeSelectorValue(attribute, Equal, value)
     def contains(value: String): AttributeSelectorValue   = AttributeSelectorValue(attribute, Contains, value)
@@ -52,8 +56,7 @@ object Selector {
 
   def interpretFlags(flags: Set[FlagSelector]): String = flags.map(interpret(_)).mkString
 
-  /** Interpret a Selector structure into a css selector statement
-    */
+  /** Interpret a Selector structure into a css selector statement */
   def interpret(selector: Selector, ignoreTag: Boolean = false): String =
     selector match {
       case FlagSelector(flag)                               => s":$flag"
@@ -69,8 +72,7 @@ object Selector {
       case InsideSelector(container, content) => interpret(container) + " " + interpret(content)
     }
 
-  /** Interpret a Selector structure into a By css selector
-    */
+  /** Interpret a Selector structure into a By css selector */
   def by(selector: Selector): By = By.cssSelector(interpret(selector))
 
   val a: TagSelector      = TagSelector("a")

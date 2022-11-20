@@ -1,37 +1,38 @@
-val zioVersion             = "2.0.0-RC2"
-val seleniumVersion        = "4.1.2"
-val htmlUnitDriverVersion  = "3.60.0"
-val organizeImportsVersion = "0.6.0"
+val zioVersion            = "2.0.2"
+val seleniumVersion       = "4.6.0"
+val htmlUnitDriverVersion = "4.6.0"
 
 ThisBuild / scalaVersion := "2.13.8"
 ThisBuild / scalacOptions += "-Wunused:imports"
 
 ThisBuild / organization         := "dev.doamaral"
 ThisBuild / organizationName     := "doamaral"
-ThisBuild / organizationHomepage := Some(url("https://www.dylan.doamaral.dev/"))
+ThisBuild / organizationHomepage := Some(url("https://github.com/dylandoamaral"))
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
-    url("https://github.com/dylandoamaral/zinteract"),
-    "scm:git@github.com:dylandoamaral/zinteract.git"
+    url("https://github.com/dylandoamaral/zio-selenium"),
+    "scm:git@github.com:dylandoamaral/zio-selenium.git"
   )
 )
+
 ThisBuild / developers := List(
   Developer(
-    id = "ddoamaral",
-    name = "Dylan DO AMARAL",
+    id    = "ddoamaral",
+    name  = "Dylan DO AMARAL",
     email = "do.amaral.dylan@gmail.com",
-    url = url("https://www.dylan.doamaral.dev/")
+    url   = url("https://www.dylan.doamaral.dev/")
   )
 )
 
 ThisBuild / description := "A ZIO wrapper to interact with a browser using Selenium."
-ThisBuild / licenses    := List("Apache 2" -> new URL("http://www.apache.org/licenses/LICENSE-2.0.txt"))
-ThisBuild / homepage    := Some(url("https://github.com/dylandoamaral/zinteract"))
+ThisBuild / licenses    := List("Apache 2" -> new URL("https://github.com/dylandoamaral/zinteract/blob/master/LICENSE"))
+ThisBuild / homepage    := Some(url("https://github.com/dylandoamaral/zio-selenium"))
 
-ThisBuild / coverageExcludedPackages := ".*zinteract.example.*"
+ThisBuild / coverageExcludedPackages := ".*zio.selenium.example.*"
 
 ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
+
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
   RefPredicate.Equals(Ref.Branch("master")),
   RefPredicate.StartsWith(Ref.Tag("v"))
@@ -43,68 +44,49 @@ ThisBuild / githubWorkflowPublishPreamble +=
 ThisBuild / githubWorkflowPublish := Seq(
   WorkflowStep.Sbt(
     List("ci-release"),
-    env = Map(
-      "PGP_PASSPHRASE"    -> "${{ secrets.PGP_PASSPHRASE }}",
-      "PGP_SECRET"        -> "${{ secrets.PGP_SECRET }}",
-      "SONATYPE_PASSWORD" -> "${{ secrets.SONATYPE_PASSWORD }}",
-      "SONATYPE_USERNAME" -> "${{ secrets.SONATYPE_USERNAME }}"
-    )
+    env =
+      Map(
+        "PGP_PASSPHRASE"    -> "${{ secrets.PGP_PASSPHRASE }}",
+        "PGP_SECRET"        -> "${{ secrets.PGP_SECRET }}",
+        "SONATYPE_PASSWORD" -> "${{ secrets.SONATYPE_PASSWORD }}",
+        "SONATYPE_USERNAME" -> "${{ secrets.SONATYPE_USERNAME }}"
+      )
   )
 )
 
 ThisBuild / githubWorkflowBuildPreamble := Seq(
-  WorkflowStep.Run(
-    name = Some("Create Webdriver folder"),
-    commands = List(
-      "mkdir ~/Webdriver"
-    )
-  ),
-  WorkflowStep.Run(
-    name = Some("Install chromedriver"),
-    commands = List(
-      "CHROME_VERSION=$(google-chrome --version | cut -f 3 -d ' ' | cut -d '.' -f 1)",
-      "CHROMEDRIVER_RELEASE=$(curl --location --fail --retry 3 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION})",
-      "wget https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_RELEASE}/chromedriver_linux64.zip",
-      "unzip chromedriver*.zip -d ~/Webdriver"
-    )
-  ),
-  WorkflowStep.Run(
-    name = Some("Install geckodriver"),
-    commands = List(
-      "wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux32.tar.gz",
-      "tar zxvf geckodriver*.tar.gz -C ~/Webdriver"
-    )
-  ),
   WorkflowStep.Sbt(
-    name = Some("Check formatting"),
+    name     = Some("Check formatting"),
     commands = List("scalafmtCheck")
   ),
   WorkflowStep.Sbt(
-    name = Some("Check linting"),
+    name     = Some("Check linting"),
     commands = List("scalafix --check")
   )
 )
 ThisBuild / githubWorkflowBuild := Seq(WorkflowStep.Sbt(List("coverage", "test")))
+
 ThisBuild / githubWorkflowBuildPostamble := Seq(
   WorkflowStep.Run(
-    name = Some("Generate coverage"),
+    name     = Some("Generate coverage"),
     commands = List("sbt coverageReport && bash <(curl -s https://codecov.io/bash)")
   )
 )
 
-ThisBuild / semanticdbEnabled                              := true
-ThisBuild / semanticdbVersion                              := scalafixSemanticdb.revision
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % organizeImportsVersion
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
-lazy val root = (project in file("."))
-  .settings(
-    name := "zinteract",
-    libraryDependencies ++= Seq(
-      "dev.zio"                %% "zio"             % zioVersion,
-      "dev.zio"                %% "zio-test"        % zioVersion % "test",
-      "dev.zio"                %% "zio-test-sbt"    % zioVersion % "test",
-      "org.seleniumhq.selenium" % "selenium-java"   % seleniumVersion,
-      "org.seleniumhq.selenium" % "htmlunit-driver" % htmlUnitDriverVersion
-    ),
-    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
-  )
+lazy val root =
+  (project in file("."))
+    .settings(
+      name := "zinteract",
+      libraryDependencies ++= Seq(
+        "dev.zio"                %% "zio"             % zioVersion,
+        "dev.zio"                %% "zio-test"        % zioVersion % "test",
+        "dev.zio"                %% "zio-test-sbt"    % zioVersion % "test",
+        "org.seleniumhq.selenium" % "selenium-java"   % seleniumVersion,
+        "org.seleniumhq.selenium" % "htmlunit-driver" % htmlUnitDriverVersion
+      ),
+      testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
+      Test / parallelExecution := false
+    )
