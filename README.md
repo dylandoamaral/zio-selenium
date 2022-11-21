@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/dylandoamaral/zio-selenium/actions">
-    <img src="https://github.com/dylandoamaral/zio-selenium/workflows/Continuous%20Integration/badge.svg" />
+    <img src="https://github.com/dylandoamaral/zio-selenium/workflows/ZIO%20Selenium%20Continuous%20Integration/badge.svg" />
   </a>
   <a href="https://codecov.io/gh/dylandoamaral/zio-selenium">
     <img src="https://codecov.io/gh/dylandoamaral/zio-selenium/branch/master/graph/badge.svg" />
