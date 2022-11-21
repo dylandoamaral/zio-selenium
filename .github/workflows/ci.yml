@@ -36,7 +36,7 @@ jobs:
       - name: Cache scala dependencies
         uses: coursier/cache-action@v6
       - name: Run tests
-        run: sbt testSpecificWithCoverage
+        run: sbt test
       - name: Publish coverage to codecov
         uses: codecov/codecov-action@v2
 
