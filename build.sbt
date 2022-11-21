@@ -28,6 +28,7 @@ ThisBuild / developers := List(
 ThisBuild / description := "A ZIO wrapper to interact with a browser using Selenium."
 ThisBuild / licenses := List("Apache 2" -> new URL("https://github.com/dylandoamaral/zio-selenium/blob/master/LICENSE"))
 ThisBuild / homepage := Some(url("https://github.com/dylandoamaral/zio-selenium"))
+ThisBuild / versionScheme := Some("early-semver")
 
 ThisBuild / coverageExcludedPackages := ".*zio.selenium.example.*"
 
