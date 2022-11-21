@@ -35,7 +35,7 @@ If you're using sbt, add the following to your build:
 
 ```bash
 libraryDependencies ++= Seq(
-  "dev.doamaral" %% "zio-selenium" % "0.0.0"
+  "dev.doamaral" %% "zio-selenium" % "1.0.0"
 )
 ```
 
