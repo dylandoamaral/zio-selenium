@@ -31,48 +31,6 @@ ThisBuild / homepage := Some(url("https://github.com/dylandoamaral/zio-selenium"
 
 ThisBuild / coverageExcludedPackages := ".*zio.selenium.example.*"
 
-ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
-
-ThisBuild / githubWorkflowPublishTargetBranches := Seq(
-  RefPredicate.Equals(Ref.Branch("master")),
-  RefPredicate.StartsWith(Ref.Tag("v"))
-)
-
-ThisBuild / githubWorkflowPublishPreamble +=
-  WorkflowStep.Use(UseRef.Public("olafurpg", "setup-gpg", "v3"))
-
-ThisBuild / githubWorkflowPublish := Seq(
-  WorkflowStep.Sbt(
-    List("ci-release"),
-    env =
-      Map(
-        "PGP_PASSPHRASE"    -> "${{ secrets.PGP_PASSPHRASE }}",
-        "PGP_SECRET"        -> "${{ secrets.PGP_SECRET }}",
-        "SONATYPE_PASSWORD" -> "${{ secrets.SONATYPE_PASSWORD }}",
-        "SONATYPE_USERNAME" -> "${{ secrets.SONATYPE_USERNAME }}"
-      )
-  )
-)
-
-ThisBuild / githubWorkflowBuildPreamble := Seq(
-  WorkflowStep.Sbt(
-    name     = Some("Check formatting"),
-    commands = List("scalafmtCheck")
-  ),
-  WorkflowStep.Sbt(
-    name     = Some("Check linting"),
-    commands = List("scalafix --check")
-  )
-)
-ThisBuild / githubWorkflowBuild := Seq(WorkflowStep.Sbt(List("coverage", "test")))
-
-ThisBuild / githubWorkflowBuildPostamble := Seq(
-  WorkflowStep.Run(
-    name     = Some("Generate coverage"),
-    commands = List("sbt coverageReport && bash <(curl -s https://codecov.io/bash)")
-  )
-)
-
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
@@ -90,3 +48,5 @@ lazy val root =
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
       Test / parallelExecution := false
     )
+
+addCommandAlias("check", "; scalafmtCheckAll; scalafixAll --check;")
