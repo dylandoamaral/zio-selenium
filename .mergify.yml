@@ -2,8 +2,9 @@ pull_request_rules:
   - name: Automatic merge for scala steward 🐱
     conditions:
       - author=scala-steward
-      - check-success~=^Build and Test
-      - check-success=codecov/project
+      - check-success~=test
+      - check-success~=check
+      - title~=^chore[^\s]+ bump [^\s]+ from ([\d]+)\..+ to \1\.
     actions:
       merge:
         method: squash
