@@ -11,8 +11,8 @@ object Selector extends ZIOAppDefault {
 
   val app: ZIO[WebDriver, Throwable, Unit] =
     for {
-      _       <- WebDriver.get("https://github.com/dylandoamaral/zinteract")
-      element <- WebDriver.findElement(by(href equalsTo "/dylandoamaral/zinteract" in a))
+      _       <- WebDriver.get("https://github.com/dylandoamaral/zio-selenium")
+      element <- WebDriver.findElement(by(href equalsTo "/dylandoamaral/zio-selenium" in a))
       _       <- Console.printLine(s"Project: ${element.getText}")
     } yield ()
 

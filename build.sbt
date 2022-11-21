@@ -26,8 +26,8 @@ ThisBuild / developers := List(
 )
 
 ThisBuild / description := "A ZIO wrapper to interact with a browser using Selenium."
-ThisBuild / licenses    := List("Apache 2" -> new URL("https://github.com/dylandoamaral/zinteract/blob/master/LICENSE"))
-ThisBuild / homepage    := Some(url("https://github.com/dylandoamaral/zio-selenium"))
+ThisBuild / licenses := List("Apache 2" -> new URL("https://github.com/dylandoamaral/zio-selenium/blob/master/LICENSE"))
+ThisBuild / homepage := Some(url("https://github.com/dylandoamaral/zio-selenium"))
 
 ThisBuild / coverageExcludedPackages := ".*zio.selenium.example.*"
 
@@ -79,7 +79,7 @@ ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 lazy val root =
   (project in file("."))
     .settings(
-      name := "zinteract",
+      name := "zio-selenium",
       libraryDependencies ++= Seq(
         "dev.zio"                %% "zio"             % zioVersion,
         "dev.zio"                %% "zio-test"        % zioVersion % "test",

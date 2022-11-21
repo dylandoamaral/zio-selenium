@@ -1,15 +1,15 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/dylandoamaral/zinteract/master/images/zinteract.png" />
+  <img src="https://raw.githubusercontent.com/dylandoamaral/zio-selenium/master/images/zio-selenium.png" />
 </p>
 
 <h1 align="center">ZIO Selenium</h1>
 
 <p align="center">
-  <a href="https://github.com/dylandoamaral/zinteract/actions">
-    <img src="https://github.com/dylandoamaral/zinteract/workflows/Continuous%20Integration/badge.svg" />
+  <a href="https://github.com/dylandoamaral/zio-selenium/actions">
+    <img src="https://github.com/dylandoamaral/zio-selenium/workflows/Continuous%20Integration/badge.svg" />
   </a>
-  <a href="https://codecov.io/gh/dylandoamaral/zinteract">
-    <img src="https://codecov.io/gh/dylandoamaral/zinteract/branch/master/graph/badge.svg" />
+  <a href="https://codecov.io/gh/dylandoamaral/zio-selenium">
+    <img src="https://codecov.io/gh/dylandoamaral/zio-selenium/branch/master/graph/badge.svg" />
   </a>
   <a href="https://scala-steward.org">
     <img src="https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=" />
@@ -20,11 +20,11 @@
 
 ## Why use it 🤔
 
-For <img src="https://raw.githubusercontent.com/dylandoamaral/zinteract/master/images/zio.png" width=32 height=16/> users:
+For <img src="https://raw.githubusercontent.com/dylandoamaral/zio-selenium/master/images/zio.png" width=32 height=16/> users:
 - You need to test website interactions
 - You want to create browser automation
 
-For <img src="https://raw.githubusercontent.com/dylandoamaral/zinteract/master/images/selenium.png" width=16 height=16/> users:
+For <img src="https://raw.githubusercontent.com/dylandoamaral/zio-selenium/master/images/selenium.png" width=16 height=16/> users:
  - You need to run selenium in parallel
  - You want to retry elegantly using zio schedule
  - You want to use selenium purely
@@ -37,7 +37,7 @@ If you're using sbt, add the following to your build:
 
 ```bash
 libraryDependencies ++= Seq(
-  "dev.doamaral" %% "zinteract" % "0.2.0"
+  "dev.doamaral" %% "zio-selenium" % "0.0.0"
 )
 ```
 
