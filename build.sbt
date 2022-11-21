@@ -37,9 +37,6 @@ ThisBuild / coverageExcludedPackages := ".*zio.selenium.example.*"
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
-ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
-ThisBuild / sonatypeRepository     := "https://s01.oss.sonatype.org/service/local"
-
 lazy val root =
   (project in file("."))
     .settings(
