@@ -28,7 +28,9 @@ ThisBuild / developers := List(
 ThisBuild / description := "A ZIO wrapper to interact with a browser using Selenium."
 ThisBuild / licenses := List("Apache 2" -> new URL("https://github.com/dylandoamaral/zio-selenium/blob/master/LICENSE"))
 ThisBuild / homepage := Some(url("https://github.com/dylandoamaral/zio-selenium"))
+
 ThisBuild / versionScheme := Some("early-semver")
+ThisBuild / version ~= addVersionPadding
 
 ThisBuild / coverageExcludedPackages := ".*zio.selenium.example.*"
 
@@ -51,3 +53,24 @@ lazy val root =
     )
 
 addCommandAlias("check", "; scalafmtCheckAll; scalafixAll --check;")
+
+/**
+ * Add padding to change: 0.1.0+48-bfcea99ap20220317-1157-SNAPSHOT into
+ * 0.1.0+0048-bfcea99ap20220317-1157-SNAPSHOT. It helps to retrieve the
+ * latest snapshots from
+ * https://oss.sonatype.org/#nexus-search;gav~dev.doamaral~zio-selenium_2.13~~~~kw,versionexpand.
+ */
+def addVersionPadding(baseVersion: String): String = {
+  import scala.util.matching.Regex
+
+  val paddingSize    = 5
+  val counter: Regex = "\\+([0-9]+)-".r
+
+  counter.findFirstMatchIn(baseVersion) match {
+    case Some(regex) =>
+      val count          = regex.group(1)
+      val snapshotNumber = "0" * (paddingSize - count.length) + count
+      counter.replaceFirstIn(baseVersion, s"+$snapshotNumber-")
+    case None => baseVersion
+  }
+}
