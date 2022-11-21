@@ -31,8 +31,6 @@ For <img src="https://raw.githubusercontent.com/dylandoamaral/zio-selenium/maste
 
 ## Using ZIO Selenium
 
-The latest version is 0.2.0, which is available for scala 2.13.
-
 If you're using sbt, add the following to your build:
 
 ```bash
