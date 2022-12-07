@@ -1,6 +1,6 @@
 val zioVersion            = "2.0.2"
 val seleniumVersion       = "4.6.0"
-val htmlUnitDriverVersion = "4.6.0"
+val htmlUnitDriverVersion = "4.7.0"
 
 ThisBuild / scalaVersion := "2.13.8"
 ThisBuild / scalacOptions += "-Wunused:imports"
