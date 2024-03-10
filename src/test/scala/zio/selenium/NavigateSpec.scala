@@ -25,7 +25,7 @@ object NavigateSpec extends SharedWebDriverSpec {
       test("Navigate can go back") {
         for {
           _   <- WebDriver.get(trueWebsite)
-          _   <- WebDriver.get("https://duckduckgo.com/")
+          _   <- WebDriver.get(testWebsite)
           _   <- WebDriver.Navigate.back
           url <- WebDriver.getCurrentUrl
         } yield assertTrue(url == trueWebsite)
