@@ -1,4 +1,4 @@
-val zioVersion            = "2.0.21"
+val zioVersion            = "2.0.22"
 val seleniumVersion       = "4.20.0"
 val htmlUnitDriverVersion = "4.13.0"
 
